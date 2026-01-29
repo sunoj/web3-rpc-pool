@@ -14,23 +14,26 @@
 //!
 //! ```rust,no_run
 //! use web3_rpc_pool::{RpcPool, RpcPoolConfig, strategies::FailoverStrategy, presets};
+//! use std::sync::Arc;
 //! use std::time::Duration;
+//! use alloy::providers::{Provider, ProviderBuilder};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let pool = RpcPool::new(RpcPoolConfig {
+//!     let pool = Arc::new(RpcPool::new(RpcPoolConfig {
 //!         endpoints: presets::arbitrum_endpoints(),
 //!         strategy: Box::new(FailoverStrategy),
 //!         health_check_interval: Duration::from_secs(60),
 //!         max_consecutive_errors: 3,
 //!         retry_delay: Duration::from_secs(5),
-//!     });
+//!     })?);
 //!
 //!     // Start background health checker
 //!     let _health_task = pool.start_health_check();
 //!
 //!     // Execute with automatic failover
-//!     let block = pool.execute(|provider| async move {
+//!     let block = pool.execute(|url: url::Url| async move {
+//!         let provider = ProviderBuilder::new().connect_http(url);
 //!         provider.get_block_number().await
 //!     }).await?;
 //!
