@@ -1,0 +1,50 @@
+[package]
+name = "web3-rpc-pool"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+description = "High-availability multi-endpoint RPC pool with automatic failover and load balancing for Web3 applications"
+repository = "https://github.com/sunoj/web3-rpc-pool"
+keywords = ["web3", "rpc", "ethereum", "failover", "load-balancing"]
+categories = ["network-programming", "asynchronous"]
+
+[features]
+default = ["http", "ws"]
+http = []
+ws = ["tokio-tungstenite"]
+metrics = ["prometheus"]
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full", "sync", "time"] }
+futures = "0.3"
+async-trait = "0.1"
+
+# Alloy for RPC
+alloy = { version = "0.9", features = ["full", "providers", "transports", "rpc-client"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Utilities
+parking_lot = "0.12"
+dashmap = "6"
+url = "2"
+
+# Logging
+tracing = "0.1"
+
+# Optional: WebSocket support
+tokio-tungstenite = { version = "0.24", optional = true }
+
+# Optional: Metrics
+prometheus = { version = "0.13", optional = true }
+
+# Error handling
+thiserror = "2"
+
+[dev-dependencies]
+tokio-test = "0.4"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
