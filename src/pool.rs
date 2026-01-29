@@ -5,8 +5,7 @@ use crate::error::RpcPoolError;
 use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
 use crate::strategies::SelectionStrategy;
 
-use alloy::providers::{Provider, ProviderBuilder, RootProvider};
-use alloy::transports::http::{Client, Http};
+use alloy::providers::{Provider, ProviderBuilder};
 use dashmap::DashMap;
 use parking_lot::RwLock;
 use std::collections::HashSet;
@@ -15,9 +14,6 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tracing::{debug, info, warn};
-
-/// Type alias for the HTTP provider.
-pub type HttpProvider = RootProvider<Http<Client>>;
 
 /// Configuration for the RPC pool.
 pub struct RpcPoolConfig {
@@ -57,9 +53,6 @@ pub struct RpcPool {
     /// Statistics for each endpoint.
     stats: DashMap<String, EndpointStats>,
 
-    /// Cached HTTP providers.
-    providers: DashMap<String, Arc<HttpProvider>>,
-
     /// Selection strategy.
     strategy: RwLock<Box<dyn SelectionStrategy>>,
 
@@ -98,7 +91,6 @@ impl RpcPool {
         Ok(Self {
             endpoints: config.endpoints,
             stats,
-            providers: DashMap::new(),
             strategy: RwLock::new(config.strategy),
             max_consecutive_errors: config.max_consecutive_errors,
             retry_delay: config.retry_delay,
@@ -108,13 +100,31 @@ impl RpcPool {
         })
     }
 
-    /// Execute a request with automatic failover.
+    /// Get the URL of the currently selected endpoint.
+    pub fn get_current_url(&self) -> Option<String> {
+        let stats_map: std::collections::HashMap<_, _> = self
+            .stats
+            .iter()
+            .map(|r| (r.key().clone(), r.value().clone()))
+            .collect();
+        let mut strategy = self.strategy.write();
+        strategy
+            .select(&self.endpoints, &stats_map, &HashSet::new())
+            .map(|e| e.url.clone())
+    }
+
+    /// Get all configured RPC URLs.
+    pub fn get_all_urls(&self) -> Vec<String> {
+        self.endpoints.iter().map(|e| e.url.clone()).collect()
+    }
+
+    /// Execute a function with automatic failover across endpoints.
     ///
-    /// Tries each endpoint in order based on the selection strategy.
-    /// Automatically switches to the next endpoint on failure.
-    pub async fn execute<F, Fut, T, E>(&self, f: F) -> Result<T, RpcPoolError>
+    /// The provided function receives the endpoint URL and should create
+    /// and use its own provider instance.
+    pub async fn execute_with_url<F, Fut, T, E>(&self, f: F) -> Result<T, RpcPoolError>
     where
-        F: Fn(Arc<HttpProvider>) -> Fut + Clone,
+        F: Fn(String) -> Fut + Clone,
         Fut: Future<Output = Result<T, E>>,
         E: std::error::Error,
     {
@@ -142,18 +152,9 @@ impl RpcPool {
 
             tried.insert(endpoint.url.clone());
 
-            // Get or create provider
-            let provider = match self.get_or_create_provider(&endpoint).await {
-                Ok(p) => p,
-                Err(e) => {
-                    warn!(endpoint = %endpoint.name, error = %e, "Failed to create provider");
-                    continue;
-                }
-            };
-
             // Execute request
             let start = Instant::now();
-            match f(provider).await {
+            match f(endpoint.url.clone()).await {
                 Ok(result) => {
                     let latency = start.elapsed().as_millis() as u64;
                     if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
@@ -192,42 +193,25 @@ impl RpcPool {
         ))
     }
 
-    /// Get a provider for direct use (without retry logic).
-    pub async fn get_provider(&self) -> Result<Arc<HttpProvider>, RpcPoolError> {
-        let endpoint = {
-            let stats_map: std::collections::HashMap<_, _> = self
-                .stats
-                .iter()
-                .map(|r| (r.key().clone(), r.value().clone()))
-                .collect();
-            let mut strategy = self.strategy.write();
-            strategy
-                .select(&self.endpoints, &stats_map, &HashSet::new())
-                .cloned()
-        };
-
-        match endpoint {
-            Some(e) => self.get_or_create_provider(&e).await,
-            None => Err(RpcPoolError::NoHealthyEndpoints),
-        }
-    }
-
-    /// Get the current RPC URL (for external use).
-    pub fn get_current_url(&self) -> Option<String> {
-        let stats_map: std::collections::HashMap<_, _> = self
-            .stats
-            .iter()
-            .map(|r| (r.key().clone(), r.value().clone()))
-            .collect();
-        let mut strategy = self.strategy.write();
-        strategy
-            .select(&self.endpoints, &stats_map, &HashSet::new())
-            .map(|e| e.url.clone())
-    }
-
-    /// Get all configured RPC URLs.
-    pub fn get_all_urls(&self) -> Vec<String> {
-        self.endpoints.iter().map(|e| e.url.clone()).collect()
+    /// Execute a request with automatic failover using a pre-built provider.
+    ///
+    /// Creates a new provider for each attempt (recommended for most use cases).
+    pub async fn execute<T, E, F, Fut>(&self, f: F) -> Result<T, RpcPoolError>
+    where
+        F: Fn(url::Url) -> Fut + Clone,
+        Fut: Future<Output = Result<T, E>>,
+        E: std::error::Error,
+    {
+        self.execute_with_url(|url_str| {
+            let f = f.clone();
+            async move {
+                let url: url::Url = url_str.parse().map_err(|e: url::ParseError| {
+                    std::io::Error::other(format!("Invalid URL: {}", e))
+                })?;
+                f(url).await.map_err(|e| std::io::Error::other(e.to_string()))
+            }
+        })
+        .await
     }
 
     /// Start background health check task.
@@ -268,28 +252,23 @@ impl RpcPool {
                 continue;
             }
 
-            // Try to recover
-            match self.get_or_create_provider(endpoint).await {
-                Ok(provider) => {
-                    // Simple probe: get block number
-                    match provider.get_block_number().await {
-                        Ok(_) => {
-                            if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
-                                stats.mark_recovered();
-                                info!(endpoint = %endpoint.name, "Endpoint recovered");
-                            }
-                        }
-                        Err(_) => {
-                            // Still unhealthy, update error time
-                            if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
-                                stats.last_error_time = Some(Instant::now());
-                            }
+            // Try to recover with a simple probe
+            let url: Result<url::Url, _> = endpoint.url.parse();
+            if let Ok(url) = url {
+                let provider = ProviderBuilder::new().connect_http(url);
+
+                match provider.get_block_number().await {
+                    Ok(_) => {
+                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                            stats.mark_recovered();
+                            info!(endpoint = %endpoint.name, "Endpoint recovered");
                         }
                     }
-                }
-                Err(_) => {
-                    if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
-                        stats.last_error_time = Some(Instant::now());
+                    Err(_) => {
+                        // Still unhealthy, update error time
+                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                            stats.last_error_time = Some(Instant::now());
+                        }
                     }
                 }
             }
@@ -332,32 +311,6 @@ impl RpcPool {
             endpoints,
         }
     }
-
-    /// Get or create a provider for an endpoint.
-    async fn get_or_create_provider(
-        &self,
-        endpoint: &RpcEndpoint,
-    ) -> Result<Arc<HttpProvider>, RpcPoolError> {
-        // Check cache first
-        if let Some(provider) = self.providers.get(&endpoint.url) {
-            return Ok(Arc::clone(&provider));
-        }
-
-        // Create new provider
-        let url = endpoint
-            .url
-            .parse()
-            .map_err(|e: url::ParseError| RpcPoolError::InvalidUrl(e.to_string()))?;
-
-        let provider = ProviderBuilder::new().on_http(url);
-
-        let provider = Arc::new(provider);
-        self.providers.insert(endpoint.url.clone(), Arc::clone(&provider));
-
-        debug!(endpoint = %endpoint.name, "Created new provider");
-
-        Ok(provider)
-    }
 }
 
 #[cfg(test)]
@@ -390,5 +343,29 @@ mod tests {
 
         let pool = RpcPool::new(config);
         assert!(matches!(pool, Err(RpcPoolError::NoEndpointsConfigured)));
+    }
+
+    #[test]
+    fn test_get_urls() {
+        let config = RpcPoolConfig {
+            endpoints: vec![
+                RpcEndpoint::new("https://rpc1.example.com").with_priority(10),
+                RpcEndpoint::new("https://rpc2.example.com").with_priority(50),
+            ],
+            strategy: Box::new(FailoverStrategy),
+            ..Default::default()
+        };
+
+        let pool = RpcPool::new(config).unwrap();
+
+        // Should return highest priority (lowest number) endpoint
+        assert_eq!(
+            pool.get_current_url(),
+            Some("https://rpc1.example.com".to_string())
+        );
+
+        // Should return all URLs
+        let all = pool.get_all_urls();
+        assert_eq!(all.len(), 2);
     }
 }

@@ -22,7 +22,7 @@ futures = "0.3"
 async-trait = "0.1"
 
 # Alloy for RPC
-alloy = { version = "0.9", features = ["full", "providers", "transports", "rpc-client"] }
+alloy = { version = "1.0", features = ["full", "providers", "transports", "rpc-client"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
