@@ -1,0 +1,179 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      save_baseline:
+        description: 'Save results as new baseline'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  benchmarks:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-bench-
+            ${{ runner.os }}-cargo-
+
+      - name: Build release
+        run: cargo build --release
+
+      - name: Run criterion benchmarks
+        run: |
+          cargo bench --bench strategy_benchmarks -- --noplot | tee bench_strategy.log
+          cargo bench --bench pool_benchmarks -- --noplot | tee bench_pool.log
+
+      - name: Run integration performance tests
+        run: cargo test --release --test perf_tests -- --nocapture | tee perf_tests.log
+
+      - name: Generate performance report
+        run: |
+          mkdir -p perf-results
+          VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          GIT_HASH=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+          cat > perf-results/report_${VERSION}_${TIMESTAMP}.md << EOF
+          # Performance Report
+
+          - **Version:** $VERSION
+          - **Git Hash:** $GIT_HASH
+          - **Date:** $(date -Iseconds)
+          - **Runner:** ${{ runner.os }}
+
+          ## Strategy Benchmarks
+
+          \`\`\`
+          $(grep -E "(select/|time:)" bench_strategy.log | head -40)
+          \`\`\`
+
+          ## Pool Benchmarks
+
+          \`\`\`
+          $(grep -E "(pool_|preset_|time:)" bench_pool.log | head -40)
+          \`\`\`
+
+          ## Integration Tests
+
+          \`\`\`
+          $(grep -E "^(===|  [A-Za-z])" perf_tests.log)
+          \`\`\`
+          EOF
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: |
+            bench_*.log
+            perf_tests.log
+            perf-results/
+          retention-days: 30
+
+      - name: Download previous baseline (for comparison)
+        if: github.event_name == 'pull_request'
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: perf.yml
+          branch: ${{ github.base_ref }}
+          name: benchmark-results-*
+          path: baseline/
+        continue-on-error: true
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const version = fs.readFileSync('Cargo.toml', 'utf8').match(/version = "(.*)"/)[1];
+
+            let report = `## Performance Test Results\n\n`;
+            report += `**Version:** ${version}\n`;
+            report += `**Commit:** ${context.sha.substring(0, 7)}\n\n`;
+
+            // Read test results
+            try {
+              const strategyLog = fs.readFileSync('bench_strategy.log', 'utf8');
+              const poolLog = fs.readFileSync('bench_pool.log', 'utf8');
+              const perfLog = fs.readFileSync('perf_tests.log', 'utf8');
+
+              report += `### Strategy Benchmarks\n\`\`\`\n`;
+              report += strategyLog.split('\n').filter(l => l.includes('time:')).slice(0, 10).join('\n');
+              report += `\n\`\`\`\n\n`;
+
+              report += `### Pool Benchmarks\n\`\`\`\n`;
+              report += poolLog.split('\n').filter(l => l.includes('time:')).slice(0, 10).join('\n');
+              report += `\n\`\`\`\n\n`;
+
+              // Check if all tests passed
+              if (perfLog.includes('test result: ok')) {
+                report += `### Status: All performance tests passed!\n`;
+              } else {
+                report += `### Status: Some tests may have issues. Check artifacts for details.\n`;
+              }
+            } catch (e) {
+              report += `Could not read benchmark results: ${e.message}\n`;
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+
+  # Release performance baseline
+  save-baseline:
+    name: Save Performance Baseline
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.save_baseline == 'true'
+    needs: benchmarks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: results/
+
+      - name: Commit baseline to repo
+        run: |
+          VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          mkdir -p perf-results/baselines
+          cp -r results/* perf-results/baselines/v${VERSION}/
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add perf-results/
+          git commit -m "perf: Save performance baseline for v${VERSION}" || true
+          git push || true

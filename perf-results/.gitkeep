@@ -1,0 +1,31 @@
+# Performance Results Directory
+
+This directory stores performance test results and baselines.
+
+## Files
+
+- `latest.txt` - Symlink to the most recent performance report
+- `latest.json` - Symlink to the most recent JSON results
+- `perf_<version>_<timestamp>.txt` - Human-readable performance reports
+- `perf_<version>_<timestamp>.json` - Machine-readable JSON results
+- `baselines/` - Performance baselines for each release
+
+## Running Performance Tests
+
+```bash
+# Run all performance tests and save results
+./scripts/run_perf_tests.sh --save
+
+# Compare with a baseline
+./scripts/run_perf_tests.sh --compare perf-results/baselines/v0.1.0/latest.json
+```
+
+## Performance Targets
+
+| Metric                          | Target      |
+|---------------------------------|-------------|
+| Strategy selection              | < 10 us     |
+| Pool creation (20 endpoints)    | < 1 ms      |
+| Stats update                    | < 1 us      |
+| Metrics collection              | < 100 us    |
+| Concurrent throughput           | > 100k/sec  |
