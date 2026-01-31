@@ -48,9 +48,13 @@ pub mod metrics;
 pub mod pool;
 pub mod presets;
 pub mod strategies;
+pub mod tiered;
 
 pub use endpoint::{RpcEndpoint, EndpointStats};
 pub use error::RpcPoolError;
 pub use metrics::RpcPoolMetrics;
 pub use pool::{RpcPool, RpcPoolConfig};
 pub use strategies::SelectionStrategy;
+pub use tiered::{
+    EndpointTier, RequestPriority, TieredEndpoint, TieredPool, TieredPoolBuilder, TieredPoolConfig,
+};
