@@ -2,13 +2,22 @@
 //!
 //! This module provides different algorithms for selecting which RPC endpoint
 //! to use for a request.
+//!
+//! ## Available Strategies
+//!
+//! - [`FailoverStrategy`]: Uses primary endpoint, switches on failure (best for premium tier)
+//! - [`RoundRobinStrategy`]: Cycles through endpoints evenly (good for load distribution)
+//! - [`LatencyBasedStrategy`]: Selects fastest endpoint (best for latency-sensitive ops)
+//! - [`RateAwareStrategy`]: Tracks usage per endpoint, selects least recently used (best for free tier)
 
 mod failover;
 mod latency_based;
+mod rate_aware;
 mod round_robin;
 
 pub use failover::FailoverStrategy;
 pub use latency_based::LatencyBasedStrategy;
+pub use rate_aware::RateAwareStrategy;
 pub use round_robin::RoundRobinStrategy;
 
 use crate::endpoint::{EndpointStats, RpcEndpoint};
