@@ -9,7 +9,7 @@
 use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
 use crate::pool::{RpcPool, RpcPoolConfig};
-use crate::strategies::{FailoverStrategy, RoundRobinStrategy, SelectionStrategy};
+use crate::strategies::{FailoverStrategy, RateAwareStrategy, SelectionStrategy};
 
 use std::collections::HashMap;
 use std::future::Future;
@@ -178,8 +178,12 @@ impl TieredPool {
             let strategy: Box<dyn SelectionStrategy> = match tier {
                 // Premium: use failover to maximize success rate
                 EndpointTier::Premium => Box::new(FailoverStrategy),
-                // Standard/Free: use round-robin to distribute load
-                EndpointTier::Standard | EndpointTier::Free => Box::new(RoundRobinStrategy::new()),
+                // Standard: use failover (paid RPCs, prefer reliability)
+                EndpointTier::Standard => Box::new(FailoverStrategy),
+                // Free: use rate-aware to distribute load across all providers
+                // This tracks last request time per endpoint and selects the
+                // one that has been idle longest, naturally staying within rate limits
+                EndpointTier::Free => Box::new(RateAwareStrategy::new()),
             };
 
             let pool_config = RpcPoolConfig {
