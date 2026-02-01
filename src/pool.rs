@@ -14,7 +14,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio_util::sync::CancellationToken;
-use tracing::{debug, info, warn};
+use tracing::{debug, error, info, trace, warn, instrument};
 
 /// Maximum length for error messages to prevent unbounded memory growth.
 const MAX_ERROR_MESSAGE_LENGTH: usize = 512;
@@ -146,6 +146,7 @@ impl RpcPool {
     /// Create a new RPC pool with the given configuration.
     pub fn new(mut config: RpcPoolConfig) -> Result<Self, RpcPoolError> {
         if config.endpoints.is_empty() {
+            error!("Attempted to create RPC pool with no endpoints configured");
             return Err(RpcPoolError::NoEndpointsConfigured);
         }
 
@@ -156,6 +157,13 @@ impl RpcPool {
         let stats = DashMap::new();
         for endpoint in &config.endpoints {
             stats.insert(endpoint.url.clone(), EndpointStats::new(endpoint));
+            trace!(
+                endpoint_name = %endpoint.name,
+                endpoint_url = %endpoint.url,
+                priority = endpoint.priority,
+                chain_id = endpoint.chain_id,
+                "Registered endpoint"
+            );
         }
 
         let strategy_name = config.strategy.read().name();
@@ -164,7 +172,16 @@ impl RpcPool {
             strategy = strategy_name,
             request_timeout_ms = config.request_timeout.as_millis() as u64,
             health_check_timeout_ms = config.health_check_timeout.as_millis() as u64,
+            health_check_interval_secs = config.health_check_interval.as_secs(),
+            max_consecutive_errors = config.max_consecutive_errors,
+            retry_delay_secs = config.retry_delay.as_secs(),
             "RPC pool initialized"
+        );
+
+        // Log endpoint summary at debug level
+        debug!(
+            endpoint_names = ?config.endpoints.iter().map(|e| &e.name).collect::<Vec<_>>(),
+            "Configured endpoints (sorted by priority)"
         );
 
         Ok(Self {
@@ -228,6 +245,7 @@ impl RpcPool {
     ///
     /// The provided function receives the endpoint URL and should create
     /// and use its own provider instance.
+    #[instrument(skip(self, f), level = "trace", fields(request_id = %self.total_requests.load(Ordering::Relaxed) + 1))]
     pub async fn execute_with_url<F, Fut, T, E>(&self, f: F) -> Result<T, RpcPoolError>
     where
         F: Fn(String) -> Fut + Clone,
@@ -235,17 +253,23 @@ impl RpcPool {
         E: std::error::Error,
     {
         if self.is_shutdown() {
+            debug!("Request rejected: pool is shut down");
             return Err(RpcPoolError::PoolShutdown);
         }
 
-        self.total_requests.fetch_add(1, Ordering::Relaxed);
+        let request_id = self.total_requests.fetch_add(1, Ordering::Relaxed) + 1;
+        trace!(request_id, "Starting request execution");
 
         let mut tried = HashSet::new();
         let mut last_error = None;
+        let mut attempt = 0u32;
 
         for _ in 0..self.endpoints.len() {
+            attempt += 1;
+
             // Check for shutdown
             if self.cancel_token.is_cancelled() {
+                debug!(request_id, attempt, "Request cancelled: pool shutdown in progress");
                 return Err(RpcPoolError::PoolShutdown);
             }
 
@@ -258,10 +282,26 @@ impl RpcPool {
 
             let endpoint = match endpoint {
                 Some(e) => e,
-                None => break,
+                None => {
+                    debug!(
+                        request_id,
+                        attempt,
+                        tried_count = tried.len(),
+                        "No more endpoints available to try"
+                    );
+                    break;
+                }
             };
 
             tried.insert(endpoint.url.clone());
+
+            trace!(
+                request_id,
+                attempt,
+                endpoint_name = %endpoint.name,
+                endpoint_url = %endpoint.url,
+                "Selected endpoint for request"
+            );
 
             // Execute request with timeout
             let start = Instant::now();
@@ -285,6 +325,12 @@ impl RpcPool {
                     if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
                         stats.record_success(latency);
                     }
+                    trace!(
+                        request_id,
+                        endpoint_name = %endpoint.name,
+                        latency_ms = latency,
+                        "Request completed successfully"
+                    );
                     return Ok(value);
                 }
                 Ok(Err(e)) => {
@@ -335,9 +381,15 @@ impl RpcPool {
             }
         }
 
-        Err(RpcPoolError::AllEndpointsFailed(
-            last_error.unwrap_or_else(|| "Unknown error".to_string()),
-        ))
+        let error_msg = last_error.unwrap_or_else(|| "Unknown error".to_string());
+        error!(
+            request_id,
+            tried_endpoints = tried.len(),
+            total_endpoints = self.endpoints.len(),
+            last_error = %error_msg,
+            "All endpoints failed"
+        );
+        Err(RpcPoolError::AllEndpointsFailed(error_msg))
     }
 
     /// Execute a request with automatic failover using a pre-built provider.
@@ -397,9 +449,14 @@ impl RpcPool {
 
     /// Perform health check on all endpoints.
     async fn check_health(&self) {
+        trace!("Starting health check cycle");
+        let mut checked_count = 0u32;
+        let mut recovered_count = 0u32;
+
         for endpoint in &self.endpoints {
             // Check for shutdown
             if self.cancel_token.is_cancelled() {
+                debug!("Health check interrupted by shutdown");
                 return;
             }
 
@@ -421,6 +478,9 @@ impl RpcPool {
             if !should_check {
                 continue;
             }
+
+            trace!(endpoint_name = %endpoint.name, "Probing unhealthy endpoint");
+            checked_count += 1;
 
             // Try to recover with a simple probe (with timeout)
             let url: Result<url::Url, _> = endpoint.url.parse();
@@ -447,16 +507,39 @@ impl RpcPool {
                         if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
                             stats.mark_recovered();
                             info!(endpoint = %endpoint.name, "Endpoint recovered");
+                            recovered_count += 1;
                         }
                     }
-                    Ok(Err(_)) | Err(_) => {
-                        // Still unhealthy or timed out, update error time
+                    Ok(Err(e)) => {
+                        trace!(
+                            endpoint_name = %endpoint.name,
+                            error = %e,
+                            "Endpoint health check failed"
+                        );
+                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                            stats.last_error_time = Some(Instant::now());
+                        }
+                    }
+                    Err(_) => {
+                        trace!(
+                            endpoint_name = %endpoint.name,
+                            timeout_ms = self.health_check_timeout.as_millis() as u64,
+                            "Endpoint health check timed out"
+                        );
                         if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
                             stats.last_error_time = Some(Instant::now());
                         }
                     }
                 }
             }
+        }
+
+        if checked_count > 0 {
+            debug!(
+                checked = checked_count,
+                recovered = recovered_count,
+                "Health check cycle completed"
+            );
         }
     }
 
@@ -493,6 +576,13 @@ impl RpcPool {
         if let Some(mut stats) = self.stats.get_mut(url) {
             stats.is_healthy = false;
             stats.last_error_time = Some(Instant::now());
+            debug!(
+                endpoint_name = %stats.name,
+                endpoint_url = %url,
+                "Endpoint manually marked unhealthy"
+            );
+        } else {
+            warn!(endpoint_url = %url, "Attempted to mark unknown endpoint as unhealthy");
         }
     }
 
