@@ -24,8 +24,7 @@ impl SelectionStrategy for FailoverStrategy {
         let healthy = endpoints
             .iter()
             .filter(|e| !exclude.contains(&e.url))
-            .filter(|e| stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true))
-            .next();
+            .find(|e| stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true));
 
         // Fallback: any non-excluded endpoint
         healthy.or_else(|| endpoints.iter().find(|e| !exclude.contains(&e.url)))

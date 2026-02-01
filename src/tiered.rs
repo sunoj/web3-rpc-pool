@@ -186,13 +186,12 @@ impl TieredPool {
                 EndpointTier::Free => Box::new(RateAwareStrategy::new()),
             };
 
-            let pool_config = RpcPoolConfig {
-                endpoints,
-                strategy,
-                health_check_interval: config.health_check_interval,
-                max_consecutive_errors: config.max_consecutive_errors,
-                retry_delay: config.retry_delay,
-            };
+            let pool_config = RpcPoolConfig::new()
+                .with_endpoints(endpoints)
+                .with_strategy(strategy)
+                .with_health_check_interval(config.health_check_interval)
+                .with_max_consecutive_errors(config.max_consecutive_errors)
+                .with_retry_delay(config.retry_delay);
 
             let pool = RpcPool::new(pool_config)?;
             info!(tier = ?tier, "Created RPC pool for tier");
