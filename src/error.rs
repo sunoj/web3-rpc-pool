@@ -32,6 +32,10 @@ pub enum RpcPoolError {
     /// Timeout waiting for response.
     #[error("Request timeout after {0}ms")]
     Timeout(u64),
+
+    /// Pool has been shut down.
+    #[error("RPC pool has been shut down")]
+    PoolShutdown,
 }
 
 impl From<url::ParseError> for RpcPoolError {

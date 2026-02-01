@@ -1,7 +1,6 @@
 //! Benchmark tests for RPC pool operations.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use std::sync::Arc;
 use std::time::Duration;
 use web3_rpc_pool::endpoint::RpcEndpoint;
 use web3_rpc_pool::presets::{self, chain_id};
@@ -31,13 +30,12 @@ fn bench_pool_creation(c: &mut Criterion) {
             &endpoints,
             |b, endpoints| {
                 b.iter(|| {
-                    let config = RpcPoolConfig {
-                        endpoints: endpoints.clone(),
-                        strategy: Box::new(FailoverStrategy),
-                        health_check_interval: Duration::from_secs(60),
-                        max_consecutive_errors: 3,
-                        retry_delay: Duration::from_secs(5),
-                    };
+                    let config = RpcPoolConfig::new()
+                        .with_endpoints(endpoints.clone())
+                        .with_strategy(Box::new(FailoverStrategy))
+                        .with_health_check_interval(Duration::from_secs(60))
+                        .with_max_consecutive_errors(3)
+                        .with_retry_delay(Duration::from_secs(5));
                     black_box(RpcPool::new(config).unwrap())
                 });
             },
@@ -48,13 +46,12 @@ fn bench_pool_creation(c: &mut Criterion) {
             &endpoints,
             |b, endpoints| {
                 b.iter(|| {
-                    let config = RpcPoolConfig {
-                        endpoints: endpoints.clone(),
-                        strategy: Box::new(RoundRobinStrategy::new()),
-                        health_check_interval: Duration::from_secs(60),
-                        max_consecutive_errors: 3,
-                        retry_delay: Duration::from_secs(5),
-                    };
+                    let config = RpcPoolConfig::new()
+                        .with_endpoints(endpoints.clone())
+                        .with_strategy(Box::new(RoundRobinStrategy::new()))
+                        .with_health_check_interval(Duration::from_secs(60))
+                        .with_max_consecutive_errors(3)
+                        .with_retry_delay(Duration::from_secs(5));
                     black_box(RpcPool::new(config).unwrap())
                 });
             },
@@ -65,13 +62,12 @@ fn bench_pool_creation(c: &mut Criterion) {
             &endpoints,
             |b, endpoints| {
                 b.iter(|| {
-                    let config = RpcPoolConfig {
-                        endpoints: endpoints.clone(),
-                        strategy: Box::new(LatencyBasedStrategy),
-                        health_check_interval: Duration::from_secs(60),
-                        max_consecutive_errors: 3,
-                        retry_delay: Duration::from_secs(5),
-                    };
+                    let config = RpcPoolConfig::new()
+                        .with_endpoints(endpoints.clone())
+                        .with_strategy(Box::new(LatencyBasedStrategy))
+                        .with_health_check_interval(Duration::from_secs(60))
+                        .with_max_consecutive_errors(3)
+                        .with_retry_delay(Duration::from_secs(5));
                     black_box(RpcPool::new(config).unwrap())
                 });
             },
@@ -112,13 +108,12 @@ fn bench_pool_get_url(c: &mut Criterion) {
 
     for endpoint_count in [5, 10, 20, 50] {
         let endpoints = create_test_endpoints(endpoint_count);
-        let config = RpcPoolConfig {
-            endpoints,
-            strategy: Box::new(FailoverStrategy),
-            health_check_interval: Duration::from_secs(60),
-            max_consecutive_errors: 3,
-            retry_delay: Duration::from_secs(5),
-        };
+        let config = RpcPoolConfig::new()
+            .with_endpoints(endpoints)
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_health_check_interval(Duration::from_secs(60))
+            .with_max_consecutive_errors(3)
+            .with_retry_delay(Duration::from_secs(5));
         let pool = RpcPool::new(config).unwrap();
 
         group.throughput(Throughput::Elements(1));
@@ -147,13 +142,12 @@ fn bench_pool_metrics(c: &mut Criterion) {
 
     for endpoint_count in [5, 10, 20, 50] {
         let endpoints = create_test_endpoints(endpoint_count);
-        let config = RpcPoolConfig {
-            endpoints,
-            strategy: Box::new(FailoverStrategy),
-            health_check_interval: Duration::from_secs(60),
-            max_consecutive_errors: 3,
-            retry_delay: Duration::from_secs(5),
-        };
+        let config = RpcPoolConfig::new()
+            .with_endpoints(endpoints)
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_health_check_interval(Duration::from_secs(60))
+            .with_max_consecutive_errors(3)
+            .with_retry_delay(Duration::from_secs(5));
         let pool = RpcPool::new(config).unwrap();
 
         group.throughput(Throughput::Elements(1));

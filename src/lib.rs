@@ -20,13 +20,17 @@
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let pool = Arc::new(RpcPool::new(RpcPoolConfig {
-//!         endpoints: presets::arbitrum_endpoints(),
-//!         strategy: Box::new(FailoverStrategy),
-//!         health_check_interval: Duration::from_secs(60),
-//!         max_consecutive_errors: 3,
-//!         retry_delay: Duration::from_secs(5),
-//!     })?);
+//!     // Create pool with builder pattern
+//!     let pool = Arc::new(RpcPool::new(
+//!         RpcPoolConfig::new()
+//!             .with_endpoints(presets::arbitrum_endpoints())
+//!             .with_strategy(Box::new(FailoverStrategy))
+//!             .with_request_timeout(Duration::from_secs(30))
+//!             .with_health_check_timeout(Duration::from_secs(10))
+//!             .with_health_check_interval(Duration::from_secs(60))
+//!             .with_max_consecutive_errors(3)
+//!             .with_retry_delay(Duration::from_secs(5))
+//!     )?);
 //!
 //!     // Start background health checker
 //!     let _health_task = pool.start_health_check();
@@ -38,6 +42,9 @@
 //!     }).await?;
 //!
 //!     println!("Current block: {}", block);
+//!
+//!     // Graceful shutdown
+//!     pool.shutdown().await;
 //!     Ok(())
 //! }
 //! ```
