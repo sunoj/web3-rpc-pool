@@ -34,7 +34,7 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
     }
 }
 
-/// Default endpoints for Ethereum Mainnet (14 verified endpoints).
+/// Default endpoints for Ethereum Mainnet (22 verified endpoints).
 pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://ethereum-rpc.publicnode.com")
@@ -93,6 +93,39 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://endpoints.omniatech.io/v1/eth/mainnet/public")
             .with_name("OmniaTech")
             .with_priority(63)
+            .with_chain_id(chain_id::ETHEREUM),
+        // Additional verified endpoints
+        RpcEndpoint::new("https://eth.rpc.blxrbdn.com")
+            .with_name("BloXroute")
+            .with_priority(64)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.eth.gateway.fm")
+            .with_name("Gateway.fm")
+            .with_priority(65)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://core.gashawk.io/rpc")
+            .with_name("GasHawk")
+            .with_priority(66)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.tornadoeth.cash/eth")
+            .with_name("TornadoETH")
+            .with_priority(67)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://mainnet.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(68)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.mevblocker.io/fast")
+            .with_name("MEV Blocker Fast")
+            .with_priority(69)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.mevblocker.io/noreverts")
+            .with_name("MEV Blocker NoReverts")
+            .with_priority(70)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.mevblocker.io/fullprivacy")
+            .with_name("MEV Blocker FullPrivacy")
+            .with_priority(71)
             .with_chain_id(chain_id::ETHEREUM),
     ]
 }
@@ -236,7 +269,7 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for BSC (17 verified endpoints).
+/// Default endpoints for BSC (22 verified endpoints).
 pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
     vec![
         // Official BNB Chain endpoints
@@ -269,46 +302,66 @@ pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Defibit 2")
             .with_priority(56)
             .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc-dataseed3.defibit.io")
+            .with_name("Defibit 3")
+            .with_priority(57)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc-dataseed4.defibit.io")
+            .with_name("Defibit 4")
+            .with_priority(58)
+            .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-dataseed1.ninicoin.io")
             .with_name("Ninicoin 1")
-            .with_priority(57)
+            .with_priority(59)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-dataseed2.ninicoin.io")
             .with_name("Ninicoin 2")
-            .with_priority(58)
+            .with_priority(60)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc-dataseed3.ninicoin.io")
+            .with_name("Ninicoin 3")
+            .with_priority(61)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc-dataseed4.ninicoin.io")
+            .with_name("Ninicoin 4")
+            .with_priority(62)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://bsc-rpc.publicnode.com")
-            .with_priority(59)
+            .with_priority(63)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc.publicnode.com")
+            .with_name("PublicNode Alt")
+            .with_priority(64)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://1rpc.io/bnb")
             .with_name("1RPC")
-            .with_priority(60)
+            .with_priority(65)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc.drpc.org")
             .with_name("dRPC")
-            .with_priority(61)
+            .with_priority(66)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
-            .with_priority(62)
+            .with_priority(67)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc.meowrpc.com")
             .with_name("MeowRPC")
-            .with_priority(63)
+            .with_priority(68)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-pokt.nodies.app")
             .with_name("Nodies")
-            .with_priority(64)
+            .with_priority(69)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://endpoints.omniatech.io/v1/bsc/mainnet/public")
             .with_name("OmniaTech")
-            .with_priority(65)
+            .with_priority(70)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bnb.rpc.subquery.network/public")
             .with_name("SubQuery")
-            .with_priority(66)
+            .with_priority(71)
             .with_chain_id(chain_id::BSC),
     ]
 }
@@ -352,7 +405,7 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Polygon (9 verified endpoints).
+/// Default endpoints for Polygon (10 verified endpoints).
 pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://polygon-rpc.com")
@@ -392,6 +445,10 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Nodies")
             .with_priority(58)
             .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://rpc-mainnet.matic.quiknode.pro")
+            .with_name("QuickNode")
+            .with_priority(59)
+            .with_chain_id(chain_id::POLYGON),
     ]
 }
 
@@ -418,7 +475,7 @@ mod tests {
     fn test_ethereum_endpoints() {
         let endpoints = ethereum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ETHEREUM);
-        assert!(endpoints.len() >= 10, "Should have at least 10 endpoints");
+        assert!(endpoints.len() >= 20, "Should have at least 20 endpoints");
     }
 
     #[test]
