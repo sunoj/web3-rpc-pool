@@ -130,7 +130,7 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Arbitrum One (10 verified endpoints).
+/// Default endpoints for Arbitrum One (16 verified endpoints).
 pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://arb1.arbitrum.io/rpc")
@@ -175,10 +175,35 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("SubQuery")
             .with_priority(59)
             .with_chain_id(chain_id::ARBITRUM_ONE),
+        // Additional verified endpoints
+        RpcEndpoint::new("https://arbitrum-one-public.nodies.app")
+            .with_name("Nodies Public")
+            .with_priority(60)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arbitrum.public.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(61)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://api.zan.top/arb-one")
+            .with_name("ZAN")
+            .with_priority(62)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arb1.lava.build")
+            .with_name("Lava")
+            .with_priority(63)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arb-one-mainnet.gateway.tatum.io")
+            .with_name("Tatum")
+            .with_priority(64)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://public-arb-mainnet.fastnode.io")
+            .with_name("FastNode")
+            .with_priority(65)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
 }
 
-/// Default endpoints for Base (11 verified endpoints).
+/// Default endpoints for Base (15 verified endpoints).
 pub fn base_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.base.org")
@@ -226,6 +251,23 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://endpoints.omniatech.io/v1/base/mainnet/public")
             .with_name("OmniaTech")
             .with_priority(60)
+            .with_chain_id(chain_id::BASE),
+        // Additional verified endpoints
+        RpcEndpoint::new("https://base.public.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(61)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base-public.nodies.app")
+            .with_name("Nodies Public")
+            .with_priority(62)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base.api.pocket.network")
+            .with_name("Pocket")
+            .with_priority(63)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://rpcbase.hairylabs.io/rpc")
+            .with_name("HairyLabs")
+            .with_priority(64)
             .with_chain_id(chain_id::BASE),
     ]
 }
@@ -482,7 +524,7 @@ mod tests {
     fn test_arbitrum_endpoints() {
         let endpoints = arbitrum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ARBITRUM_ONE);
-        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints");
+        assert!(endpoints.len() >= 14, "Should have at least 14 endpoints");
     }
 
     #[test]
