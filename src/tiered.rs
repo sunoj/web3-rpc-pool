@@ -15,7 +15,7 @@ use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 /// Request priority levels.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -249,21 +249,32 @@ impl TieredPool {
     {
         let tiers = self.tier_order(priority);
         let mut last_error = None;
+        let mut tried_tiers = Vec::new();
 
-        for tier in tiers {
-            if let Some(pool) = self.pools.get(&tier) {
-                debug!(priority = ?priority, tier = ?tier, "Attempting request");
+        for tier in &tiers {
+            if let Some(pool) = self.pools.get(tier) {
+                debug!(priority = ?priority, tier = ?tier, "Attempting tier");
+                tried_tiers.push(*tier);
 
                 match pool.execute(f.clone()).await {
                     Ok(result) => return Ok(result),
                     Err(e) => {
-                        debug!(tier = ?tier, error = %e, "Tier failed, trying next");
+                        warn!(tier = ?tier, error = %e, "Tier failed, falling back to next tier");
                         last_error = Some(e);
                     }
                 }
+            } else {
+                debug!(tier = ?tier, "Tier not configured, skipping");
             }
         }
 
+        warn!(
+            priority = ?priority,
+            tried_tiers = ?tried_tiers,
+            available_tiers = ?tiers,
+            error = ?last_error,
+            "All tiers failed"
+        );
         Err(last_error.unwrap_or(RpcPoolError::NoEndpointsConfigured))
     }
 
@@ -280,21 +291,32 @@ impl TieredPool {
     {
         let tiers = self.tier_order(priority);
         let mut last_error = None;
+        let mut tried_tiers = Vec::new();
 
-        for tier in tiers {
-            if let Some(pool) = self.pools.get(&tier) {
-                debug!(priority = ?priority, tier = ?tier, "Attempting request with URL string");
+        for tier in &tiers {
+            if let Some(pool) = self.pools.get(tier) {
+                debug!(priority = ?priority, tier = ?tier, "Attempting tier with URL string");
+                tried_tiers.push(*tier);
 
                 match pool.execute_with_url(f.clone()).await {
                     Ok(result) => return Ok(result),
                     Err(e) => {
-                        debug!(tier = ?tier, error = %e, "Tier failed, trying next");
+                        warn!(tier = ?tier, error = %e, "Tier failed, falling back to next tier");
                         last_error = Some(e);
                     }
                 }
+            } else {
+                debug!(tier = ?tier, "Tier not configured, skipping");
             }
         }
 
+        warn!(
+            priority = ?priority,
+            tried_tiers = ?tried_tiers,
+            available_tiers = ?tiers,
+            error = ?last_error,
+            "All tiers failed"
+        );
         Err(last_error.unwrap_or(RpcPoolError::NoEndpointsConfigured))
     }
 
