@@ -25,6 +25,32 @@ const DEFAULT_REQUEST_TIMEOUT_SECS: u64 = 30;
 /// Default health check timeout in seconds.
 const DEFAULT_HEALTH_CHECK_TIMEOUT_SECS: u64 = 10;
 
+/// Summary of endpoint health status.
+#[derive(Debug, Clone, Copy)]
+pub struct HealthSummary {
+    /// Number of healthy endpoints.
+    pub healthy: usize,
+    /// Number of unhealthy endpoints.
+    pub unhealthy: usize,
+    /// Total number of endpoints.
+    pub total: usize,
+}
+
+impl HealthSummary {
+    /// Returns true if all endpoints are unhealthy.
+    pub fn all_unhealthy(&self) -> bool {
+        self.healthy == 0 && self.total > 0
+    }
+
+    /// Returns the percentage of healthy endpoints.
+    pub fn health_percentage(&self) -> f64 {
+        if self.total == 0 {
+            return 0.0;
+        }
+        (self.healthy as f64 / self.total as f64) * 100.0
+    }
+}
+
 /// Configuration for the RPC pool.
 #[derive(Clone)]
 pub struct RpcPoolConfig {
@@ -382,12 +408,15 @@ impl RpcPool {
         }
 
         let error_msg = last_error.unwrap_or_else(|| "Unknown error".to_string());
+        let health = self.health_summary();
         error!(
             request_id,
             tried_endpoints = tried.len(),
-            total_endpoints = self.endpoints.len(),
+            healthy_endpoints = health.healthy,
+            unhealthy_endpoints = health.unhealthy,
+            total_endpoints = health.total,
             last_error = %error_msg,
-            "All endpoints failed"
+            "All endpoints failed (most endpoints marked unhealthy from previous failures)"
         );
         Err(RpcPoolError::AllEndpointsFailed(error_msg))
     }
@@ -511,23 +540,31 @@ impl RpcPool {
                         }
                     }
                     Ok(Err(e)) => {
-                        trace!(
-                            endpoint_name = %endpoint.name,
-                            error = %e,
-                            "Endpoint health check failed"
-                        );
                         if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
                             stats.last_error_time = Some(Instant::now());
+                            stats.increment_recovery_attempts();
+                            let next_retry = stats.current_retry_delay(self.retry_delay);
+                            trace!(
+                                endpoint_name = %endpoint.name,
+                                error = %e,
+                                recovery_attempts = stats.recovery_attempts,
+                                next_retry_secs = next_retry.as_secs(),
+                                "Endpoint health check failed, increasing backoff"
+                            );
                         }
                     }
                     Err(_) => {
-                        trace!(
-                            endpoint_name = %endpoint.name,
-                            timeout_ms = self.health_check_timeout.as_millis() as u64,
-                            "Endpoint health check timed out"
-                        );
                         if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
                             stats.last_error_time = Some(Instant::now());
+                            stats.increment_recovery_attempts();
+                            let next_retry = stats.current_retry_delay(self.retry_delay);
+                            trace!(
+                                endpoint_name = %endpoint.name,
+                                timeout_ms = self.health_check_timeout.as_millis() as u64,
+                                recovery_attempts = stats.recovery_attempts,
+                                next_retry_secs = next_retry.as_secs(),
+                                "Endpoint health check timed out, increasing backoff"
+                            );
                         }
                     }
                 }
@@ -569,6 +606,28 @@ impl RpcPool {
         }
 
         info!("RPC pool shutdown complete");
+    }
+
+    /// Get a summary of endpoint health status.
+    ///
+    /// Returns counts of healthy, unhealthy, and total endpoints.
+    pub fn health_summary(&self) -> HealthSummary {
+        let mut healthy = 0;
+        let mut unhealthy = 0;
+
+        for entry in self.stats.iter() {
+            if entry.value().is_healthy {
+                healthy += 1;
+            } else {
+                unhealthy += 1;
+            }
+        }
+
+        HealthSummary {
+            healthy,
+            unhealthy,
+            total: self.endpoints.len(),
+        }
     }
 
     /// Manually mark an endpoint as unhealthy.
@@ -762,5 +821,35 @@ mod tests {
         pool.shutdown().await;
 
         assert!(pool.is_shutdown());
+    }
+
+    #[test]
+    fn test_health_summary() {
+        let config = create_test_config();
+        let pool = RpcPool::new(config).unwrap();
+
+        // Initially all endpoints should be healthy
+        let summary = pool.health_summary();
+        assert_eq!(summary.healthy, 2);
+        assert_eq!(summary.unhealthy, 0);
+        assert_eq!(summary.total, 2);
+        assert!(!summary.all_unhealthy());
+        assert_eq!(summary.health_percentage(), 100.0);
+
+        // Mark one as unhealthy
+        pool.mark_unhealthy("https://rpc1.example.com");
+        let summary = pool.health_summary();
+        assert_eq!(summary.healthy, 1);
+        assert_eq!(summary.unhealthy, 1);
+        assert!(!summary.all_unhealthy());
+        assert_eq!(summary.health_percentage(), 50.0);
+
+        // Mark another as unhealthy
+        pool.mark_unhealthy("https://rpc2.example.com");
+        let summary = pool.health_summary();
+        assert_eq!(summary.healthy, 0);
+        assert_eq!(summary.unhealthy, 2);
+        assert!(summary.all_unhealthy());
+        assert_eq!(summary.health_percentage(), 0.0);
     }
 }

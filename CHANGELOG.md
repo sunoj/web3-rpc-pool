@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-02-02
+
+### Added
+
+- **Health Summary API**: New `health_summary()` method on `RpcPool` to get counts of healthy/unhealthy endpoints
+  - `HealthSummary` struct with `healthy`, `unhealthy`, `total` counts
+  - Helper methods: `all_unhealthy()`, `health_percentage()`
+
+- **Exponential Backoff Recovery**: Unhealthy endpoints now use exponential backoff for retry attempts
+  - Base delay × 2^attempts, capped at 5 minutes
+  - First failure: 5s, second: 10s, third: 20s, etc.
+  - Backoff resets on successful recovery
+
+### Changed
+
+- **Improved Error Messages**: "All endpoints failed" error now includes healthy/unhealthy endpoint counts
+  ```
+  All endpoints failed (most endpoints marked unhealthy from previous failures)
+  tried_endpoints=2, healthy_endpoints=0, unhealthy_endpoints=16, total_endpoints=16
+  ```
+
 ## [0.2.3] - 2026-02-02
 
 ### Added

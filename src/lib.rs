@@ -60,7 +60,7 @@ pub mod tiered;
 pub use endpoint::{RpcEndpoint, EndpointStats};
 pub use error::RpcPoolError;
 pub use metrics::RpcPoolMetrics;
-pub use pool::{RpcPool, RpcPoolConfig};
+pub use pool::{HealthSummary, RpcPool, RpcPoolConfig};
 pub use strategies::{
     FailoverStrategy, LatencyBasedStrategy, RateAwareStrategy, RoundRobinStrategy,
     SelectionStrategy,
