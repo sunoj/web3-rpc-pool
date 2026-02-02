@@ -1,6 +1,6 @@
 //! Preset RPC endpoint configurations for popular chains.
 //!
-//! All endpoints have been verified to be working as of 2025-01.
+//! All endpoints have been verified to be working as of 2026-02.
 //! Endpoints are tested with eth_blockNumber RPC call.
 
 use crate::endpoint::RpcEndpoint;
@@ -34,53 +34,65 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
     }
 }
 
-/// Default endpoints for Ethereum Mainnet (11 verified endpoints).
+/// Default endpoints for Ethereum Mainnet (14 verified endpoints).
 pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     vec![
-        RpcEndpoint::new("https://eth.llamarpc.com")
-            .with_name("Llama RPC")
-            .with_priority(50)
-            .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://ethereum-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://ethereum-rpc.publicnode.com")
-            .with_priority(51)
+            .with_priority(50)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://1rpc.io/eth")
             .with_name("1RPC")
-            .with_priority(52)
+            .with_priority(51)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth.drpc.org")
             .with_name("dRPC")
-            .with_priority(53)
+            .with_priority(52)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
-            .with_priority(54)
+            .with_priority(53)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth.merkle.io")
             .with_name("Merkle")
-            .with_priority(55)
+            .with_priority(54)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://rpc.flashbots.net")
             .with_name("Flashbots")
-            .with_priority(56)
+            .with_priority(55)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth.api.onfinality.io/public")
             .with_name("OnFinality")
-            .with_priority(57)
+            .with_priority(56)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth.meowrpc.com")
             .with_name("MeowRPC")
-            .with_priority(58)
+            .with_priority(57)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://eth-pokt.nodies.app")
             .with_name("Nodies")
-            .with_priority(59)
+            .with_priority(58)
             .with_chain_id(chain_id::ETHEREUM),
         RpcEndpoint::new("https://rpc.mevblocker.io")
             .with_name("MEV Blocker")
+            .with_priority(59)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://ethereum.rpc.subquery.network/public")
+            .with_name("SubQuery")
             .with_priority(60)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://0xrpc.io/eth")
+            .with_name("0xRPC")
+            .with_priority(61)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://eth.blockrazor.xyz")
+            .with_name("BlockRazor")
+            .with_priority(62)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/eth/mainnet/public")
+            .with_name("OmniaTech")
+            .with_priority(63)
             .with_chain_id(chain_id::ETHEREUM),
     ]
 }
@@ -126,8 +138,8 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly")
             .with_priority(58)
             .with_chain_id(chain_id::ARBITRUM_ONE),
-        RpcEndpoint::new("https://rpc.arb1.arbitrum.gateway.fm")
-            .with_name("Gateway.fm")
+        RpcEndpoint::new("https://arbitrum.rpc.subquery.network/public")
+            .with_name("SubQuery")
             .with_priority(59)
             .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
@@ -141,45 +153,45 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://mainnet.base.org")
             .with_priority(50)
             .with_chain_id(chain_id::BASE),
-        RpcEndpoint::new("https://base.llamarpc.com")
-            .with_name("Llama RPC")
-            .with_priority(51)
-            .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://base-rpc.publicnode.com")
-            .with_priority(52)
+            .with_priority(51)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://1rpc.io/base")
             .with_name("1RPC")
-            .with_priority(53)
+            .with_priority(52)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base.drpc.org")
             .with_name("dRPC")
-            .with_priority(54)
+            .with_priority(53)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
-            .with_priority(55)
+            .with_priority(54)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base.meowrpc.com")
             .with_name("MeowRPC")
-            .with_priority(56)
+            .with_priority(55)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base.gateway.tenderly.co")
             .with_name("Tenderly")
-            .with_priority(57)
+            .with_priority(56)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://base-pokt.nodies.app")
             .with_name("Nodies")
-            .with_priority(58)
+            .with_priority(57)
             .with_chain_id(chain_id::BASE),
         RpcEndpoint::new("https://developer-access-mainnet.base.org")
             .with_name("Base Developer")
+            .with_priority(58)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base.rpc.subquery.network/public")
+            .with_name("SubQuery")
             .with_priority(59)
             .with_chain_id(chain_id::BASE),
-        RpcEndpoint::new("https://base.gateway.tenderly.co")
-            .with_name("Tenderly Gateway")
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/base/mainnet/public")
+            .with_name("OmniaTech")
             .with_priority(60)
             .with_chain_id(chain_id::BASE),
     ]
@@ -217,17 +229,17 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly")
             .with_priority(56)
             .with_chain_id(chain_id::OPTIMISM),
-        RpcEndpoint::new("https://rpc.optimism.gateway.fm")
-            .with_name("Gateway.fm")
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/op/mainnet/public")
+            .with_name("OmniaTech")
             .with_priority(57)
             .with_chain_id(chain_id::OPTIMISM),
     ]
 }
 
-/// Default endpoints for BSC (16 verified endpoints).
+/// Default endpoints for BSC (17 verified endpoints).
 pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
     vec![
-        // Official BNB Chain endpoints - all verified working
+        // Official BNB Chain endpoints
         RpcEndpoint::new("https://bsc-dataseed.bnbchain.org")
             .with_name("BNB Chain Official")
             .with_priority(50)
@@ -265,34 +277,38 @@ pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Ninicoin 2")
             .with_priority(58)
             .with_chain_id(chain_id::BSC),
-        RpcEndpoint::new("https://binance.llamarpc.com")
-            .with_name("Llama RPC")
-            .with_priority(59)
-            .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://bsc-rpc.publicnode.com")
-            .with_priority(60)
+            .with_priority(59)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://1rpc.io/bnb")
             .with_name("1RPC")
-            .with_priority(61)
+            .with_priority(60)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc.drpc.org")
             .with_name("dRPC")
-            .with_priority(62)
+            .with_priority(61)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
-            .with_priority(63)
+            .with_priority(62)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc.meowrpc.com")
             .with_name("MeowRPC")
-            .with_priority(64)
+            .with_priority(63)
             .with_chain_id(chain_id::BSC),
         RpcEndpoint::new("https://bsc-pokt.nodies.app")
             .with_name("Nodies")
+            .with_priority(64)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/bsc/mainnet/public")
+            .with_name("OmniaTech")
             .with_priority(65)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bnb.rpc.subquery.network/public")
+            .with_name("SubQuery")
+            .with_priority(66)
             .with_chain_id(chain_id::BSC),
     ]
 }
@@ -329,14 +345,14 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly")
             .with_priority(56)
             .with_chain_id(chain_id::AVALANCHE),
-        RpcEndpoint::new("https://rpc.avax.network/ext/bc/C/rpc")
-            .with_name("Avalanche Alt")
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/avax/mainnet/public")
+            .with_name("OmniaTech")
             .with_priority(57)
             .with_chain_id(chain_id::AVALANCHE),
     ]
 }
 
-/// Default endpoints for Polygon (8 verified endpoints).
+/// Default endpoints for Polygon (9 verified endpoints).
 pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://polygon-rpc.com")
@@ -364,13 +380,17 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly")
             .with_priority(55)
             .with_chain_id(chain_id::POLYGON),
-        RpcEndpoint::new("https://polygon.llamarpc.com")
-            .with_name("Llama RPC")
+        RpcEndpoint::new("https://polygon.rpc.subquery.network/public")
+            .with_name("SubQuery")
             .with_priority(56)
             .with_chain_id(chain_id::POLYGON),
-        RpcEndpoint::new("https://rpc.polygon.gateway.fm")
-            .with_name("Gateway.fm")
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/matic/mainnet/public")
+            .with_name("OmniaTech")
             .with_priority(57)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(58)
             .with_chain_id(chain_id::POLYGON),
     ]
 }
@@ -398,7 +418,7 @@ mod tests {
     fn test_ethereum_endpoints() {
         let endpoints = ethereum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ETHEREUM);
-        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints");
+        assert!(endpoints.len() >= 10, "Should have at least 10 endpoints");
     }
 
     #[test]
@@ -426,14 +446,14 @@ mod tests {
     fn test_polygon_endpoints() {
         let endpoints = polygon_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::POLYGON);
-        assert!(endpoints.len() >= 6, "Should have at least 6 endpoints");
+        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints");
     }
 
     #[test]
     fn test_bsc_endpoints() {
         let endpoints = bsc_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BSC);
-        assert!(endpoints.len() >= 12, "Should have at least 12 endpoints");
+        assert!(endpoints.len() >= 15, "Should have at least 15 endpoints");
     }
 
     #[test]
@@ -465,6 +485,6 @@ mod tests {
             + bsc_endpoints().len()
             + avalanche_endpoints().len();
 
-        assert!(total >= 60, "Should have at least 60 total endpoints, got {}", total);
+        assert!(total >= 70, "Should have at least 70 total endpoints, got {}", total);
     }
 }

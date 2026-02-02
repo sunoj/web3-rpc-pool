@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-02-02
+
+### Changed
+
+- **RPC Endpoints Verification**: All 77 built-in RPC endpoints verified working via `eth_blockNumber` test
+  - Ethereum: 14 endpoints (+3 new: SubQuery, 0xRPC, BlockRazor, OmniaTech)
+  - Arbitrum: 10 endpoints (+1 new: SubQuery)
+  - Base: 11 endpoints (+2 new: SubQuery, OmniaTech)
+  - Optimism: 8 endpoints (+1 new: OmniaTech)
+  - BSC: 17 endpoints (+2 new: OmniaTech, SubQuery)
+  - Avalanche: 8 endpoints (+1 new: OmniaTech)
+  - Polygon: 9 endpoints (+3 new: SubQuery, OmniaTech, Nodies)
+
+### Removed
+
+- Removed 35 non-working RPC endpoints:
+  - Llama RPC (all chains) - connection issues
+  - Ankr public endpoints (all chains) - rate limited
+  - BlockPI (all chains) - connection issues
+  - Cloudflare, Payload (Ethereum) - not responding
+  - Gateway.fm (Arbitrum, Optimism, Polygon) - connection issues
+  - NotADegen (Base) - not responding
+
 ## [0.2.0] - 2026-02-01
 
 ### Added
