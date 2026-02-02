@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-02-02
+
+### Added
+
+- **Auto-load Free Endpoints**: New builder methods for TieredPool to automatically load built-in free endpoints
+  - `with_default_free_endpoints(chain_id)` - loads all verified free endpoints for a chain
+  - `with_default_free_endpoints_for_chains(&[chain_ids])` - loads for multiple chains
+  - `tier_endpoint_counts()` - returns endpoint count per tier for debugging
+  - `log_tier_info()` - logs tier configuration at info level
+
+### Changed
+
+- **Improved Tier Fallback Logging**: Tier fallback events now logged at `warn` level for better visibility
+  - "Tier failed, falling back to next tier" is now visible at default log levels
+  - Added "All tiers failed" warning with tried/available tier information
+
 ## [0.3.0] - 2026-02-02
 
 ### Added
