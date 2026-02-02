@@ -9,6 +9,7 @@
 use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
 use crate::pool::{RpcPool, RpcPoolConfig};
+use crate::presets;
 use crate::strategies::{FailoverStrategy, RateAwareStrategy, SelectionStrategy};
 
 use std::collections::HashMap;
@@ -344,6 +345,26 @@ impl TieredPool {
         tiers.sort();
         tiers
     }
+
+    /// Get endpoint count for each tier (useful for debugging).
+    pub fn tier_endpoint_counts(&self) -> HashMap<EndpointTier, usize> {
+        self.pools
+            .iter()
+            .map(|(tier, pool)| (*tier, pool.get_all_urls().len()))
+            .collect()
+    }
+
+    /// Log current tier configuration for debugging.
+    pub fn log_tier_info(&self) {
+        let counts = self.tier_endpoint_counts();
+        for tier in [EndpointTier::Premium, EndpointTier::Standard, EndpointTier::Free] {
+            if let Some(count) = counts.get(&tier) {
+                info!(tier = ?tier, endpoint_count = count, "Tier configuration");
+            } else {
+                debug!(tier = ?tier, "Tier not configured");
+            }
+        }
+    }
 }
 
 /// Builder for creating tiered pool configurations.
@@ -419,6 +440,44 @@ impl TieredPoolBuilder {
                 tier: EndpointTier::Free,
                 rate_limit: 0,
             });
+        }
+        self
+    }
+
+    /// Automatically load built-in free public RPC endpoints for a chain.
+    ///
+    /// This adds all verified public endpoints from `presets::default_endpoints(chain_id)`
+    /// to the Free tier. Call this to ensure you have fallback endpoints.
+    ///
+    /// # Example
+    /// ```ignore
+    /// let pool = TieredPoolBuilder::new()
+    ///     .add_premium("https://my-alchemy.com/v2/key", "Alchemy")
+    ///     .with_default_free_endpoints(42161)  // Load Arbitrum free endpoints
+    ///     .build()?;
+    /// ```
+    pub fn with_default_free_endpoints(self, chain_id: u64) -> Self {
+        let endpoints = presets::default_endpoints(chain_id);
+        let count = endpoints.len();
+        if count > 0 {
+            info!(
+                chain_id = chain_id,
+                endpoint_count = count,
+                "Loading default free endpoints for chain"
+            );
+        } else {
+            warn!(
+                chain_id = chain_id,
+                "No default free endpoints found for chain"
+            );
+        }
+        self.add_free_endpoints(endpoints)
+    }
+
+    /// Automatically load built-in free endpoints for multiple chains.
+    pub fn with_default_free_endpoints_for_chains(mut self, chain_ids: &[u64]) -> Self {
+        for &chain_id in chain_ids {
+            self = self.with_default_free_endpoints(chain_id);
         }
         self
     }
@@ -499,5 +558,98 @@ mod tests {
         assert!(pool.has_tier(EndpointTier::Premium));
         assert!(pool.has_tier(EndpointTier::Standard));
         assert!(pool.has_tier(EndpointTier::Free));
+    }
+
+    #[test]
+    fn test_tier_endpoint_counts() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium1.example.com", "Premium1")
+            .add_standard("https://standard1.example.com", "Standard1")
+            .add_standard("https://standard2.example.com", "Standard2")
+            .add_free("https://free1.example.com", "Free1")
+            .add_free("https://free2.example.com", "Free2")
+            .add_free("https://free3.example.com", "Free3")
+            .build()
+            .unwrap();
+
+        let counts = pool.tier_endpoint_counts();
+        assert_eq!(counts.get(&EndpointTier::Premium), Some(&1));
+        assert_eq!(counts.get(&EndpointTier::Standard), Some(&2));
+        assert_eq!(counts.get(&EndpointTier::Free), Some(&3));
+    }
+
+    #[test]
+    fn test_normal_priority_includes_standard_and_free() {
+        // Build pool with 2 Standard and 19 Free endpoints (similar to user's case)
+        let mut builder = TieredPoolBuilder::new()
+            .add_standard("https://standard1.example.com", "Standard1")
+            .add_standard("https://standard2.example.com", "Standard2");
+
+        // Add 19 Free endpoints
+        for i in 1..=19 {
+            builder = builder.add_free(
+                format!("https://free{}.example.com", i),
+                format!("Free{}", i),
+            );
+        }
+
+        let pool = builder.build().unwrap();
+
+        // Verify tier configuration
+        let counts = pool.tier_endpoint_counts();
+        assert_eq!(counts.get(&EndpointTier::Standard), Some(&2));
+        assert_eq!(counts.get(&EndpointTier::Free), Some(&19));
+
+        // Verify Normal priority will try both Standard and Free
+        let tiers = pool.tier_order(RequestPriority::Normal);
+        assert_eq!(tiers.len(), 2);
+        assert_eq!(tiers[0], EndpointTier::Standard);
+        assert_eq!(tiers[1], EndpointTier::Free);
+
+        // Verify both tier pools exist
+        assert!(pool.has_tier(EndpointTier::Standard));
+        assert!(pool.has_tier(EndpointTier::Free));
+    }
+
+    #[test]
+    fn test_with_default_free_endpoints() {
+        use crate::presets::chain_id;
+
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .with_default_free_endpoints(chain_id::ARBITRUM_ONE)
+            .build()
+            .unwrap();
+
+        // Verify Free tier was created with Arbitrum endpoints
+        assert!(pool.has_tier(EndpointTier::Free));
+        let counts = pool.tier_endpoint_counts();
+        let free_count = counts.get(&EndpointTier::Free).unwrap_or(&0);
+        assert!(*free_count > 0, "Free tier should have endpoints loaded");
+
+        // Should match the number from presets
+        let preset_count = crate::presets::arbitrum_endpoints().len();
+        assert_eq!(*free_count, preset_count);
+    }
+
+    #[test]
+    fn test_with_default_free_endpoints_for_chains() {
+        use crate::presets::chain_id;
+
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .with_default_free_endpoints_for_chains(&[
+                chain_id::ETHEREUM,
+                chain_id::ARBITRUM_ONE,
+            ])
+            .build()
+            .unwrap();
+
+        let counts = pool.tier_endpoint_counts();
+        let free_count = counts.get(&EndpointTier::Free).unwrap_or(&0);
+
+        let expected_count = crate::presets::ethereum_endpoints().len()
+            + crate::presets::arbitrum_endpoints().len();
+        assert_eq!(*free_count, expected_count);
     }
 }
