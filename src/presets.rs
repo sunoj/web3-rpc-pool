@@ -130,7 +130,7 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Arbitrum One (16 verified endpoints).
+/// Default endpoints for Arbitrum One (19 verified endpoints).
 pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://arb1.arbitrum.io/rpc")
@@ -199,6 +199,18 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://public-arb-mainnet.fastnode.io")
             .with_name("FastNode")
             .with_priority(65)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arbitrum.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(66)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arb-one.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(67)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arb.leorpc.com/?api_key=FREE")
+            .with_name("LeoRPC")
+            .with_priority(68)
             .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
 }
