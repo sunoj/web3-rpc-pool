@@ -176,6 +176,17 @@ impl RpcPool {
             return Err(RpcPoolError::NoEndpointsConfigured);
         }
 
+        // Deduplicate endpoints by URL, keeping the first (lowest priority value = highest priority)
+        {
+            let mut seen = HashSet::new();
+            let before = config.endpoints.len();
+            config.endpoints.retain(|e| seen.insert(e.url.clone()));
+            let removed = before - config.endpoints.len();
+            if removed > 0 {
+                warn!(removed, "Duplicate endpoints removed from RPC pool");
+            }
+        }
+
         // Sort endpoints by priority (lower = higher priority)
         config.endpoints.sort_by_key(|e| e.priority);
 
