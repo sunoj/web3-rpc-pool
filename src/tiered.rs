@@ -12,7 +12,7 @@ use crate::pool::{RpcPool, RpcPoolConfig};
 use crate::presets;
 use crate::strategies::{FailoverStrategy, RateAwareStrategy, SelectionStrategy};
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
@@ -502,8 +502,24 @@ impl TieredPoolBuilder {
 
     /// Build the tiered pool.
     pub fn build(self) -> Result<TieredPool, RpcPoolError> {
+        // Deduplicate endpoints by URL, keeping the first occurrence (higher tier / earlier added wins)
+        let mut seen = HashSet::new();
+        let mut deduped = Vec::with_capacity(self.endpoints.len());
+        for ep in self.endpoints {
+            if !seen.insert(ep.endpoint.url.clone()) {
+                warn!(
+                    url = %ep.endpoint.url,
+                    name = %ep.endpoint.name,
+                    tier = ?ep.tier,
+                    "Duplicate endpoint removed during pool build"
+                );
+                continue;
+            }
+            deduped.push(ep);
+        }
+
         TieredPool::new(TieredPoolConfig {
-            endpoints: self.endpoints,
+            endpoints: deduped,
             health_check_interval: self.health_check_interval,
             max_consecutive_errors: self.max_consecutive_errors,
             retry_delay: self.retry_delay,

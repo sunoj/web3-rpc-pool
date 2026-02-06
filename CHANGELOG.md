@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-02-06
+
+### Fixed
+
+- **Automatic Endpoint Deduplication**: Endpoints with duplicate URLs are now automatically removed
+  - `TieredPoolBuilder::build()` deduplicates by URL, keeping the first occurrence (earlier-added / higher-tier wins)
+  - `RpcPool::new()` provides a safety-net dedup for direct config construction
+  - Warns via `tracing::warn!` when duplicates are detected
+  - Fixes `RateAwareStrategy` giving extra weight to duplicated URLs when config manually adds endpoints that also exist in built-in presets
+
 ## [0.3.0] - 2026-02-02
 
 ### Added
