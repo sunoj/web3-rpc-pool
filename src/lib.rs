@@ -57,7 +57,7 @@ pub mod presets;
 pub mod strategies;
 pub mod tiered;
 
-pub use endpoint::{RpcEndpoint, EndpointStats};
+pub use endpoint::{EndpointCapabilities, EndpointGrade, EndpointStats, RpcEndpoint};
 pub use error::RpcPoolError;
 pub use metrics::RpcPoolMetrics;
 pub use pool::{HealthSummary, RpcPool, RpcPoolConfig};

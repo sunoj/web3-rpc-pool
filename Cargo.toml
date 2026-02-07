@@ -14,6 +14,8 @@ default = ["http", "ws"]
 http = []
 ws = ["tokio-tungstenite"]
 metrics = ["prometheus"]
+evaluator = ["dep:reqwest", "dep:clap", "dep:chrono"]
+live-tests = ["dep:reqwest"]
 
 [dependencies]
 # Async runtime
@@ -46,13 +48,22 @@ prometheus = { version = "0.13", optional = true }
 # Error handling
 thiserror = "2"
 
+# Optional: RPC evaluator binary
+reqwest = { version = "0.12", features = ["json"], optional = true }
+clap = { version = "4", features = ["derive"], optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 criterion = { version = "0.5", features = ["async_tokio", "html_reports"] }
 rand = "0.8"
-chrono = { version = "0.4", features = ["serde"] }
 wiremock = "0.6"
+
+[[bin]]
+name = "rpc-evaluator"
+path = "src/bin/rpc_evaluator.rs"
+required-features = ["evaluator"]
 
 [[bench]]
 name = "pool_benchmarks"
