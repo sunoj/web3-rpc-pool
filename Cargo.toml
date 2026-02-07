@@ -1,6 +1,6 @@
 [package]
 name = "web3-rpc-pool"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT"
@@ -19,12 +19,10 @@ live-tests = ["dep:reqwest"]
 
 [dependencies]
 # Async runtime
-tokio = { version = "1.35", features = ["full", "sync", "time"] }
-futures = "0.3"
-async-trait = "0.1"
+tokio = { version = "1.35", features = ["rt-multi-thread", "macros", "sync", "time"] }
 
 # Alloy for RPC
-alloy = { version = "1.0", features = ["full", "providers", "transports", "rpc-client"] }
+alloy = { version = "1.0", default-features = false, features = ["providers", "transports", "rpc-client", "transport-http", "reqwest"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -32,9 +30,7 @@ serde_json = "1.0"
 
 # Utilities
 parking_lot = "0.12"
-dashmap = "6"
 url = "2"
-tokio-util = "0.7"
 
 # Logging
 tracing = "0.1"

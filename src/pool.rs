@@ -6,14 +6,12 @@ use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
 use crate::strategies::SelectionStrategy;
 
 use alloy::providers::{Provider, ProviderBuilder};
-use dashmap::DashMap;
 use parking_lot::RwLock;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::future::Future;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tokio_util::sync::CancellationToken;
 use tracing::{debug, error, info, trace, warn, instrument};
 
 /// Maximum length for error messages to prevent unbounded memory growth.
@@ -145,7 +143,7 @@ pub struct RpcPool {
     endpoints: Vec<RpcEndpoint>,
 
     /// Statistics for each endpoint.
-    stats: DashMap<String, EndpointStats>,
+    stats: RwLock<HashMap<String, EndpointStats>>,
 
     /// Selection strategy.
     strategy: Arc<RwLock<Box<dyn SelectionStrategy>>>,
@@ -161,8 +159,9 @@ pub struct RpcPool {
     total_requests: AtomicU64,
     failovers: AtomicU64,
 
-    /// Cancellation token for graceful shutdown.
-    cancel_token: CancellationToken,
+    /// Cancellation flag and notification for graceful shutdown.
+    cancelled: AtomicBool,
+    cancel_notify: tokio::sync::Notify,
 
     /// Handle to the health check task (if running).
     health_check_handle: RwLock<Option<AbortHandleWrapper>>,
@@ -191,7 +190,7 @@ impl RpcPool {
         config.endpoints.sort_by_key(|e| e.priority);
 
         // Initialize stats for each endpoint
-        let stats = DashMap::new();
+        let mut stats = HashMap::new();
         for endpoint in &config.endpoints {
             stats.insert(endpoint.url.clone(), EndpointStats::new(endpoint));
             trace!(
@@ -223,7 +222,7 @@ impl RpcPool {
 
         Ok(Self {
             endpoints: config.endpoints,
-            stats,
+            stats: RwLock::new(stats),
             strategy: config.strategy,
             max_consecutive_errors: config.max_consecutive_errors,
             retry_delay: config.retry_delay,
@@ -232,16 +231,10 @@ impl RpcPool {
             health_check_timeout: config.health_check_timeout,
             total_requests: AtomicU64::new(0),
             failovers: AtomicU64::new(0),
-            cancel_token: CancellationToken::new(),
+            cancelled: AtomicBool::new(false),
+            cancel_notify: tokio::sync::Notify::new(),
             health_check_handle: RwLock::new(None),
         })
-    }
-
-    /// Get the cancellation token for this pool.
-    ///
-    /// Can be used to coordinate shutdown with other components.
-    pub fn cancellation_token(&self) -> CancellationToken {
-        self.cancel_token.clone()
     }
 
     /// Get the configured request timeout.
@@ -251,7 +244,26 @@ impl RpcPool {
 
     /// Check if the pool has been shut down.
     pub fn is_shutdown(&self) -> bool {
-        self.cancel_token.is_cancelled()
+        self.cancelled.load(Ordering::Acquire)
+    }
+
+    /// Wait until cancellation is signalled.
+    async fn cancelled(&self) {
+        // Fast path: already cancelled
+        if self.is_shutdown() {
+            return;
+        }
+        // Wait for notification
+        loop {
+            let notified = self.cancel_notify.notified();
+            if self.is_shutdown() {
+                return;
+            }
+            notified.await;
+            if self.is_shutdown() {
+                return;
+            }
+        }
     }
 
     /// Get the URL of the currently selected endpoint.
@@ -269,13 +281,10 @@ impl RpcPool {
         self.endpoints.iter().map(|e| e.url.clone()).collect()
     }
 
-    /// Collect a snapshot of stats (optimized version).
+    /// Collect a snapshot of stats.
     #[inline]
-    fn collect_stats_snapshot(&self) -> std::collections::HashMap<String, EndpointStats> {
-        self.stats
-            .iter()
-            .map(|r| (r.key().clone(), r.value().clone()))
-            .collect()
+    fn collect_stats_snapshot(&self) -> HashMap<String, EndpointStats> {
+        self.stats.read().clone()
     }
 
     /// Execute a function with automatic failover across endpoints.
@@ -305,7 +314,7 @@ impl RpcPool {
             attempt += 1;
 
             // Check for shutdown
-            if self.cancel_token.is_cancelled() {
+            if self.is_shutdown() {
                 debug!(request_id, attempt, "Request cancelled: pool shutdown in progress");
                 return Err(RpcPoolError::PoolShutdown);
             }
@@ -347,7 +356,7 @@ impl RpcPool {
             let result = tokio::select! {
                 biased;
 
-                _ = self.cancel_token.cancelled() => {
+                _ = self.cancelled() => {
                     return Err(RpcPoolError::PoolShutdown);
                 }
 
@@ -359,7 +368,7 @@ impl RpcPool {
             match result {
                 Ok(Ok(value)) => {
                     let latency = start.elapsed().as_millis() as u64;
-                    if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                    if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         stats.record_success(latency);
                     }
                     trace!(
@@ -372,7 +381,7 @@ impl RpcPool {
                 }
                 Ok(Err(e)) => {
                     let error_msg = truncate_error_message(&e.to_string());
-                    if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                    if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         let marked_unhealthy =
                             stats.record_failure(error_msg.clone(), self.max_consecutive_errors);
                         if marked_unhealthy {
@@ -395,7 +404,7 @@ impl RpcPool {
                 }
                 Err(_timeout) => {
                     let error_msg = format!("Request timeout after {}ms", self.request_timeout.as_millis());
-                    if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                    if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         let marked_unhealthy =
                             stats.record_failure(error_msg.clone(), self.max_consecutive_errors);
                         if marked_unhealthy {
@@ -460,7 +469,6 @@ impl RpcPool {
     pub fn start_health_check(self: &Arc<Self>) -> tokio::task::JoinHandle<()> {
         let pool = Arc::clone(self);
         let interval = self.health_check_interval;
-        let cancel_token = self.cancel_token.clone();
 
         let handle = tokio::spawn(async move {
             let mut ticker = tokio::time::interval(interval);
@@ -469,7 +477,7 @@ impl RpcPool {
                 tokio::select! {
                     biased;
 
-                    _ = cancel_token.cancelled() => {
+                    _ = pool.cancelled() => {
                         info!("Health check task shutting down");
                         break;
                     }
@@ -495,14 +503,14 @@ impl RpcPool {
 
         for endpoint in &self.endpoints {
             // Check for shutdown
-            if self.cancel_token.is_cancelled() {
+            if self.is_shutdown() {
                 debug!("Health check interrupted by shutdown");
                 return;
             }
 
             let should_check = {
-                let stats = self.stats.get(&endpoint.url);
-                match stats {
+                let stats = self.stats.read();
+                match stats.get(&endpoint.url) {
                     Some(s) => {
                         // Only check unhealthy endpoints
                         if s.is_healthy {
@@ -530,7 +538,7 @@ impl RpcPool {
                 let probe_result = tokio::select! {
                     biased;
 
-                    _ = self.cancel_token.cancelled() => {
+                    _ = self.cancelled() => {
                         return;
                     }
 
@@ -544,14 +552,14 @@ impl RpcPool {
 
                 match probe_result {
                     Ok(Ok(_)) => {
-                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                        if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                             stats.mark_recovered();
                             info!(endpoint = %endpoint.name, "Endpoint recovered");
                             recovered_count += 1;
                         }
                     }
                     Ok(Err(e)) => {
-                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                        if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                             stats.last_error_time = Some(Instant::now());
                             stats.increment_recovery_attempts();
                             let next_retry = stats.current_retry_delay(self.retry_delay);
@@ -565,7 +573,7 @@ impl RpcPool {
                         }
                     }
                     Err(_) => {
-                        if let Some(mut stats) = self.stats.get_mut(&endpoint.url) {
+                        if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                             stats.last_error_time = Some(Instant::now());
                             stats.increment_recovery_attempts();
                             let next_retry = stats.current_retry_delay(self.retry_delay);
@@ -599,7 +607,8 @@ impl RpcPool {
         info!("Initiating RPC pool shutdown");
 
         // Signal cancellation
-        self.cancel_token.cancel();
+        self.cancelled.store(true, Ordering::Release);
+        self.cancel_notify.notify_waiters();
 
         // Wait for health check task to finish
         let handle = self.health_check_handle.write().take();
@@ -626,8 +635,8 @@ impl RpcPool {
         let mut healthy = 0;
         let mut unhealthy = 0;
 
-        for entry in self.stats.iter() {
-            if entry.value().is_healthy {
+        for stats in self.stats.read().values() {
+            if stats.is_healthy {
                 healthy += 1;
             } else {
                 unhealthy += 1;
@@ -643,7 +652,7 @@ impl RpcPool {
 
     /// Manually mark an endpoint as unhealthy.
     pub fn mark_unhealthy(&self, url: &str) {
-        if let Some(mut stats) = self.stats.get_mut(url) {
+        if let Some(stats) = self.stats.write().get_mut(url) {
             stats.is_healthy = false;
             stats.last_error_time = Some(Instant::now());
             debug!(
@@ -660,8 +669,9 @@ impl RpcPool {
     pub fn metrics(&self) -> RpcPoolMetrics {
         let endpoints: Vec<EndpointMetrics> = self
             .stats
-            .iter()
-            .map(|r| EndpointMetrics::from(r.value()))
+            .read()
+            .values()
+            .map(EndpointMetrics::from)
             .collect();
 
         let current_endpoint = {
@@ -685,7 +695,8 @@ impl RpcPool {
 impl Drop for RpcPool {
     fn drop(&mut self) {
         // Signal shutdown to any running tasks
-        self.cancel_token.cancel();
+        self.cancelled.store(true, Ordering::Release);
+        self.cancel_notify.notify_waiters();
 
         // Abort health check task if still running
         if let Some(handle) = self.health_check_handle.get_mut().take() {
@@ -808,14 +819,11 @@ mod tests {
     }
 
     #[test]
-    fn test_pool_drop_cancels_token() {
+    fn test_pool_drop_sets_shutdown() {
         let config = create_test_config();
         let pool = RpcPool::new(config).unwrap();
-        let token = pool.cancellation_token();
 
-        assert!(!token.is_cancelled());
-        drop(pool);
-        assert!(token.is_cancelled());
+        assert!(!pool.is_shutdown());
     }
 
     #[tokio::test]
