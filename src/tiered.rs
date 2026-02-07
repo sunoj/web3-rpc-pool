@@ -433,8 +433,23 @@ impl TieredPoolBuilder {
     }
 
     /// Add multiple free endpoints from a preset.
+    ///
+    /// Automatically adjusts endpoint priority based on capability grades
+    /// when capability data is available (unknown capabilities = no adjustment).
     pub fn add_free_endpoints(mut self, endpoints: Vec<RpcEndpoint>) -> Self {
-        for e in endpoints {
+        for mut e in endpoints {
+            let adjustment = e.capabilities.priority_adjustment();
+            if adjustment != 0 {
+                let new_priority = (e.priority as i32 + adjustment).max(0) as u32;
+                debug!(
+                    name = %e.name,
+                    grade = %e.capabilities.grade(),
+                    old_priority = e.priority,
+                    new_priority = new_priority,
+                    "Adjusting endpoint priority based on capabilities"
+                );
+                e.priority = new_priority;
+            }
             self.endpoints.push(TieredEndpoint {
                 endpoint: e,
                 tier: EndpointTier::Free,
