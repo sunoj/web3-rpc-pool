@@ -21,7 +21,7 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 ```toml
 [dependencies]
-web3-rpc-pool = "0.1"
+web3-rpc-pool = "0.4"
 ```
 
 ## Quick Start
@@ -142,19 +142,36 @@ for endpoint in &metrics.endpoints {
 
 ## Supported Chains
 
-Built-in presets for:
-- Arbitrum One (42161)
-- Base (8453)
-- Ethereum Mainnet (1)
-- Optimism (10)
-- Polygon (137)
+Built-in presets with 213+ verified public RPC endpoints across 17 chains:
+
+| Chain | Chain ID | Endpoints | Preset Function |
+|-------|----------|-----------|-----------------|
+| Arbitrum One | 42161 | 19 | `arbitrum_endpoints()` |
+| Avalanche C-Chain | 43114 | 8 | `avalanche_endpoints()` |
+| Base | 8453 | 15 | `base_endpoints()` |
+| Blast | 81457 | 11 | `blast_endpoints()` |
+| BSC/BNB Chain | 56 | 17 | `bsc_endpoints()` |
+| Ethereum Mainnet | 1 | 22 | `ethereum_endpoints()` |
+| Fantom | 250 | 7 | `fantom_endpoints()` |
+| Hyperliquid EVM | 999 | 3 | `hyperliquid_evm_endpoints()` |
+| Linea | 59144 | 8 | `linea_endpoints()` |
+| Manta Pacific | 169 | 7 | `manta_pacific_endpoints()` |
+| Mantle | 5000 | 12 | `mantle_endpoints()` |
+| Mode | 34443 | 5 | `mode_endpoints()` |
+| Optimism | 10 | 8 | `optimism_endpoints()` |
+| Polygon | 137 | 9 | `polygon_endpoints()` |
+| Polygon zkEVM | 1101 | 8 | `polygon_zkevm_endpoints()` |
+| Scroll | 534352 | 12 | `scroll_endpoints()` |
+| zkSync Era | 324 | 7 | `zksync_era_endpoints()` |
 
 ```rust
 use web3_rpc_pool::presets;
 
 let arbitrum = presets::arbitrum_endpoints();
-let base = presets::base_endpoints();
 let ethereum = presets::ethereum_endpoints();
+let scroll = presets::scroll_endpoints();
+// ... or get endpoints for any chain by ID
+let endpoints = presets::default_endpoints(534352);
 ```
 
 ## License
