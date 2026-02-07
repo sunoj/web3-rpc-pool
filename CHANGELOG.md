@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-07
+
+### Added
+
+- **6 New DeFi L2 Chains**: Added 55 verified public RPC endpoints across 6 new chains (158 → 213 total, 11 → 17 chains)
+  - **Scroll** (534352): 12 endpoints — Official, PublicNode, 1RPC, dRPC, BlastAPI, Ankr, OnFinality, Nodies, OmniaTech, thirdweb, Pocket Network, IceCreamSwap
+  - **Polygon zkEVM** (1101): 8 endpoints — Official, 1RPC, BlastAPI, dRPC, Nodies, OmniaTech, Pocket Network, Gateway.fm
+  - **Blast** (81457): 11 endpoints — Official, PublicNode, dRPC, BlastAPI, OmniaTech, Pocket Network, BlockPI, thirdweb, DIN, Ankr, OnFinality
+  - **Mantle** (5000): 12 endpoints — Official, PublicNode, 1RPC, dRPC, BlastAPI, Nodies, OnFinality, ZAN, OmniaTech, Pocket Network, thirdweb, UncleZak
+  - **Mode** (34443): 5 endpoints — Official, 1RPC, dRPC, thirdweb, Tenderly
+  - **Manta Pacific** (169): 7 endpoints — Official, 1RPC, dRPC, thirdweb, Caldera, Caldera Aperture, Ankr
+
+- **Endpoint Capability Grading**: All new chain endpoints evaluated and graded (A/B/C/D/F) with embedded capability data
+  - `supports_eth_get_logs`, `max_batch_size`, `max_block_range` measured per endpoint
+  - Capability data baked in as defaults for instant availability
+
 ## [0.3.3] - 2026-02-07
 
 ### Added

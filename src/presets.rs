@@ -22,6 +22,12 @@ pub mod chain_id {
     pub const ZKSYNC_ERA: u64 = 324;
     pub const LINEA: u64 = 59144;
     pub const HYPERLIQUID_EVM: u64 = 999;
+    pub const SCROLL: u64 = 534352;
+    pub const POLYGON_ZKEVM: u64 = 1101;
+    pub const BLAST: u64 = 81457;
+    pub const MANTLE: u64 = 5000;
+    pub const MODE: u64 = 34443;
+    pub const MANTA_PACIFIC: u64 = 169;
 }
 
 /// Get default endpoints for a chain by chain ID.
@@ -30,13 +36,19 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
         chain_id::ARBITRUM_ONE => arbitrum_endpoints(),
         chain_id::AVALANCHE => avalanche_endpoints(),
         chain_id::BASE => base_endpoints(),
+        chain_id::BLAST => blast_endpoints(),
         chain_id::BSC => bsc_endpoints(),
         chain_id::ETHEREUM => ethereum_endpoints(),
         chain_id::FANTOM => fantom_endpoints(),
         chain_id::HYPERLIQUID_EVM => hyperliquid_evm_endpoints(),
         chain_id::LINEA => linea_endpoints(),
+        chain_id::MANTA_PACIFIC => manta_pacific_endpoints(),
+        chain_id::MANTLE => mantle_endpoints(),
+        chain_id::MODE => mode_endpoints(),
         chain_id::OPTIMISM => optimism_endpoints(),
         chain_id::POLYGON => polygon_endpoints(),
+        chain_id::POLYGON_ZKEVM => polygon_zkevm_endpoints(),
+        chain_id::SCROLL => scroll_endpoints(),
         chain_id::ZKSYNC_ERA => zksync_era_endpoints(),
         _ => vec![],
     }
@@ -49,12 +61,18 @@ pub fn all_chain_ids() -> Vec<u64> {
         chain_id::ARBITRUM_ONE,
         chain_id::AVALANCHE,
         chain_id::BASE,
+        chain_id::BLAST,
         chain_id::BSC,
         chain_id::FANTOM,
         chain_id::HYPERLIQUID_EVM,
         chain_id::LINEA,
+        chain_id::MANTA_PACIFIC,
+        chain_id::MANTLE,
+        chain_id::MODE,
         chain_id::OPTIMISM,
         chain_id::POLYGON,
+        chain_id::POLYGON_ZKEVM,
+        chain_id::SCROLL,
         chain_id::ZKSYNC_ERA,
     ]
 }
@@ -70,12 +88,18 @@ pub fn chain_name(chain_id: u64) -> &'static str {
         self::chain_id::AVALANCHE => "Avalanche C-Chain",
         self::chain_id::BASE => "Base",
         self::chain_id::BASE_SEPOLIA => "Base Sepolia",
+        self::chain_id::BLAST => "Blast",
         self::chain_id::BSC => "BNB Smart Chain",
         self::chain_id::FANTOM => "Fantom Opera",
         self::chain_id::HYPERLIQUID_EVM => "Hyperliquid EVM",
         self::chain_id::LINEA => "Linea",
+        self::chain_id::MANTA_PACIFIC => "Manta Pacific",
+        self::chain_id::MANTLE => "Mantle",
+        self::chain_id::MODE => "Mode",
         self::chain_id::OPTIMISM => "Optimism",
         self::chain_id::POLYGON => "Polygon",
+        self::chain_id::POLYGON_ZKEVM => "Polygon zkEVM",
+        self::chain_id::SCROLL => "Scroll",
         self::chain_id::ZKSYNC_ERA => "zkSync Era",
         _ => "Unknown",
     }
@@ -919,6 +943,300 @@ pub fn hyperliquid_evm_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
+/// Default endpoints for Scroll (12 verified endpoints).
+pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.scroll.io")
+            .with_name("Scroll Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(5000), ..Default::default() }),
+        RpcEndpoint::new("https://scroll-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://scroll-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/scroll")
+            .with_name("1RPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://scroll.drpc.org")
+            .with_name("dRPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(5000), ..Default::default() }),
+        RpcEndpoint::new("https://scroll-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(54)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://rpc.ankr.com/scroll")
+            .with_name("Ankr")
+            .with_priority(55)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://scroll.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(56)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://scroll-public.nodies.app")
+            .with_name("Nodies")
+            .with_priority(57)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/scroll/mainnet/public")
+            .with_name("OmniaTech")
+            .with_priority(58)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://534352.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(59)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://scroll.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(60)
+            .with_chain_id(chain_id::SCROLL)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://rpc-scroll.icecreamswap.com")
+            .with_name("IceCreamSwap")
+            .with_priority(61)
+            .with_chain_id(chain_id::SCROLL),
+    ]
+}
+
+/// Default endpoints for Polygon zkEVM (8 verified endpoints).
+pub fn polygon_zkevm_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://zkevm-rpc.com")
+            .with_name("Polygon zkEVM Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::POLYGON_ZKEVM)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://rpc.polygon-zkevm.gateway.fm")
+            .with_name("Gateway.fm")
+            .with_priority(51)
+            .with_chain_id(chain_id::POLYGON_ZKEVM),
+        RpcEndpoint::new("https://1rpc.io/polygon/zkevm")
+            .with_name("1RPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::POLYGON_ZKEVM),
+        RpcEndpoint::new("https://polygon-zkevm.drpc.org")
+            .with_name("dRPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::POLYGON_ZKEVM)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(5000), ..Default::default() }),
+        RpcEndpoint::new("https://polygon-zkevm-public.nodies.app")
+            .with_name("Nodies")
+            .with_priority(54)
+            .with_chain_id(chain_id::POLYGON_ZKEVM)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/polygon-zkevm/mainnet/public")
+            .with_name("OmniaTech")
+            .with_priority(55)
+            .with_chain_id(chain_id::POLYGON_ZKEVM),
+        RpcEndpoint::new("https://polygon-zkevm.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(56)
+            .with_chain_id(chain_id::POLYGON_ZKEVM)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://poly-zkevm.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(57)
+            .with_chain_id(chain_id::POLYGON_ZKEVM)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(100), ..Default::default() }),
+    ]
+}
+
+/// Default endpoints for Blast (11 verified endpoints).
+pub fn blast_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.blast.io")
+            .with_name("Blast Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://blast-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://blast-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://blast.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://blastl2-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(53)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://rpc.ankr.com/blast")
+            .with_name("Ankr")
+            .with_priority(54)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/blast/mainnet/public")
+            .with_name("OmniaTech")
+            .with_priority(55)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://blast.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(56)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://blast.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(57)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://81457.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(58)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://blast.din.dev/rpc")
+            .with_name("DIN")
+            .with_priority(59)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://blast-public.nodies.app")
+            .with_name("Nodies")
+            .with_priority(60)
+            .with_chain_id(chain_id::BLAST)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+    ]
+}
+
+/// Default endpoints for Mantle (12 verified endpoints).
+pub fn mantle_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.mantle.xyz")
+            .with_name("Mantle Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://mantle-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://mantle-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/mantle")
+            .with_name("1RPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://mantle.drpc.org")
+            .with_name("dRPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://mantle-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(54)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://mantle-public.nodies.app")
+            .with_name("Nodies")
+            .with_priority(55)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://mantle.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(56)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://api.zan.top/mantle-mainnet")
+            .with_name("ZAN")
+            .with_priority(57)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(10000), ..Default::default() }),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/mantle/mainnet/public")
+            .with_name("OmniaTech")
+            .with_priority(58)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://mantle.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(59)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://rpc.ankr.com/mantle")
+            .with_name("Ankr")
+            .with_priority(60)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://5000.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(61)
+            .with_chain_id(chain_id::MANTLE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+    ]
+}
+
+/// Default endpoints for Mode (5 verified endpoints).
+pub fn mode_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://mainnet.mode.network")
+            .with_name("Mode Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::MODE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/mode")
+            .with_name("1RPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::MODE),
+        RpcEndpoint::new("https://mode.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::MODE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://34443.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(53)
+            .with_chain_id(chain_id::MODE)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://mode.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(54)
+            .with_chain_id(chain_id::MODE),
+    ]
+}
+
+/// Default endpoints for Manta Pacific (7 verified endpoints).
+pub fn manta_pacific_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://pacific-rpc.manta.network/http")
+            .with_name("Manta Official")
+            .with_ws_url("wss://pacific-rpc.manta.network/ws")
+            .with_priority(50)
+            .with_chain_id(chain_id::MANTA_PACIFIC)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/manta")
+            .with_name("1RPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::MANTA_PACIFIC),
+        RpcEndpoint::new("https://manta-pacific.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::MANTA_PACIFIC)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://169.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(53)
+            .with_chain_id(chain_id::MANTA_PACIFIC)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://manta-pacific-gascap.calderachain.xyz/http")
+            .with_name("Caldera")
+            .with_priority(54)
+            .with_chain_id(chain_id::MANTA_PACIFIC)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://manta-pacific-aperture.calderachain.xyz/http")
+            .with_name("Caldera Aperture")
+            .with_priority(55)
+            .with_chain_id(chain_id::MANTA_PACIFIC)
+            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://rpc.ankr.com/manta")
+            .with_name("Ankr")
+            .with_priority(56)
+            .with_chain_id(chain_id::MANTA_PACIFIC),
+    ]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1016,17 +1334,65 @@ mod tests {
     }
 
     #[test]
+    fn test_scroll_endpoints() {
+        let endpoints = scroll_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::SCROLL);
+        assert!(endpoints.len() >= 12, "Should have at least 12 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
+    fn test_polygon_zkevm_endpoints() {
+        let endpoints = polygon_zkevm_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::POLYGON_ZKEVM);
+        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
+    fn test_blast_endpoints() {
+        let endpoints = blast_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::BLAST);
+        assert!(endpoints.len() >= 11, "Should have at least 11 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
+    fn test_mantle_endpoints() {
+        let endpoints = mantle_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::MANTLE);
+        assert!(endpoints.len() >= 12, "Should have at least 12 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
+    fn test_mode_endpoints() {
+        let endpoints = mode_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::MODE);
+        assert!(endpoints.len() >= 5, "Should have at least 5 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
+    fn test_manta_pacific_endpoints() {
+        let endpoints = manta_pacific_endpoints();
+        assert_valid_endpoints(&endpoints, chain_id::MANTA_PACIFIC);
+        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
+    }
+
+    #[test]
     fn test_default_endpoints() {
         assert!(!default_endpoints(chain_id::ARBITRUM_ONE).is_empty());
         assert!(!default_endpoints(chain_id::AVALANCHE).is_empty());
         assert!(!default_endpoints(chain_id::BASE).is_empty());
+        assert!(!default_endpoints(chain_id::BLAST).is_empty());
         assert!(!default_endpoints(chain_id::BSC).is_empty());
         assert!(!default_endpoints(chain_id::ETHEREUM).is_empty());
         assert!(!default_endpoints(chain_id::FANTOM).is_empty());
         assert!(!default_endpoints(chain_id::HYPERLIQUID_EVM).is_empty());
         assert!(!default_endpoints(chain_id::LINEA).is_empty());
+        assert!(!default_endpoints(chain_id::MANTA_PACIFIC).is_empty());
+        assert!(!default_endpoints(chain_id::MANTLE).is_empty());
+        assert!(!default_endpoints(chain_id::MODE).is_empty());
         assert!(!default_endpoints(chain_id::OPTIMISM).is_empty());
         assert!(!default_endpoints(chain_id::POLYGON).is_empty());
+        assert!(!default_endpoints(chain_id::POLYGON_ZKEVM).is_empty());
+        assert!(!default_endpoints(chain_id::SCROLL).is_empty());
         assert!(!default_endpoints(chain_id::ZKSYNC_ERA).is_empty());
         assert!(default_endpoints(99999).is_empty()); // Unknown chain
     }
@@ -1038,18 +1404,24 @@ mod tests {
             .map(|&id| default_endpoints(id).len())
             .sum();
 
-        assert!(total >= 150, "Should have at least 150 total endpoints, got {}", total);
+        assert!(total >= 200, "Should have at least 200 total endpoints, got {}", total);
     }
 
     #[test]
     fn test_all_chain_ids() {
         let ids = all_chain_ids();
-        assert!(ids.len() >= 11, "Should have at least 11 chains");
+        assert!(ids.len() >= 17, "Should have at least 17 chains");
         assert!(ids.contains(&chain_id::ETHEREUM));
         assert!(ids.contains(&chain_id::FANTOM));
         assert!(ids.contains(&chain_id::ZKSYNC_ERA));
         assert!(ids.contains(&chain_id::LINEA));
         assert!(ids.contains(&chain_id::HYPERLIQUID_EVM));
+        assert!(ids.contains(&chain_id::SCROLL));
+        assert!(ids.contains(&chain_id::POLYGON_ZKEVM));
+        assert!(ids.contains(&chain_id::BLAST));
+        assert!(ids.contains(&chain_id::MANTLE));
+        assert!(ids.contains(&chain_id::MODE));
+        assert!(ids.contains(&chain_id::MANTA_PACIFIC));
     }
 
     #[test]
@@ -1059,6 +1431,12 @@ mod tests {
         assert_eq!(chain_name(chain_id::ZKSYNC_ERA), "zkSync Era");
         assert_eq!(chain_name(chain_id::LINEA), "Linea");
         assert_eq!(chain_name(chain_id::HYPERLIQUID_EVM), "Hyperliquid EVM");
+        assert_eq!(chain_name(chain_id::SCROLL), "Scroll");
+        assert_eq!(chain_name(chain_id::POLYGON_ZKEVM), "Polygon zkEVM");
+        assert_eq!(chain_name(chain_id::BLAST), "Blast");
+        assert_eq!(chain_name(chain_id::MANTLE), "Mantle");
+        assert_eq!(chain_name(chain_id::MODE), "Mode");
+        assert_eq!(chain_name(chain_id::MANTA_PACIFIC), "Manta Pacific");
         assert_eq!(chain_name(99999), "Unknown");
     }
 
