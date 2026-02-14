@@ -105,7 +105,7 @@ pub fn chain_name(chain_id: u64) -> &'static str {
     }
 }
 
-/// Default endpoints for Ethereum Mainnet (29 verified endpoints).
+/// Default endpoints for Ethereum Mainnet (34 verified endpoints).
 pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://ethereum-rpc.publicnode.com")
@@ -246,10 +246,30 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("BloXroute Singapore")
             .with_priority(80)
             .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://ethereum.blinklabs.xyz")
+            .with_name("BlinkLabs")
+            .with_priority(81)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://eth-protect.rpc.blxrbdn.com")
+            .with_name("BloXroute Protect")
+            .with_priority(82)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://eth.leorpc.com/?api_key=FREE")
+            .with_name("LeoRPC")
+            .with_priority(83)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://eth.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(84)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://ethereum-public.nodies.app")
+            .with_name("Nodies Public")
+            .with_priority(85)
+            .with_chain_id(chain_id::ETHEREUM),
     ]
 }
 
-/// Default endpoints for Arbitrum One (19 verified endpoints).
+/// Default endpoints for Arbitrum One (20 verified endpoints).
 pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://arb1.arbitrum.io/rpc")
@@ -349,10 +369,14 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly Public")
             .with_priority(74)
             .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arbitrum.lava.build")
+            .with_name("Lava")
+            .with_priority(75)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
 }
 
-/// Default endpoints for Base (20 verified endpoints).
+/// Default endpoints for Base (21 verified endpoints).
 pub fn base_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.base.org")
@@ -451,10 +475,14 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Sentio")
             .with_priority(75)
             .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base.leorpc.com/?api_key=FREE")
+            .with_name("LeoRPC")
+            .with_priority(76)
+            .with_chain_id(chain_id::BASE),
     ]
 }
 
-/// Default endpoints for Optimism (15 verified endpoints).
+/// Default endpoints for Optimism (16 verified endpoints).
 pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.optimism.io")
@@ -528,10 +556,14 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Sentio")
             .with_priority(73)
             .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://op.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(74)
+            .with_chain_id(chain_id::OPTIMISM),
     ]
 }
 
-/// Default endpoints for BSC (23 verified endpoints).
+/// Default endpoints for BSC (25 verified endpoints).
 pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
     vec![
         // Official BNB Chain endpoints
@@ -653,6 +685,14 @@ pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(74)
             .with_chain_id(chain_id::BSC)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://bsc.blockrazor.xyz")
+            .with_name("BlockRazor")
+            .with_priority(75)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(76)
+            .with_chain_id(chain_id::BSC),
     ]
 }
 
@@ -698,7 +738,7 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Polygon (13 verified endpoints).
+/// Default endpoints for Polygon (14 verified endpoints).
 pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://polygon-rpc.com")
@@ -764,6 +804,10 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Tenderly Public")
             .with_priority(70)
             .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://poly.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(71)
+            .with_chain_id(chain_id::POLYGON),
     ]
 }
 
@@ -812,7 +856,7 @@ pub fn fantom_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for zkSync Era (4 verified endpoints).
+/// Default endpoints for zkSync Era (7 verified endpoints).
 pub fn zksync_era_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.era.zksync.io")
@@ -836,10 +880,22 @@ pub fn zksync_era_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(54)
             .with_chain_id(chain_id::ZKSYNC_ERA)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://zksync.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(55)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
+        RpcEndpoint::new("https://zksync.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(56)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
+        RpcEndpoint::new("https://zksync-era.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(57)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
     ]
 }
 
-/// Default endpoints for Linea (4 verified endpoints).
+/// Default endpoints for Linea (6 verified endpoints).
 pub fn linea_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://rpc.linea.build")
@@ -864,10 +920,18 @@ pub fn linea_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(53)
             .with_chain_id(chain_id::LINEA)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://linea.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(54)
+            .with_chain_id(chain_id::LINEA),
+        RpcEndpoint::new("https://linea.api.pocket.network")
+            .with_name("Pocket Network")
+            .with_priority(55)
+            .with_chain_id(chain_id::LINEA),
     ]
 }
 
-/// Default endpoints for Hyperliquid EVM (2 verified endpoints).
+/// Default endpoints for Hyperliquid EVM (3 verified endpoints).
 pub fn hyperliquid_evm_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://rpc.hyperliquid.xyz/evm")
@@ -880,10 +944,14 @@ pub fn hyperliquid_evm_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(52)
             .with_chain_id(chain_id::HYPERLIQUID_EVM)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/hyperliquid")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::HYPERLIQUID_EVM),
     ]
 }
 
-/// Default endpoints for Scroll (8 verified endpoints).
+/// Default endpoints for Scroll (11 verified endpoints).
 pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://rpc.scroll.io")
@@ -926,10 +994,22 @@ pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(60)
             .with_chain_id(chain_id::SCROLL)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://scroll-mainnet.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(61)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://scroll.leorpc.com/?api_key=FREE")
+            .with_name("LeoRPC")
+            .with_priority(62)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://rpc.sentio.xyz/scroll")
+            .with_name("Sentio")
+            .with_priority(63)
+            .with_chain_id(chain_id::SCROLL),
     ]
 }
 
-/// Default endpoints for Polygon zkEVM (5 verified endpoints).
+/// Default endpoints for Polygon zkEVM (6 verified endpoints).
 pub fn polygon_zkevm_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://zkevm-rpc.com")
@@ -957,10 +1037,14 @@ pub fn polygon_zkevm_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(57)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://1rpc.io/polygon/zkevm")
+            .with_name("1RPC")
+            .with_priority(58)
+            .with_chain_id(chain_id::POLYGON_ZKEVM),
     ]
 }
 
-/// Default endpoints for Blast (7 verified endpoints).
+/// Default endpoints for Blast (9 verified endpoints).
 pub fn blast_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://rpc.blast.io")
@@ -999,10 +1083,18 @@ pub fn blast_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(60)
             .with_chain_id(chain_id::BLAST)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+        RpcEndpoint::new("https://blast.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(61)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://blast.leorpc.com/?api_key=FREE")
+            .with_name("LeoRPC")
+            .with_priority(62)
+            .with_chain_id(chain_id::BLAST),
     ]
 }
 
-/// Default endpoints for Mantle (8 verified endpoints).
+/// Default endpoints for Mantle (11 verified endpoints).
 pub fn mantle_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://rpc.mantle.xyz")
@@ -1045,10 +1137,22 @@ pub fn mantle_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(61)
             .with_chain_id(chain_id::MANTLE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://mantle.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(62)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://rpc.mantle.quicknode.com")
+            .with_name("QuickNode")
+            .with_priority(63)
+            .with_chain_id(chain_id::MANTLE),
+        RpcEndpoint::new("https://api.zan.top/public/mantle-mainnet")
+            .with_name("ZAN Public")
+            .with_priority(64)
+            .with_chain_id(chain_id::MANTLE),
     ]
 }
 
-/// Default endpoints for Mode (4 verified endpoints).
+/// Default endpoints for Mode (5 verified endpoints).
 pub fn mode_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.mode.network")
@@ -1070,6 +1174,10 @@ pub fn mode_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(53)
             .with_chain_id(chain_id::MODE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+        RpcEndpoint::new("https://rpc-mode-mainnet-0.t.conduit.xyz")
+            .with_name("Conduit")
+            .with_priority(54)
+            .with_chain_id(chain_id::MODE),
     ]
 }
 
@@ -1127,42 +1235,42 @@ mod tests {
     fn test_ethereum_endpoints() {
         let endpoints = ethereum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ETHEREUM);
-        assert!(endpoints.len() >= 22, "Should have at least 22 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 34, "Should have at least 34 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_arbitrum_endpoints() {
         let endpoints = arbitrum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ARBITRUM_ONE);
-        assert!(endpoints.len() >= 19, "Should have at least 19 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 20, "Should have at least 20 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_optimism_endpoints() {
         let endpoints = optimism_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::OPTIMISM);
-        assert!(endpoints.len() >= 15, "Should have at least 15 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 16, "Should have at least 16 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_base_endpoints() {
         let endpoints = base_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BASE);
-        assert!(endpoints.len() >= 20, "Should have at least 20 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 21, "Should have at least 21 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_polygon_endpoints() {
         let endpoints = polygon_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::POLYGON);
-        assert!(endpoints.len() >= 13, "Should have at least 13 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 14, "Should have at least 14 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_bsc_endpoints() {
         let endpoints = bsc_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BSC);
-        assert!(endpoints.len() >= 23, "Should have at least 23 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 25, "Should have at least 25 endpoints, got {}", endpoints.len());
     }
 
     #[test]
@@ -1183,56 +1291,56 @@ mod tests {
     fn test_zksync_era_endpoints() {
         let endpoints = zksync_era_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ZKSYNC_ERA);
-        assert!(endpoints.len() >= 4, "Should have at least 4 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_linea_endpoints() {
         let endpoints = linea_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::LINEA);
-        assert!(endpoints.len() >= 4, "Should have at least 4 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 6, "Should have at least 6 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_hyperliquid_evm_endpoints() {
         let endpoints = hyperliquid_evm_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::HYPERLIQUID_EVM);
-        assert!(endpoints.len() >= 2, "Should have at least 2 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 3, "Should have at least 3 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_scroll_endpoints() {
         let endpoints = scroll_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::SCROLL);
-        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 11, "Should have at least 11 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_polygon_zkevm_endpoints() {
         let endpoints = polygon_zkevm_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::POLYGON_ZKEVM);
-        assert!(endpoints.len() >= 5, "Should have at least 5 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 6, "Should have at least 6 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_blast_endpoints() {
         let endpoints = blast_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BLAST);
-        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 9, "Should have at least 9 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_mantle_endpoints() {
         let endpoints = mantle_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::MANTLE);
-        assert!(endpoints.len() >= 8, "Should have at least 8 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 11, "Should have at least 11 endpoints, got {}", endpoints.len());
     }
 
     #[test]
     fn test_mode_endpoints() {
         let endpoints = mode_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::MODE);
-        assert!(endpoints.len() >= 4, "Should have at least 4 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 5, "Should have at least 5 endpoints, got {}", endpoints.len());
     }
 
     #[test]
@@ -1271,7 +1379,7 @@ mod tests {
             .map(|&id| default_endpoints(id).len())
             .sum();
 
-        assert!(total >= 173, "Should have at least 173 total endpoints, got {}", total);
+        assert!(total >= 207, "Should have at least 207 total endpoints, got {}", total);
     }
 
     #[test]
