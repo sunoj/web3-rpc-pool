@@ -233,7 +233,7 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Arbitrum One (21 verified endpoints).
+/// Default endpoints for Arbitrum One (22 verified endpoints).
 pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://arb1.arbitrum.io/rpc")
@@ -341,10 +341,14 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("0xRPC")
             .with_priority(70)
             .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://gateway.tenderly.co/public/arbitrum")
+            .with_name("Tenderly Public")
+            .with_priority(74)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
 }
 
-/// Default endpoints for Base (17 verified endpoints).
+/// Default endpoints for Base (23 verified endpoints).
 pub fn base_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.base.org")
@@ -417,11 +421,6 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(63)
             .with_chain_id(chain_id::BASE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
-        RpcEndpoint::new("https://rpcbase.hairylabs.io/rpc")
-            .with_name("HairyLabs")
-            .with_priority(64)
-            .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://rpc.ankr.com/base")
             .with_name("Ankr")
@@ -432,10 +431,38 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(66)
             .with_chain_id(chain_id::BASE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+        RpcEndpoint::new("https://base.lava.build")
+            .with_name("Lava")
+            .with_priority(68)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://api.zan.top/base-mainnet")
+            .with_name("ZAN")
+            .with_priority(69)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base-mainnet.gateway.tatum.io")
+            .with_name("Tatum")
+            .with_priority(70)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base.api.onfinality.io/public")
+            .with_name("OnFinality Public")
+            .with_priority(71)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://base.rpc.blxrbdn.com")
+            .with_name("BloXroute")
+            .with_priority(73)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://gateway.tenderly.co/public/base")
+            .with_name("Tenderly Public")
+            .with_priority(74)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://rpc.sentio.xyz/base")
+            .with_name("Sentio")
+            .with_priority(75)
+            .with_chain_id(chain_id::BASE),
     ]
 }
 
-/// Default endpoints for Optimism (16 verified endpoints).
+/// Default endpoints for Optimism (20 verified endpoints).
 pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://mainnet.optimism.io")
@@ -483,10 +510,6 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
             .with_name("BlastAPI")
             .with_priority(58)
             .with_chain_id(chain_id::OPTIMISM),
-        RpcEndpoint::new("https://optimism.meowrpc.com")
-            .with_name("MeowRPC")
-            .with_priority(59)
-            .with_chain_id(chain_id::OPTIMISM),
         RpcEndpoint::new("https://optimism.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(60)
@@ -513,6 +536,26 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://0xrpc.io/op")
             .with_name("0xRPC")
             .with_priority(65)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://api.zan.top/opt-mainnet")
+            .with_name("ZAN")
+            .with_priority(66)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://optimism-mainnet.gateway.tatum.io")
+            .with_name("Tatum")
+            .with_priority(67)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://public-op-mainnet.fastnode.io")
+            .with_name("FastNode")
+            .with_priority(68)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://gateway.tenderly.co/public/optimism")
+            .with_name("Tenderly Public")
+            .with_priority(72)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://rpc.sentio.xyz/optimism")
+            .with_name("Sentio")
+            .with_priority(73)
             .with_chain_id(chain_id::OPTIMISM),
     ]
 }
@@ -705,7 +748,7 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
-/// Default endpoints for Polygon (12 verified endpoints).
+/// Default endpoints for Polygon (16 verified endpoints).
 pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://polygon-rpc.com")
@@ -766,6 +809,22 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://polygon.llamarpc.com")
             .with_name("LlamaNodes")
             .with_priority(61)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon.lava.build")
+            .with_name("Lava")
+            .with_priority(66)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://api.zan.top/polygon-mainnet")
+            .with_name("ZAN")
+            .with_priority(67)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon-mainnet.gateway.tatum.io")
+            .with_name("Tatum")
+            .with_priority(68)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://gateway.tenderly.co/public/polygon")
+            .with_name("Tenderly Public")
+            .with_priority(70)
             .with_chain_id(chain_id::POLYGON),
     ]
 }
