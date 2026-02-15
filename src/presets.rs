@@ -28,27 +28,70 @@ pub mod chain_id {
     pub const MANTLE: u64 = 5000;
     pub const MODE: u64 = 34443;
     pub const MANTA_PACIFIC: u64 = 169;
+    // New small EVM chains
+    pub const GNOSIS: u64 = 100;
+    pub const CELO: u64 = 42220;
+    pub const MOONBEAM: u64 = 1284;
+    pub const CRONOS: u64 = 25;
+    pub const AURORA: u64 = 1313161554;
+    pub const METIS: u64 = 1088;
+    pub const KAVA: u64 = 2222;
+    pub const KLAYTN: u64 = 8217;
+    pub const HARMONY: u64 = 1666600000;
+    pub const ROOTSTOCK: u64 = 30;
+    pub const FUSE: u64 = 122;
+    pub const SONIC: u64 = 146;
+    pub const BERACHAIN: u64 = 80094;
+    pub const TAIKO: u64 = 167000;
+    pub const FRAXTAL: u64 = 252;
+    pub const SEI: u64 = 1329;
+    pub const WORLD_CHAIN: u64 = 480;
+    pub const IMMUTABLE_ZKEVM: u64 = 13371;
+    pub const OPBNB: u64 = 204;
+    pub const ZETACHAIN: u64 = 7000;
+    pub const LISK: u64 = 1135;
 }
 
 /// Get default endpoints for a chain by chain ID.
 pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
     match chain_id {
         chain_id::ARBITRUM_ONE => arbitrum_endpoints(),
+        chain_id::AURORA => aurora_endpoints(),
         chain_id::AVALANCHE => avalanche_endpoints(),
         chain_id::BASE => base_endpoints(),
+        chain_id::BERACHAIN => berachain_endpoints(),
         chain_id::BLAST => blast_endpoints(),
         chain_id::BSC => bsc_endpoints(),
+        chain_id::CELO => celo_endpoints(),
+        chain_id::CRONOS => cronos_endpoints(),
         chain_id::ETHEREUM => ethereum_endpoints(),
         chain_id::FANTOM => fantom_endpoints(),
+        chain_id::FRAXTAL => fraxtal_endpoints(),
+        chain_id::FUSE => fuse_endpoints(),
+        chain_id::GNOSIS => gnosis_endpoints(),
+        chain_id::HARMONY => harmony_endpoints(),
         chain_id::HYPERLIQUID_EVM => hyperliquid_evm_endpoints(),
+        chain_id::IMMUTABLE_ZKEVM => immutable_zkevm_endpoints(),
+        chain_id::KAVA => kava_endpoints(),
+        chain_id::KLAYTN => klaytn_endpoints(),
         chain_id::LINEA => linea_endpoints(),
+        chain_id::LISK => lisk_endpoints(),
         chain_id::MANTA_PACIFIC => manta_pacific_endpoints(),
         chain_id::MANTLE => mantle_endpoints(),
+        chain_id::METIS => metis_endpoints(),
         chain_id::MODE => mode_endpoints(),
+        chain_id::MOONBEAM => moonbeam_endpoints(),
+        chain_id::OPBNB => opbnb_endpoints(),
         chain_id::OPTIMISM => optimism_endpoints(),
         chain_id::POLYGON => polygon_endpoints(),
         chain_id::POLYGON_ZKEVM => polygon_zkevm_endpoints(),
+        chain_id::ROOTSTOCK => rootstock_endpoints(),
         chain_id::SCROLL => scroll_endpoints(),
+        chain_id::SEI => sei_endpoints(),
+        chain_id::SONIC => sonic_endpoints(),
+        chain_id::TAIKO => taiko_endpoints(),
+        chain_id::WORLD_CHAIN => world_chain_endpoints(),
+        chain_id::ZETACHAIN => zetachain_endpoints(),
         chain_id::ZKSYNC_ERA => zksync_era_endpoints(),
         _ => vec![],
     }
@@ -59,20 +102,41 @@ pub fn all_chain_ids() -> Vec<u64> {
     vec![
         chain_id::ETHEREUM,
         chain_id::ARBITRUM_ONE,
+        chain_id::AURORA,
         chain_id::AVALANCHE,
         chain_id::BASE,
+        chain_id::BERACHAIN,
         chain_id::BLAST,
         chain_id::BSC,
+        chain_id::CELO,
+        chain_id::CRONOS,
         chain_id::FANTOM,
+        chain_id::FRAXTAL,
+        chain_id::FUSE,
+        chain_id::GNOSIS,
+        chain_id::HARMONY,
         chain_id::HYPERLIQUID_EVM,
+        chain_id::IMMUTABLE_ZKEVM,
+        chain_id::KAVA,
+        chain_id::KLAYTN,
         chain_id::LINEA,
+        chain_id::LISK,
         chain_id::MANTA_PACIFIC,
         chain_id::MANTLE,
+        chain_id::METIS,
         chain_id::MODE,
+        chain_id::MOONBEAM,
+        chain_id::OPBNB,
         chain_id::OPTIMISM,
         chain_id::POLYGON,
         chain_id::POLYGON_ZKEVM,
+        chain_id::ROOTSTOCK,
         chain_id::SCROLL,
+        chain_id::SEI,
+        chain_id::SONIC,
+        chain_id::TAIKO,
+        chain_id::WORLD_CHAIN,
+        chain_id::ZETACHAIN,
         chain_id::ZKSYNC_ERA,
     ]
 }
@@ -85,21 +149,42 @@ pub fn chain_name(chain_id: u64) -> &'static str {
         self::chain_id::SEPOLIA => "Sepolia",
         self::chain_id::ARBITRUM_ONE => "Arbitrum One",
         self::chain_id::ARBITRUM_SEPOLIA => "Arbitrum Sepolia",
+        self::chain_id::AURORA => "Aurora",
         self::chain_id::AVALANCHE => "Avalanche C-Chain",
         self::chain_id::BASE => "Base",
         self::chain_id::BASE_SEPOLIA => "Base Sepolia",
+        self::chain_id::BERACHAIN => "Berachain",
         self::chain_id::BLAST => "Blast",
         self::chain_id::BSC => "BNB Smart Chain",
+        self::chain_id::CELO => "Celo",
+        self::chain_id::CRONOS => "Cronos",
         self::chain_id::FANTOM => "Fantom Opera",
+        self::chain_id::FRAXTAL => "Fraxtal",
+        self::chain_id::FUSE => "Fuse",
+        self::chain_id::GNOSIS => "Gnosis",
+        self::chain_id::HARMONY => "Harmony",
         self::chain_id::HYPERLIQUID_EVM => "Hyperliquid EVM",
+        self::chain_id::IMMUTABLE_ZKEVM => "Immutable zkEVM",
+        self::chain_id::KAVA => "Kava",
+        self::chain_id::KLAYTN => "Klaytn",
         self::chain_id::LINEA => "Linea",
+        self::chain_id::LISK => "Lisk",
         self::chain_id::MANTA_PACIFIC => "Manta Pacific",
         self::chain_id::MANTLE => "Mantle",
+        self::chain_id::METIS => "Metis",
         self::chain_id::MODE => "Mode",
+        self::chain_id::MOONBEAM => "Moonbeam",
+        self::chain_id::OPBNB => "opBNB",
         self::chain_id::OPTIMISM => "Optimism",
         self::chain_id::POLYGON => "Polygon",
         self::chain_id::POLYGON_ZKEVM => "Polygon zkEVM",
+        self::chain_id::ROOTSTOCK => "Rootstock",
         self::chain_id::SCROLL => "Scroll",
+        self::chain_id::SEI => "Sei",
+        self::chain_id::SONIC => "Sonic",
+        self::chain_id::TAIKO => "Taiko",
+        self::chain_id::WORLD_CHAIN => "World Chain",
+        self::chain_id::ZETACHAIN => "ZetaChain",
         self::chain_id::ZKSYNC_ERA => "zkSync Era",
         _ => "Unknown",
     }
@@ -1212,6 +1297,417 @@ pub fn manta_pacific_endpoints() -> Vec<RpcEndpoint> {
     ]
 }
 
+// ============================================
+// New small EVM chains (21 chains, 68 endpoints)
+// ============================================
+
+/// Default endpoints for Gnosis (8 verified endpoints).
+pub fn gnosis_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.gnosischain.com")
+            .with_name("Gnosis Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://gnosis-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://1rpc.io/gnosis")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(54)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(55)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(56)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://rpc.gnosis.gateway.fm")
+            .with_name("Gateway.fm")
+            .with_priority(57)
+            .with_chain_id(chain_id::GNOSIS),
+    ]
+}
+
+/// Default endpoints for Celo (4 verified endpoints).
+pub fn celo_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://forno.celo.org")
+            .with_name("Celo Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::CELO),
+        RpcEndpoint::new("https://celo-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://celo-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::CELO),
+        RpcEndpoint::new("https://celo.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::CELO),
+        RpcEndpoint::new("https://1rpc.io/celo")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::CELO),
+    ]
+}
+
+/// Default endpoints for Moonbeam (5 verified endpoints).
+pub fn moonbeam_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.api.moonbeam.network")
+            .with_name("Moonbeam Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://moonbeam-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://1rpc.io/glmr")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(54)
+            .with_chain_id(chain_id::MOONBEAM),
+    ]
+}
+
+/// Default endpoints for Cronos (2 verified endpoints).
+pub fn cronos_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://evm.cronos.org")
+            .with_name("Cronos Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::CRONOS),
+        RpcEndpoint::new("https://cronos.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::CRONOS),
+    ]
+}
+
+/// Default endpoints for Aurora (3 verified endpoints).
+pub fn aurora_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://mainnet.aurora.dev")
+            .with_name("Aurora Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::AURORA),
+        RpcEndpoint::new("https://aurora.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::AURORA),
+        RpcEndpoint::new("https://1rpc.io/aurora")
+            .with_name("1RPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::AURORA),
+    ]
+}
+
+/// Default endpoints for Metis (4 verified endpoints).
+pub fn metis_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://andromeda.metis.io/?owner=1088")
+            .with_name("Metis Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::METIS),
+        RpcEndpoint::new("https://metis-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://metis-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::METIS),
+        RpcEndpoint::new("https://metis.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::METIS),
+        RpcEndpoint::new("https://metis-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(53)
+            .with_chain_id(chain_id::METIS),
+    ]
+}
+
+/// Default endpoints for Kava (3 verified endpoints).
+pub fn kava_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://evm.kava.io")
+            .with_name("Kava Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::KAVA),
+        RpcEndpoint::new("https://kava.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::KAVA),
+        RpcEndpoint::new("https://kava-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(52)
+            .with_chain_id(chain_id::KAVA),
+    ]
+}
+
+/// Default endpoints for Klaytn (3 verified endpoints).
+pub fn klaytn_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://public-en.node.kaia.io")
+            .with_name("Klaytn Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::KLAYTN),
+        RpcEndpoint::new("https://klaytn.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::KLAYTN),
+        RpcEndpoint::new("https://klaytn-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(52)
+            .with_chain_id(chain_id::KLAYTN),
+    ]
+}
+
+/// Default endpoints for Harmony (2 verified endpoints).
+pub fn harmony_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://api.harmony.one")
+            .with_name("Harmony Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::HARMONY),
+        RpcEndpoint::new("https://1rpc.io/one")
+            .with_name("1RPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::HARMONY),
+    ]
+}
+
+/// Default endpoints for Rootstock (2 verified endpoints).
+pub fn rootstock_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://public-node.rsk.co")
+            .with_name("Rootstock Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::ROOTSTOCK),
+        RpcEndpoint::new("https://rootstock.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::ROOTSTOCK),
+    ]
+}
+
+/// Default endpoints for Fuse (3 verified endpoints).
+pub fn fuse_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.fuse.io")
+            .with_name("Fuse Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::FUSE),
+        RpcEndpoint::new("https://fuse.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::FUSE),
+        RpcEndpoint::new("https://fuse-pokt.nodies.app")
+            .with_name("Nodies")
+            .with_priority(52)
+            .with_chain_id(chain_id::FUSE),
+    ]
+}
+
+/// Default endpoints for Sonic (6 verified endpoints).
+pub fn sonic_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.soniclabs.com")
+            .with_name("Sonic Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::SONIC),
+        RpcEndpoint::new("https://sonic-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://sonic-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::SONIC),
+        RpcEndpoint::new("https://sonic.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::SONIC),
+        RpcEndpoint::new("https://1rpc.io/sonic")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::SONIC),
+        RpcEndpoint::new("https://sonic.api.onfinality.io/public")
+            .with_name("OnFinality")
+            .with_priority(54)
+            .with_chain_id(chain_id::SONIC),
+        RpcEndpoint::new("https://sonic.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_priority(55)
+            .with_chain_id(chain_id::SONIC),
+    ]
+}
+
+/// Default endpoints for Berachain (3 verified endpoints).
+pub fn berachain_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.berachain.com")
+            .with_name("Berachain Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::BERACHAIN),
+        RpcEndpoint::new("https://berachain-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://berachain-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::BERACHAIN),
+        RpcEndpoint::new("https://berachain.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::BERACHAIN),
+    ]
+}
+
+/// Default endpoints for Taiko (3 verified endpoints).
+pub fn taiko_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.mainnet.taiko.xyz")
+            .with_name("Taiko Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::TAIKO),
+        RpcEndpoint::new("https://taiko-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://taiko-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::TAIKO),
+        RpcEndpoint::new("https://taiko.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::TAIKO),
+    ]
+}
+
+/// Default endpoints for Fraxtal (3 verified endpoints).
+pub fn fraxtal_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.frax.com")
+            .with_name("Fraxtal Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::FRAXTAL),
+        RpcEndpoint::new("https://fraxtal-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://fraxtal-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::FRAXTAL),
+        RpcEndpoint::new("https://fraxtal.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::FRAXTAL),
+    ]
+}
+
+/// Default endpoints for Sei (2 verified endpoints).
+pub fn sei_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://evm-rpc.sei-apis.com")
+            .with_name("Sei Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::SEI),
+        RpcEndpoint::new("https://sei.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::SEI),
+    ]
+}
+
+/// Default endpoints for World Chain (2 verified endpoints).
+pub fn world_chain_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://worldchain-mainnet.g.alchemy.com/public")
+            .with_name("Alchemy")
+            .with_priority(50)
+            .with_chain_id(chain_id::WORLD_CHAIN),
+        RpcEndpoint::new("https://worldchain.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::WORLD_CHAIN),
+    ]
+}
+
+/// Default endpoints for Immutable zkEVM (2 verified endpoints).
+pub fn immutable_zkevm_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.immutable.com")
+            .with_name("Immutable Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::IMMUTABLE_ZKEVM),
+        RpcEndpoint::new("https://immutable-zkevm.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::IMMUTABLE_ZKEVM),
+    ]
+}
+
+/// Default endpoints for opBNB (4 verified endpoints).
+pub fn opbnb_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://opbnb-mainnet-rpc.bnbchain.org")
+            .with_name("opBNB Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::OPBNB),
+        RpcEndpoint::new("https://opbnb-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://opbnb-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::OPBNB),
+        RpcEndpoint::new("https://opbnb.drpc.org")
+            .with_name("dRPC")
+            .with_priority(52)
+            .with_chain_id(chain_id::OPBNB),
+        RpcEndpoint::new("https://1rpc.io/opbnb")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::OPBNB),
+    ]
+}
+
+/// Default endpoints for ZetaChain (2 verified endpoints).
+pub fn zetachain_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://zetachain-evm.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(50)
+            .with_chain_id(chain_id::ZETACHAIN),
+        RpcEndpoint::new("https://zetachain-mainnet.g.allthatnode.com/archive/evm")
+            .with_name("AllThatNode")
+            .with_priority(51)
+            .with_chain_id(chain_id::ZETACHAIN),
+    ]
+}
+
+/// Default endpoints for Lisk (2 verified endpoints).
+pub fn lisk_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.api.lisk.com")
+            .with_name("Lisk Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::LISK),
+        RpcEndpoint::new("https://lisk.drpc.org")
+            .with_name("dRPC")
+            .with_priority(51)
+            .with_chain_id(chain_id::LISK),
+    ]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1352,6 +1848,7 @@ mod tests {
 
     #[test]
     fn test_default_endpoints() {
+        // Original chains
         assert!(!default_endpoints(chain_id::ARBITRUM_ONE).is_empty());
         assert!(!default_endpoints(chain_id::AVALANCHE).is_empty());
         assert!(!default_endpoints(chain_id::BASE).is_empty());
@@ -1369,6 +1866,28 @@ mod tests {
         assert!(!default_endpoints(chain_id::POLYGON_ZKEVM).is_empty());
         assert!(!default_endpoints(chain_id::SCROLL).is_empty());
         assert!(!default_endpoints(chain_id::ZKSYNC_ERA).is_empty());
+        // New chains
+        assert!(!default_endpoints(chain_id::AURORA).is_empty());
+        assert!(!default_endpoints(chain_id::BERACHAIN).is_empty());
+        assert!(!default_endpoints(chain_id::CELO).is_empty());
+        assert!(!default_endpoints(chain_id::CRONOS).is_empty());
+        assert!(!default_endpoints(chain_id::FRAXTAL).is_empty());
+        assert!(!default_endpoints(chain_id::FUSE).is_empty());
+        assert!(!default_endpoints(chain_id::GNOSIS).is_empty());
+        assert!(!default_endpoints(chain_id::HARMONY).is_empty());
+        assert!(!default_endpoints(chain_id::IMMUTABLE_ZKEVM).is_empty());
+        assert!(!default_endpoints(chain_id::KAVA).is_empty());
+        assert!(!default_endpoints(chain_id::KLAYTN).is_empty());
+        assert!(!default_endpoints(chain_id::LISK).is_empty());
+        assert!(!default_endpoints(chain_id::METIS).is_empty());
+        assert!(!default_endpoints(chain_id::MOONBEAM).is_empty());
+        assert!(!default_endpoints(chain_id::OPBNB).is_empty());
+        assert!(!default_endpoints(chain_id::ROOTSTOCK).is_empty());
+        assert!(!default_endpoints(chain_id::SEI).is_empty());
+        assert!(!default_endpoints(chain_id::SONIC).is_empty());
+        assert!(!default_endpoints(chain_id::TAIKO).is_empty());
+        assert!(!default_endpoints(chain_id::WORLD_CHAIN).is_empty());
+        assert!(!default_endpoints(chain_id::ZETACHAIN).is_empty());
         assert!(default_endpoints(99999).is_empty()); // Unknown chain
     }
 
@@ -1379,13 +1898,14 @@ mod tests {
             .map(|&id| default_endpoints(id).len())
             .sum();
 
-        assert!(total >= 207, "Should have at least 207 total endpoints, got {}", total);
+        assert!(total >= 276, "Should have at least 276 total endpoints, got {}", total);
     }
 
     #[test]
     fn test_all_chain_ids() {
         let ids = all_chain_ids();
-        assert!(ids.len() >= 17, "Should have at least 17 chains");
+        assert!(ids.len() >= 38, "Should have at least 38 chains");
+        // Original chains
         assert!(ids.contains(&chain_id::ETHEREUM));
         assert!(ids.contains(&chain_id::FANTOM));
         assert!(ids.contains(&chain_id::ZKSYNC_ERA));
@@ -1397,10 +1917,19 @@ mod tests {
         assert!(ids.contains(&chain_id::MANTLE));
         assert!(ids.contains(&chain_id::MODE));
         assert!(ids.contains(&chain_id::MANTA_PACIFIC));
+        // New chains
+        assert!(ids.contains(&chain_id::GNOSIS));
+        assert!(ids.contains(&chain_id::CELO));
+        assert!(ids.contains(&chain_id::MOONBEAM));
+        assert!(ids.contains(&chain_id::SONIC));
+        assert!(ids.contains(&chain_id::BERACHAIN));
+        assert!(ids.contains(&chain_id::TAIKO));
+        assert!(ids.contains(&chain_id::OPBNB));
     }
 
     #[test]
     fn test_chain_name() {
+        // Original chains
         assert_eq!(chain_name(chain_id::ETHEREUM), "Ethereum");
         assert_eq!(chain_name(chain_id::FANTOM), "Fantom Opera");
         assert_eq!(chain_name(chain_id::ZKSYNC_ERA), "zkSync Era");
@@ -1412,6 +1941,14 @@ mod tests {
         assert_eq!(chain_name(chain_id::MANTLE), "Mantle");
         assert_eq!(chain_name(chain_id::MODE), "Mode");
         assert_eq!(chain_name(chain_id::MANTA_PACIFIC), "Manta Pacific");
+        // New chains
+        assert_eq!(chain_name(chain_id::GNOSIS), "Gnosis");
+        assert_eq!(chain_name(chain_id::CELO), "Celo");
+        assert_eq!(chain_name(chain_id::MOONBEAM), "Moonbeam");
+        assert_eq!(chain_name(chain_id::SONIC), "Sonic");
+        assert_eq!(chain_name(chain_id::BERACHAIN), "Berachain");
+        assert_eq!(chain_name(chain_id::TAIKO), "Taiko");
+        assert_eq!(chain_name(chain_id::OPBNB), "opBNB");
         assert_eq!(chain_name(99999), "Unknown");
     }
 
