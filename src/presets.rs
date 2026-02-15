@@ -921,6 +921,7 @@ pub fn fantom_endpoints() -> Vec<RpcEndpoint> {
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
         RpcEndpoint::new("https://fantom.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://fantom.drpc.org")
             .with_priority(56)
             .with_chain_id(chain_id::FANTOM)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(100), ..Default::default() }),
@@ -1026,6 +1027,7 @@ pub fn hyperliquid_evm_endpoints() -> Vec<RpcEndpoint> {
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
         RpcEndpoint::new("https://hyperliquid.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://hyperliquid.drpc.org")
             .with_priority(52)
             .with_chain_id(chain_id::HYPERLIQUID_EVM)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
@@ -1104,6 +1106,7 @@ pub fn polygon_zkevm_endpoints() -> Vec<RpcEndpoint> {
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(10000), ..Default::default() }),
         RpcEndpoint::new("https://polygon-zkevm.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://polygon-zkevm.drpc.org")
             .with_priority(53)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(5000), ..Default::default() }),
@@ -1251,6 +1254,7 @@ pub fn mode_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::MODE),
         RpcEndpoint::new("https://mode.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://mode.drpc.org")
             .with_priority(52)
             .with_chain_id(chain_id::MODE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
@@ -1399,6 +1403,7 @@ pub fn cronos_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::CRONOS),
         RpcEndpoint::new("https://cronos.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://cronos.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::CRONOS),
     ]
@@ -1413,6 +1418,7 @@ pub fn aurora_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::AURORA),
         RpcEndpoint::new("https://aurora.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://aurora.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::AURORA),
         RpcEndpoint::new("https://1rpc.io/aurora")
@@ -1454,6 +1460,7 @@ pub fn kava_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::KAVA),
         RpcEndpoint::new("https://kava.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://kava.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::KAVA),
         RpcEndpoint::new("https://kava-pokt.nodies.app")
@@ -1472,6 +1479,7 @@ pub fn klaytn_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::KLAYTN),
         RpcEndpoint::new("https://klaytn.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://klaytn.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::KLAYTN),
         RpcEndpoint::new("https://klaytn-pokt.nodies.app")
@@ -1486,6 +1494,7 @@ pub fn harmony_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://api.harmony.one")
             .with_name("Harmony Official")
+            .with_ws_url("wss://ws.s0.t.hmny.io")
             .with_priority(50)
             .with_chain_id(chain_id::HARMONY),
         RpcEndpoint::new("https://1rpc.io/one")
@@ -1504,6 +1513,7 @@ pub fn rootstock_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::ROOTSTOCK),
         RpcEndpoint::new("https://rootstock.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://rootstock.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::ROOTSTOCK),
     ]
@@ -1518,6 +1528,7 @@ pub fn fuse_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::FUSE),
         RpcEndpoint::new("https://fuse.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://fuse.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::FUSE),
         RpcEndpoint::new("https://fuse-pokt.nodies.app")
@@ -1624,6 +1635,7 @@ pub fn sei_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::SEI),
         RpcEndpoint::new("https://sei.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://sei.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::SEI),
     ]
@@ -1638,6 +1650,7 @@ pub fn world_chain_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::WORLD_CHAIN),
         RpcEndpoint::new("https://worldchain.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://worldchain.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::WORLD_CHAIN),
     ]
@@ -1652,6 +1665,7 @@ pub fn immutable_zkevm_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::IMMUTABLE_ZKEVM),
         RpcEndpoint::new("https://immutable-zkevm.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://immutable-zkevm.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::IMMUTABLE_ZKEVM),
     ]
@@ -1685,6 +1699,7 @@ pub fn zetachain_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://zetachain-evm.blockpi.network/v1/rpc/public")
             .with_name("BlockPI")
+            .with_ws_url("wss://zetachain-evm.blockpi.network/v1/ws/public")
             .with_priority(50)
             .with_chain_id(chain_id::ZETACHAIN),
         RpcEndpoint::new("https://zetachain-mainnet.g.allthatnode.com/archive/evm")
@@ -1703,6 +1718,7 @@ pub fn lisk_endpoints() -> Vec<RpcEndpoint> {
             .with_chain_id(chain_id::LISK),
         RpcEndpoint::new("https://lisk.drpc.org")
             .with_name("dRPC")
+            .with_ws_url("wss://lisk.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::LISK),
     ]
@@ -1962,6 +1978,38 @@ mod tests {
                 chain_name(id),
                 id
             );
+        }
+    }
+
+    #[test]
+    fn test_all_chains_have_ws_url() {
+        for &id in &all_chain_ids() {
+            let endpoints = default_endpoints(id);
+            let has_ws = endpoints.iter().any(|e| e.ws_url.is_some());
+            assert!(
+                has_ws,
+                "Chain {} ({}) should have at least one endpoint with ws_url",
+                chain_name(id),
+                id
+            );
+        }
+    }
+
+    #[test]
+    fn test_ws_urls_are_valid() {
+        for &id in &all_chain_ids() {
+            let endpoints = default_endpoints(id);
+            for ep in &endpoints {
+                if let Some(ws_url) = &ep.ws_url {
+                    assert!(
+                        ws_url.starts_with("wss://"),
+                        "WS URL for {} ({}) should start with wss://, got: {}",
+                        ep.name,
+                        chain_name(id),
+                        ws_url
+                    );
+                }
+            }
         }
     }
 }

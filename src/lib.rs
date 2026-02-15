@@ -56,6 +56,8 @@ pub mod pool;
 pub mod presets;
 pub mod strategies;
 pub mod tiered;
+#[cfg(feature = "ws")]
+pub mod ws;
 
 pub use endpoint::{EndpointCapabilities, EndpointGrade, EndpointStats, RpcEndpoint};
 pub use error::RpcPoolError;
@@ -68,3 +70,5 @@ pub use strategies::{
 pub use tiered::{
     EndpointTier, RequestPriority, TieredEndpoint, TieredPool, TieredPoolBuilder, TieredPoolConfig,
 };
+#[cfg(feature = "ws")]
+pub use ws::{WsPool, WsPoolConfig};
