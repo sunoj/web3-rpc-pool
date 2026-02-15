@@ -36,6 +36,14 @@ pub enum RpcPoolError {
     /// Pool has been shut down.
     #[error("RPC pool has been shut down")]
     PoolShutdown,
+
+    /// No WebSocket-capable endpoints configured.
+    #[error("No WebSocket-capable endpoints configured")]
+    NoWebSocketEndpoints,
+
+    /// WebSocket connection or subscription error.
+    #[error("WebSocket error: {0}")]
+    WebSocketError(String),
 }
 
 impl From<url::ParseError> for RpcPoolError {
