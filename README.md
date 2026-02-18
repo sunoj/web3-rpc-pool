@@ -17,11 +17,13 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 - **Built-in presets**: Default endpoints for popular chains (Arbitrum, Base, Ethereum, etc.)
 
+- **WebSocket subscriptions**: Stream-based `WsPool` with automatic reconnection and failover
+
 ## Installation
 
 ```toml
 [dependencies]
-web3-rpc-pool = "0.4"
+web3-rpc-pool = "0.5"
 ```
 
 ## Quick Start
@@ -140,28 +142,68 @@ for endpoint in &metrics.endpoints {
 }
 ```
 
+## WebSocket Subscriptions
+
+```rust
+use web3_rpc_pool::ws::WsPool;
+use web3_rpc_pool::presets;
+use futures_util::StreamExt;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let pool = WsPool::new(presets::ethereum_endpoints())?;
+
+    let mut stream = pool.subscribe_new_heads().await?;
+    while let Some(header) = stream.next().await {
+        println!("New block: {:?}", header.number);
+    }
+    Ok(())
+}
+```
+
 ## Supported Chains
 
-Built-in presets with 213+ verified public RPC endpoints across 17 chains:
+Built-in presets with 276 verified public RPC endpoints (43 WSS) across 38 chains:
 
 | Chain | Chain ID | Endpoints | Preset Function |
 |-------|----------|-----------|-----------------|
-| Arbitrum One | 42161 | 19 | `arbitrum_endpoints()` |
+| Arbitrum One | 42161 | 20 | `arbitrum_endpoints()` |
+| Aurora | 1313161554 | 3 | `aurora_endpoints()` |
 | Avalanche C-Chain | 43114 | 8 | `avalanche_endpoints()` |
-| Base | 8453 | 15 | `base_endpoints()` |
-| Blast | 81457 | 11 | `blast_endpoints()` |
-| BSC/BNB Chain | 56 | 17 | `bsc_endpoints()` |
-| Ethereum Mainnet | 1 | 22 | `ethereum_endpoints()` |
-| Fantom | 250 | 7 | `fantom_endpoints()` |
+| Base | 8453 | 21 | `base_endpoints()` |
+| Berachain | 80094 | 3 | `berachain_endpoints()` |
+| Blast | 81457 | 9 | `blast_endpoints()` |
+| BSC/BNB Chain | 56 | 25 | `bsc_endpoints()` |
+| Celo | 42220 | 4 | `celo_endpoints()` |
+| Cronos | 25 | 2 | `cronos_endpoints()` |
+| Ethereum Mainnet | 1 | 32 | `ethereum_endpoints()` |
+| Fantom | 250 | 8 | `fantom_endpoints()` |
+| Fraxtal | 252 | 3 | `fraxtal_endpoints()` |
+| Fuse | 122 | 3 | `fuse_endpoints()` |
+| Gnosis | 100 | 8 | `gnosis_endpoints()` |
+| Harmony | 1666600000 | 2 | `harmony_endpoints()` |
 | Hyperliquid EVM | 999 | 3 | `hyperliquid_evm_endpoints()` |
-| Linea | 59144 | 8 | `linea_endpoints()` |
-| Manta Pacific | 169 | 7 | `manta_pacific_endpoints()` |
-| Mantle | 5000 | 12 | `mantle_endpoints()` |
+| Immutable zkEVM | 13371 | 2 | `immutable_zkevm_endpoints()` |
+| Kava | 2222 | 3 | `kava_endpoints()` |
+| Klaytn | 8217 | 3 | `klaytn_endpoints()` |
+| Linea | 59144 | 6 | `linea_endpoints()` |
+| Lisk | 1135 | 2 | `lisk_endpoints()` |
+| Manta Pacific | 169 | 5 | `manta_pacific_endpoints()` |
+| Mantle | 5000 | 11 | `mantle_endpoints()` |
+| Metis | 1088 | 4 | `metis_endpoints()` |
 | Mode | 34443 | 5 | `mode_endpoints()` |
-| Optimism | 10 | 8 | `optimism_endpoints()` |
-| Polygon | 137 | 9 | `polygon_endpoints()` |
-| Polygon zkEVM | 1101 | 8 | `polygon_zkevm_endpoints()` |
-| Scroll | 534352 | 12 | `scroll_endpoints()` |
+| Moonbeam | 1284 | 5 | `moonbeam_endpoints()` |
+| opBNB | 204 | 4 | `opbnb_endpoints()` |
+| Optimism | 10 | 16 | `optimism_endpoints()` |
+| Polygon | 137 | 14 | `polygon_endpoints()` |
+| Polygon zkEVM | 1101 | 6 | `polygon_zkevm_endpoints()` |
+| Rootstock | 30 | 2 | `rootstock_endpoints()` |
+| Scroll | 534352 | 11 | `scroll_endpoints()` |
+| Sei | 1329 | 2 | `sei_endpoints()` |
+| Sonic | 146 | 6 | `sonic_endpoints()` |
+| Taiko | 167000 | 3 | `taiko_endpoints()` |
+| World Chain | 480 | 2 | `world_chain_endpoints()` |
+| ZetaChain | 7000 | 2 | `zetachain_endpoints()` |
 | zkSync Era | 324 | 7 | `zksync_era_endpoints()` |
 
 ```rust

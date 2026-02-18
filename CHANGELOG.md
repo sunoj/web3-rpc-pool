@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-02-18
+
+### Added
+
+- **WebSocket Subscription Support**: New `WsPool` module with automatic failover across WebSocket endpoints
+  - `subscribe_new_heads()`, `subscribe_pending_transactions()`, `subscribe_logs()` with stream-based API
+  - Automatic reconnection with exponential backoff on connection drops
+  - 43 WSS endpoints across all 38 chains (dRPC, PublicNode, BlockPI, official providers)
+  - New `ws` feature flag (enabled by default)
+
+- **21 New EVM Chains**: Expanded from 17 to 38 supported chains with 68 new endpoints
+  - Gnosis (8), Sonic (6), Moonbeam (5), Celo (4), Metis (4), opBNB (4), Aurora (3), Berachain (3), Fraxtal (3), Fuse (3), Kava (3), Klaytn (3), Taiko (3), Cronos (2), Harmony (2), Immutable zkEVM (2), Lisk (2), Rootstock (2), Sei (2), World Chain (2), ZetaChain (2)
+
+- **27 New Verified Endpoints** for existing chains from GitHub and aggregator sources
+  - Ethereum +5, zkSync Era +3, Scroll +3, Mantle +3, BSC +2, Linea +2, Blast +2, and more
+
+### Changed
+
+- **Slimmed Dependencies**: Removed 4 unused crates (futures, async-trait, dashmap, tokio-util), reduced alloy features from `full` to minimal set
+  - Total crates: 339 → 272 (-20%), clean build: 45.3s → 39.8s (-12%)
+  - Replaced `DashMap` with `RwLock<HashMap>`, `CancellationToken` with `AtomicBool+Notify`
+
+- **Major Endpoint Audit**: Live-tested all endpoints, removed 83 dead, added 23 new verified
+  - Removed: Ankr (requires API key), OmniaTech (521 errors), BlastAPI/BlockPI (discontinued/TLS), and others
+  - Net result: 213 → 276 endpoints, all verified reachable
+
 ## [0.4.0] - 2026-02-07
 
 ### Added
