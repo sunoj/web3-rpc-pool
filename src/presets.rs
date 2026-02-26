@@ -50,6 +50,15 @@ pub mod chain_id {
     pub const OPBNB: u64 = 204;
     pub const ZETACHAIN: u64 = 7000;
     pub const LISK: u64 = 1135;
+    // New chains from blockchain protocol repos
+    pub const UNICHAIN: u64 = 130;
+    pub const SONEIUM: u64 = 1868;
+    pub const ABSTRACT: u64 = 2741;
+    pub const INK: u64 = 57073;
+    pub const MORPH: u64 = 2818;
+    pub const BOB: u64 = 60808;
+    pub const GRAVITY: u64 = 1625;
+    pub const STORY: u64 = 1514;
 }
 
 /// Get default endpoints for a chain by chain ID.
@@ -93,6 +102,15 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
         chain_id::WORLD_CHAIN => world_chain_endpoints(),
         chain_id::ZETACHAIN => zetachain_endpoints(),
         chain_id::ZKSYNC_ERA => zksync_era_endpoints(),
+        // New chains from blockchain protocol repos
+        chain_id::UNICHAIN => unichain_endpoints(),
+        chain_id::SONEIUM => soneium_endpoints(),
+        chain_id::ABSTRACT => abstract_chain_endpoints(),
+        chain_id::INK => ink_endpoints(),
+        chain_id::MORPH => morph_endpoints(),
+        chain_id::BOB => bob_endpoints(),
+        chain_id::GRAVITY => gravity_endpoints(),
+        chain_id::STORY => story_endpoints(),
         _ => vec![],
     }
 }
@@ -138,6 +156,15 @@ pub fn all_chain_ids() -> Vec<u64> {
         chain_id::WORLD_CHAIN,
         chain_id::ZETACHAIN,
         chain_id::ZKSYNC_ERA,
+        // New chains from blockchain protocol repos
+        chain_id::UNICHAIN,
+        chain_id::SONEIUM,
+        chain_id::ABSTRACT,
+        chain_id::INK,
+        chain_id::MORPH,
+        chain_id::BOB,
+        chain_id::GRAVITY,
+        chain_id::STORY,
     ]
 }
 
@@ -186,11 +213,20 @@ pub fn chain_name(chain_id: u64) -> &'static str {
         self::chain_id::WORLD_CHAIN => "World Chain",
         self::chain_id::ZETACHAIN => "ZetaChain",
         self::chain_id::ZKSYNC_ERA => "zkSync Era",
+        // New chains from blockchain protocol repos
+        self::chain_id::UNICHAIN => "Unichain",
+        self::chain_id::SONEIUM => "Soneium",
+        self::chain_id::ABSTRACT => "Abstract",
+        self::chain_id::INK => "Ink",
+        self::chain_id::MORPH => "Morph",
+        self::chain_id::BOB => "BOB",
+        self::chain_id::GRAVITY => "Gravity",
+        self::chain_id::STORY => "Story",
         _ => "Unknown",
     }
 }
 
-/// Default endpoints for Ethereum Mainnet (34 verified endpoints).
+/// Default endpoints for Ethereum Mainnet.
 pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
     vec![
         RpcEndpoint::new("https://ethereum-rpc.publicnode.com")
@@ -351,6 +387,31 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Nodies Public")
             .with_priority(85)
             .with_chain_id(chain_id::ETHEREUM),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://cloudflare-eth.com")
+            .with_name("Cloudflare")
+            .with_priority(86)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.ankr.com/eth")
+            .with_name("Ankr")
+            .with_priority(87)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/eth/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(88)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.blocknative.com/boost")
+            .with_name("Blocknative")
+            .with_priority(89)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://api.securerpc.com/v1")
+            .with_name("SecureRPC")
+            .with_priority(90)
+            .with_chain_id(chain_id::ETHEREUM),
+        RpcEndpoint::new("https://rpc.payload.de")
+            .with_name("Payload")
+            .with_priority(91)
+            .with_chain_id(chain_id::ETHEREUM),
     ]
 }
 
@@ -458,6 +519,19 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Lava")
             .with_priority(75)
             .with_chain_id(chain_id::ARBITRUM_ONE),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/arbitrum")
+            .with_name("Ankr")
+            .with_priority(76)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/arbitrum/one/public")
+            .with_name("Omnia")
+            .with_priority(77)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
+        RpcEndpoint::new("https://arbitrum.llamarpc.com")
+            .with_name("LlamaNodes")
+            .with_priority(78)
+            .with_chain_id(chain_id::ARBITRUM_ONE),
     ]
 }
 
@@ -564,6 +638,19 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_name("LeoRPC")
             .with_priority(76)
             .with_chain_id(chain_id::BASE),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/base")
+            .with_name("Ankr")
+            .with_priority(77)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/base/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(78)
+            .with_chain_id(chain_id::BASE),
+        RpcEndpoint::new("https://rpc.notadegen.com/base")
+            .with_name("NotADegen")
+            .with_priority(79)
+            .with_chain_id(chain_id::BASE),
     ]
 }
 
@@ -644,6 +731,27 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://op.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(74)
+            .with_chain_id(chain_id::OPTIMISM),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/optimism")
+            .with_name("Ankr")
+            .with_priority(75)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://optimism.llamarpc.com")
+            .with_name("LlamaNodes")
+            .with_priority(76)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://optimism.meowrpc.com")
+            .with_name("MeowRPC")
+            .with_priority(77)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://optimism-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(78)
+            .with_chain_id(chain_id::OPTIMISM),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/op/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(79)
             .with_chain_id(chain_id::OPTIMISM),
     ]
 }
@@ -778,6 +886,19 @@ pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Pocket Network")
             .with_priority(76)
             .with_chain_id(chain_id::BSC),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/bsc")
+            .with_name("Ankr")
+            .with_priority(77)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://bsc-dataseed-public.bnbchain.org")
+            .with_name("BNB Chain Public")
+            .with_priority(78)
+            .with_chain_id(chain_id::BSC),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/bsc/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(79)
+            .with_chain_id(chain_id::BSC),
     ]
 }
 
@@ -820,6 +941,19 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
             .with_priority(56)
             .with_chain_id(chain_id::AVALANCHE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/avalanche")
+            .with_name("Ankr")
+            .with_priority(57)
+            .with_chain_id(chain_id::AVALANCHE),
+        RpcEndpoint::new("https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc")
+            .with_name("BlastAPI")
+            .with_priority(58)
+            .with_chain_id(chain_id::AVALANCHE),
+        RpcEndpoint::new("https://avalanche.public-rpc.com")
+            .with_name("Public RPC")
+            .with_priority(59)
+            .with_chain_id(chain_id::AVALANCHE),
     ]
 }
 
@@ -893,6 +1027,27 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Pocket Network")
             .with_priority(71)
             .with_chain_id(chain_id::POLYGON),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/polygon")
+            .with_name("Ankr")
+            .with_priority(72)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon.llamarpc.com")
+            .with_name("LlamaNodes")
+            .with_priority(73)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon.meowrpc.com")
+            .with_name("MeowRPC")
+            .with_priority(74)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/matic/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(75)
+            .with_chain_id(chain_id::POLYGON),
+        RpcEndpoint::new("https://polygon-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(76)
+            .with_chain_id(chain_id::POLYGON),
     ]
 }
 
@@ -939,6 +1094,28 @@ pub fn fantom_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Stakely")
             .with_priority(62)
             .with_chain_id(chain_id::FANTOM),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://fantom-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://fantom-rpc.publicnode.com")
+            .with_priority(63)
+            .with_chain_id(chain_id::FANTOM),
+        RpcEndpoint::new("https://rpc.ankr.com/fantom")
+            .with_name("Ankr")
+            .with_priority(64)
+            .with_chain_id(chain_id::FANTOM),
+        RpcEndpoint::new("https://rpc.ftm.tools")
+            .with_name("FTM Tools")
+            .with_priority(65)
+            .with_chain_id(chain_id::FANTOM),
+        RpcEndpoint::new("https://rpcapi.fantom.network")
+            .with_name("Fantom RPC API")
+            .with_priority(66)
+            .with_chain_id(chain_id::FANTOM),
+        RpcEndpoint::new("https://fantom-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(67)
+            .with_chain_id(chain_id::FANTOM),
     ]
 }
 
@@ -978,6 +1155,20 @@ pub fn zksync_era_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Pocket Network")
             .with_priority(57)
             .with_chain_id(chain_id::ZKSYNC_ERA),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://zksync.meowrpc.com")
+            .with_name("MeowRPC")
+            .with_priority(58)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/zksync-era/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(59)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
+        RpcEndpoint::new("https://zksync-era-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://zksync-era-rpc.publicnode.com")
+            .with_priority(60)
+            .with_chain_id(chain_id::ZKSYNC_ERA),
     ]
 }
 
@@ -1013,6 +1204,15 @@ pub fn linea_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://linea.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(55)
+            .with_chain_id(chain_id::LINEA),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/linea")
+            .with_name("Ankr")
+            .with_priority(56)
+            .with_chain_id(chain_id::LINEA),
+        RpcEndpoint::new("https://linea.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(57)
             .with_chain_id(chain_id::LINEA),
     ]
 }
@@ -1092,6 +1292,23 @@ pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://rpc.sentio.xyz/scroll")
             .with_name("Sentio")
             .with_priority(63)
+            .with_chain_id(chain_id::SCROLL),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/scroll")
+            .with_name("Ankr")
+            .with_priority(64)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://scroll-mainnet.chainstacklabs.com")
+            .with_name("Chainstack")
+            .with_priority(65)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://scroll-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(66)
+            .with_chain_id(chain_id::SCROLL),
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/scroll/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(67)
             .with_chain_id(chain_id::SCROLL),
     ]
 }
@@ -1178,6 +1395,23 @@ pub fn blast_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://blast.leorpc.com/?api_key=FREE")
             .with_name("LeoRPC")
             .with_priority(62)
+            .with_chain_id(chain_id::BLAST),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/blast")
+            .with_name("Ankr")
+            .with_priority(63)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://1rpc.io/blast")
+            .with_name("1RPC")
+            .with_priority(64)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://blastl2-mainnet.public.blastapi.io")
+            .with_name("BlastAPI L2")
+            .with_priority(65)
+            .with_chain_id(chain_id::BLAST),
+        RpcEndpoint::new("https://blast.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(66)
             .with_chain_id(chain_id::BLAST),
     ]
 }
@@ -1341,6 +1575,23 @@ pub fn gnosis_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Gateway.fm")
             .with_priority(57)
             .with_chain_id(chain_id::GNOSIS),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/gnosis")
+            .with_name("Ankr")
+            .with_priority(58)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(59)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://gnosis.blockpi.network/v1/rpc/public")
+            .with_name("BlockPI")
+            .with_priority(60)
+            .with_chain_id(chain_id::GNOSIS),
+        RpcEndpoint::new("https://0xrpc.io/gno")
+            .with_name("0xRPC")
+            .with_priority(61)
+            .with_chain_id(chain_id::GNOSIS),
     ]
 }
 
@@ -1363,6 +1614,11 @@ pub fn celo_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://1rpc.io/celo")
             .with_name("1RPC")
             .with_priority(53)
+            .with_chain_id(chain_id::CELO),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/celo")
+            .with_name("Ankr")
+            .with_priority(54)
             .with_chain_id(chain_id::CELO),
     ]
 }
@@ -1391,6 +1647,23 @@ pub fn moonbeam_endpoints() -> Vec<RpcEndpoint> {
             .with_name("OnFinality")
             .with_priority(54)
             .with_chain_id(chain_id::MOONBEAM),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/moonbeam")
+            .with_name("Ankr")
+            .with_priority(55)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam.unitedbloc.com")
+            .with_name("UnitedBloc")
+            .with_priority(56)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(57)
+            .with_chain_id(chain_id::MOONBEAM),
+        RpcEndpoint::new("https://moonbeam-rpc.dwellir.com")
+            .with_name("Dwellir")
+            .with_priority(58)
+            .with_chain_id(chain_id::MOONBEAM),
     ]
 }
 
@@ -1405,6 +1678,16 @@ pub fn cronos_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_ws_url("wss://cronos.drpc.org")
             .with_priority(51)
+            .with_chain_id(chain_id::CRONOS),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://cronos-evm-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://cronos-evm-rpc.publicnode.com")
+            .with_priority(52)
+            .with_chain_id(chain_id::CRONOS),
+        RpcEndpoint::new("https://1rpc.io/cro")
+            .with_name("1RPC")
+            .with_priority(53)
             .with_chain_id(chain_id::CRONOS),
     ]
 }
@@ -1424,6 +1707,11 @@ pub fn aurora_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://1rpc.io/aurora")
             .with_name("1RPC")
             .with_priority(52)
+            .with_chain_id(chain_id::AURORA),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://endpoints.omniatech.io/v1/aurora/mainnet/public")
+            .with_name("Omnia")
+            .with_priority(53)
             .with_chain_id(chain_id::AURORA),
     ]
 }
@@ -1467,6 +1755,20 @@ pub fn kava_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Nodies")
             .with_priority(52)
             .with_chain_id(chain_id::KAVA),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://kava-evm-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://kava-evm-rpc.publicnode.com")
+            .with_priority(53)
+            .with_chain_id(chain_id::KAVA),
+        RpcEndpoint::new("https://rpc.ankr.com/kava_evm")
+            .with_name("Ankr")
+            .with_priority(54)
+            .with_chain_id(chain_id::KAVA),
+        RpcEndpoint::new("https://evm.kava-rpc.com")
+            .with_name("Kava RPC")
+            .with_priority(55)
+            .with_chain_id(chain_id::KAVA),
     ]
 }
 
@@ -1501,6 +1803,20 @@ pub fn harmony_endpoints() -> Vec<RpcEndpoint> {
             .with_name("1RPC")
             .with_priority(51)
             .with_chain_id(chain_id::HARMONY),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://api.s0.t.hmny.io")
+            .with_name("Harmony S0")
+            .with_priority(52)
+            .with_chain_id(chain_id::HARMONY),
+        RpcEndpoint::new("https://harmony-0.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://harmony-0.drpc.org")
+            .with_priority(53)
+            .with_chain_id(chain_id::HARMONY),
+        RpcEndpoint::new("https://rpc.ankr.com/harmony")
+            .with_name("Ankr")
+            .with_priority(54)
+            .with_chain_id(chain_id::HARMONY),
     ]
 }
 
@@ -1515,6 +1831,11 @@ pub fn rootstock_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_ws_url("wss://rootstock.drpc.org")
             .with_priority(51)
+            .with_chain_id(chain_id::ROOTSTOCK),
+        // Phase 4: endpoints from blockchain protocol repos
+        RpcEndpoint::new("https://mycrypto.rsk.co")
+            .with_name("MyCrypto RSK")
+            .with_priority(52)
             .with_chain_id(chain_id::ROOTSTOCK),
     ]
 }
@@ -1585,6 +1906,16 @@ pub fn berachain_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_priority(52)
             .with_chain_id(chain_id::BERACHAIN),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.berachain-apis.com")
+            .with_name("Berachain APIs")
+            .with_ws_url("wss://rpc.berachain-apis.com")
+            .with_priority(53)
+            .with_chain_id(chain_id::BERACHAIN),
+        RpcEndpoint::new("https://1rpc.io/berachain")
+            .with_name("1RPC")
+            .with_priority(54)
+            .with_chain_id(chain_id::BERACHAIN),
     ]
 }
 
@@ -1603,6 +1934,15 @@ pub fn taiko_endpoints() -> Vec<RpcEndpoint> {
         RpcEndpoint::new("https://taiko.drpc.org")
             .with_name("dRPC")
             .with_priority(52)
+            .with_chain_id(chain_id::TAIKO),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://rpc.ankr.com/taiko")
+            .with_name("Ankr")
+            .with_priority(53)
+            .with_chain_id(chain_id::TAIKO),
+        RpcEndpoint::new("https://1rpc.io/taiko")
+            .with_name("1RPC")
+            .with_priority(54)
             .with_chain_id(chain_id::TAIKO),
     ]
 }
@@ -1638,6 +1978,12 @@ pub fn sei_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://sei.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::SEI),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://sei-evm-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://sei-evm-rpc.publicnode.com")
+            .with_priority(52)
+            .with_chain_id(chain_id::SEI),
     ]
 }
 
@@ -1652,6 +1998,16 @@ pub fn world_chain_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_ws_url("wss://worldchain.drpc.org")
             .with_priority(51)
+            .with_chain_id(chain_id::WORLD_CHAIN),
+        // Phase 4: endpoints from blockchain protocol repos
+        RpcEndpoint::new("https://480.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(52)
+            .with_chain_id(chain_id::WORLD_CHAIN),
+        RpcEndpoint::new("https://worldchain-mainnet.gateway.tenderly.co")
+            .with_name("Tenderly")
+            .with_ws_url("wss://worldchain-mainnet.gateway.tenderly.co")
+            .with_priority(53)
             .with_chain_id(chain_id::WORLD_CHAIN),
     ]
 }
@@ -1706,6 +2062,20 @@ pub fn zetachain_endpoints() -> Vec<RpcEndpoint> {
             .with_name("AllThatNode")
             .with_priority(51)
             .with_chain_id(chain_id::ZETACHAIN),
+        // Phase 4: endpoints from blockchain protocol repos and aggregators
+        RpcEndpoint::new("https://zeta-chain.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://zeta-chain.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::ZETACHAIN),
+        RpcEndpoint::new("https://zetachain-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_priority(53)
+            .with_chain_id(chain_id::ZETACHAIN),
+        RpcEndpoint::new("https://7000.rpc.thirdweb.com")
+            .with_name("thirdweb")
+            .with_priority(54)
+            .with_chain_id(chain_id::ZETACHAIN),
     ]
 }
 
@@ -1721,6 +2091,160 @@ pub fn lisk_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://lisk.drpc.org")
             .with_priority(51)
             .with_chain_id(chain_id::LISK),
+    ]
+}
+
+// ============================================
+// New chains from blockchain protocol GitHub repos
+// ============================================
+
+/// Default endpoints for Unichain (Uniswap L2, Chain ID: 130).
+pub fn unichain_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://mainnet.unichain.org")
+            .with_name("Unichain Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::UNICHAIN),
+        RpcEndpoint::new("https://unichain-rpc.publicnode.com")
+            .with_name("PublicNode")
+            .with_ws_url("wss://unichain-rpc.publicnode.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::UNICHAIN),
+        RpcEndpoint::new("https://unichain.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://unichain.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::UNICHAIN),
+        RpcEndpoint::new("https://1rpc.io/unichain")
+            .with_name("1RPC")
+            .with_priority(53)
+            .with_chain_id(chain_id::UNICHAIN),
+    ]
+}
+
+/// Default endpoints for Soneium (Sony L2, Chain ID: 1868).
+pub fn soneium_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.soneium.org")
+            .with_name("Soneium Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::SONEIUM),
+        RpcEndpoint::new("https://soneium.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://soneium.drpc.org")
+            .with_priority(51)
+            .with_chain_id(chain_id::SONEIUM),
+    ]
+}
+
+/// Default endpoints for Abstract (Chain ID: 2741).
+pub fn abstract_chain_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://api.mainnet.abs.xyz")
+            .with_name("Abstract Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::ABSTRACT),
+        RpcEndpoint::new("https://abstract.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://abstract.drpc.org")
+            .with_priority(51)
+            .with_chain_id(chain_id::ABSTRACT),
+    ]
+}
+
+/// Default endpoints for Ink (Kraken L2, Chain ID: 57073).
+pub fn ink_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc-gel.inkonchain.com")
+            .with_name("Ink Gelato")
+            .with_ws_url("wss://rpc-gel.inkonchain.com")
+            .with_priority(50)
+            .with_chain_id(chain_id::INK),
+        RpcEndpoint::new("https://rpc-qnd.inkonchain.com")
+            .with_name("Ink QuickNode")
+            .with_ws_url("wss://rpc-qnd.inkonchain.com")
+            .with_priority(51)
+            .with_chain_id(chain_id::INK),
+        RpcEndpoint::new("https://ink.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://ink.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::INK),
+    ]
+}
+
+/// Default endpoints for Morph (Chain ID: 2818).
+pub fn morph_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.morphl2.io")
+            .with_name("Morph Official")
+            .with_ws_url("wss://rpc.morphl2.io:8443")
+            .with_priority(50)
+            .with_chain_id(chain_id::MORPH),
+        RpcEndpoint::new("https://rpc-quicknode.morphl2.io")
+            .with_name("Morph QuickNode")
+            .with_ws_url("wss://rpc-quicknode.morphl2.io")
+            .with_priority(51)
+            .with_chain_id(chain_id::MORPH),
+    ]
+}
+
+/// Default endpoints for BOB (Build on Bitcoin, Chain ID: 60808).
+pub fn bob_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.gobob.xyz")
+            .with_name("BOB Official")
+            .with_ws_url("wss://rpc.gobob.xyz")
+            .with_priority(50)
+            .with_chain_id(chain_id::BOB),
+        RpcEndpoint::new("https://bob-mainnet.public.blastapi.io")
+            .with_name("BlastAPI")
+            .with_ws_url("wss://bob-mainnet.public.blastapi.io")
+            .with_priority(51)
+            .with_chain_id(chain_id::BOB),
+        RpcEndpoint::new("https://bob.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://bob.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::BOB),
+    ]
+}
+
+/// Default endpoints for Gravity (Chain ID: 1625).
+pub fn gravity_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://rpc.gravity.xyz")
+            .with_name("Gravity Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::GRAVITY),
+        RpcEndpoint::new("https://rpc.ankr.com/gravity")
+            .with_name("Ankr")
+            .with_priority(51)
+            .with_chain_id(chain_id::GRAVITY),
+        RpcEndpoint::new("https://gravity.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://gravity.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::GRAVITY),
+    ]
+}
+
+/// Default endpoints for Story Protocol (Chain ID: 1514).
+pub fn story_endpoints() -> Vec<RpcEndpoint> {
+    vec![
+        RpcEndpoint::new("https://mainnet.storyrpc.io")
+            .with_name("Story Official")
+            .with_priority(50)
+            .with_chain_id(chain_id::STORY),
+        RpcEndpoint::new("https://rpc.ankr.com/story")
+            .with_name("Ankr")
+            .with_priority(51)
+            .with_chain_id(chain_id::STORY),
+        RpcEndpoint::new("https://story.drpc.org")
+            .with_name("dRPC")
+            .with_ws_url("wss://story.drpc.org")
+            .with_priority(52)
+            .with_chain_id(chain_id::STORY),
     ]
 }
 
@@ -1747,7 +2271,7 @@ mod tests {
     fn test_ethereum_endpoints() {
         let endpoints = ethereum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ETHEREUM);
-        assert!(endpoints.len() >= 34, "Should have at least 34 endpoints, got {}", endpoints.len());
+        assert!(endpoints.len() >= 40, "Should have at least 40 endpoints, got {}", endpoints.len());
     }
 
     #[test]
@@ -1904,6 +2428,15 @@ mod tests {
         assert!(!default_endpoints(chain_id::TAIKO).is_empty());
         assert!(!default_endpoints(chain_id::WORLD_CHAIN).is_empty());
         assert!(!default_endpoints(chain_id::ZETACHAIN).is_empty());
+        // Chains from blockchain protocol repos
+        assert!(!default_endpoints(chain_id::UNICHAIN).is_empty());
+        assert!(!default_endpoints(chain_id::SONEIUM).is_empty());
+        assert!(!default_endpoints(chain_id::ABSTRACT).is_empty());
+        assert!(!default_endpoints(chain_id::INK).is_empty());
+        assert!(!default_endpoints(chain_id::MORPH).is_empty());
+        assert!(!default_endpoints(chain_id::BOB).is_empty());
+        assert!(!default_endpoints(chain_id::GRAVITY).is_empty());
+        assert!(!default_endpoints(chain_id::STORY).is_empty());
         assert!(default_endpoints(99999).is_empty()); // Unknown chain
     }
 
@@ -1914,13 +2447,13 @@ mod tests {
             .map(|&id| default_endpoints(id).len())
             .sum();
 
-        assert!(total >= 276, "Should have at least 276 total endpoints, got {}", total);
+        assert!(total >= 350, "Should have at least 350 total endpoints, got {}", total);
     }
 
     #[test]
     fn test_all_chain_ids() {
         let ids = all_chain_ids();
-        assert!(ids.len() >= 38, "Should have at least 38 chains");
+        assert!(ids.len() >= 46, "Should have at least 46 chains");
         // Original chains
         assert!(ids.contains(&chain_id::ETHEREUM));
         assert!(ids.contains(&chain_id::FANTOM));
@@ -1965,6 +2498,13 @@ mod tests {
         assert_eq!(chain_name(chain_id::BERACHAIN), "Berachain");
         assert_eq!(chain_name(chain_id::TAIKO), "Taiko");
         assert_eq!(chain_name(chain_id::OPBNB), "opBNB");
+        // Chains from blockchain protocol repos
+        assert_eq!(chain_name(chain_id::UNICHAIN), "Unichain");
+        assert_eq!(chain_name(chain_id::SONEIUM), "Soneium");
+        assert_eq!(chain_name(chain_id::INK), "Ink");
+        assert_eq!(chain_name(chain_id::BOB), "BOB");
+        assert_eq!(chain_name(chain_id::GRAVITY), "Gravity");
+        assert_eq!(chain_name(chain_id::STORY), "Story");
         assert_eq!(chain_name(99999), "Unknown");
     }
 
