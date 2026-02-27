@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-02-27
+
+### Added
+
+- **Evaluator retry mode**: New `--retry-from` flag to re-evaluate only failed (grade F) endpoints from a previous report, merging results with previously successful endpoints
+
+### Changed
+
+- **Evaluator default concurrency**: Changed from 4 to 1 to avoid triggering IP rate limits on public RPC providers, improving reachability from ~39% to ~80%
+
 ## [0.5.0] - 2026-02-18
 
 ### Added

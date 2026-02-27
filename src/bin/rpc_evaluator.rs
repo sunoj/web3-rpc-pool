@@ -31,12 +31,16 @@ struct Args {
     output: Option<String>,
 
     /// Max concurrent evaluations
-    #[arg(long, default_value = "4")]
+    #[arg(long, default_value = "1")]
     concurrency: usize,
 
     /// Request timeout in seconds
     #[arg(long, default_value = "10")]
     timeout: u64,
+
+    /// Retry failed (grade F) endpoints from a previous report JSON file
+    #[arg(long)]
+    retry_from: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -386,39 +390,67 @@ async fn main() {
         .build()
         .expect("Failed to build HTTP client");
 
-    // Determine which chains to evaluate
-    let chain_ids = if args.chain_id == 0 {
-        presets::all_chain_ids()
+    // Retry mode: read previous report, re-evaluate only F-grade endpoints, merge results
+    let (endpoints_to_eval, previous_ok_reports) = if let Some(ref retry_path) = args.retry_from {
+        let content = std::fs::read_to_string(retry_path)
+            .unwrap_or_else(|e| panic!("Failed to read {}: {}", retry_path, e));
+        let prev_report: EvaluationReport = serde_json::from_str(&content)
+            .unwrap_or_else(|e| panic!("Failed to parse {}: {}", retry_path, e));
+
+        let mut to_retry = Vec::new();
+        let mut ok_reports = Vec::new();
+
+        for ep in prev_report.endpoints {
+            if ep.grade == "F" {
+                to_retry.push((ep.name, ep.url, ep.chain_id));
+            } else {
+                ok_reports.push(ep);
+            }
+        }
+        eprintln!(
+            "Retry mode: {} failed endpoints to re-evaluate, {} already OK",
+            to_retry.len(),
+            ok_reports.len()
+        );
+        (to_retry, ok_reports)
     } else {
-        vec![args.chain_id]
+        // Normal mode: collect all endpoints for specified chains
+        let chain_ids = if args.chain_id == 0 {
+            presets::all_chain_ids()
+        } else {
+            vec![args.chain_id]
+        };
+
+        let mut all_endpoints = Vec::new();
+        for &cid in &chain_ids {
+            let endpoints = presets::default_endpoints(cid);
+            if endpoints.is_empty() {
+                eprintln!(
+                    "Warning: No endpoints found for chain {} ({})",
+                    presets::chain_name(cid),
+                    cid
+                );
+                continue;
+            }
+            for ep in endpoints {
+                all_endpoints.push((ep.name.clone(), ep.url.clone(), ep.chain_id));
+            }
+        }
+        (all_endpoints, Vec::new())
     };
 
-    // Collect all endpoints
-    let mut endpoints_to_eval: Vec<(String, String, u64)> = Vec::new();
-    for &cid in &chain_ids {
-        let endpoints = presets::default_endpoints(cid);
-        if endpoints.is_empty() {
-            eprintln!(
-                "Warning: No endpoints found for chain {} ({})",
-                presets::chain_name(cid),
-                cid
-            );
-            continue;
-        }
-        for ep in endpoints {
-            endpoints_to_eval.push((ep.name.clone(), ep.url.clone(), ep.chain_id));
-        }
-    }
-
-    if endpoints_to_eval.is_empty() {
-        eprintln!("No endpoints to evaluate. Check chain ID.");
+    if endpoints_to_eval.is_empty() && previous_ok_reports.is_empty() {
+        eprintln!("No endpoints to evaluate. Check chain ID or retry file.");
         std::process::exit(1);
     }
+
+    let unique_chains: std::collections::HashSet<u64> =
+        endpoints_to_eval.iter().map(|(_, _, cid)| *cid).collect();
 
     eprintln!(
         "Evaluating {} endpoints across {} chain(s) with concurrency={}...",
         endpoints_to_eval.len(),
-        chain_ids.len(),
+        unique_chains.len(),
         args.concurrency
     );
 
@@ -438,7 +470,7 @@ async fn main() {
         handles.push(handle);
     }
 
-    let mut reports: Vec<EndpointReport> = Vec::new();
+    let mut reports: Vec<EndpointReport> = previous_ok_reports;
     for handle in handles {
         match handle.await {
             Ok(report) => reports.push(report),
