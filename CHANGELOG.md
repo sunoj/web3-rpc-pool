@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2026-03-05
+
+### Fixed
+
+- **WebSocket subscriptions drop immediately**: All WS subscription streams (`subscribe_new_heads`, `subscribe_pending_transactions`, `subscribe_logs`, and standalone helpers) now keep the WS provider alive for the lifetime of the stream. Previously the provider was dropped when the subscribe function returned, causing the underlying transport to shut down and the stream to yield `None` immediately ("Pubsub service request channel closed").
+
+### Added
+
+- `OwnedStream` wrapper that co-owns the WS provider alongside the subscription stream
+- Tests verifying stream lifetime and owner drop semantics
+
 ## [0.5.1] - 2026-02-27
 
 ### Added

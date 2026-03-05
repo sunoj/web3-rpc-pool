@@ -1,6 +1,6 @@
 [package]
 name = "web3-rpc-pool"
-version = "0.5.1"
+version = "0.5.2"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT"
@@ -49,6 +49,7 @@ chrono = { version = "0.4", features = ["serde"], optional = true }
 
 [dev-dependencies]
 tokio-test = "0.4"
+tokio-stream = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 criterion = { version = "0.5", features = ["async_tokio", "html_reports"] }
 rand = "0.8"
