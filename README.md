@@ -23,7 +23,7 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 ```toml
 [dependencies]
-web3-rpc-pool = "0.5"
+web3-rpc-pool = "0.5.2"
 ```
 
 ## Quick Start

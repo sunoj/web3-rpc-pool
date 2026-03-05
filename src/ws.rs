@@ -33,8 +33,38 @@ use futures_util::stream::Stream;
 use std::pin::Pin;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::task::{Context, Poll};
 use std::time::Duration;
 use tracing::{debug, info, warn};
+
+/// A subscription stream that keeps its WS provider alive.
+///
+/// When the alloy WS provider is dropped, the underlying transport shuts down
+/// and the subscription stream immediately closes ("Pubsub service request
+/// channel closed"). This wrapper prevents that by co-owning the provider.
+struct OwnedStream<T> {
+    _owner: Box<dyn std::any::Any + Send>,
+    stream: Pin<Box<dyn Stream<Item = T> + Send>>,
+}
+
+impl<T> Stream for OwnedStream<T> {
+    type Item = T;
+
+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        self.stream.as_mut().poll_next(cx)
+    }
+}
+
+/// Wrap a subscription stream with its provider so the provider is not dropped.
+fn owned_stream<T: 'static>(
+    provider: impl std::any::Any + Send + 'static,
+    stream: impl Stream<Item = T> + Send + 'static,
+) -> BoxSubscriptionStream<T> {
+    Box::pin(OwnedStream {
+        _owner: Box::new(provider),
+        stream: Box::pin(stream),
+    })
+}
 
 /// Default connection timeout for WebSocket endpoints.
 const DEFAULT_WS_CONNECT_TIMEOUT_SECS: u64 = 15;
@@ -156,7 +186,7 @@ impl WsPool {
                         match provider.subscribe_blocks().await {
                             Ok(sub) => {
                                 info!(name = %endpoint.name, "Subscribed to newHeads");
-                                return Ok(Box::pin(sub.into_stream()));
+                                return Ok(owned_stream(provider, sub.into_stream()));
                             }
                             Err(e) => {
                                 warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -195,7 +225,7 @@ impl WsPool {
                         match provider.subscribe_pending_transactions().await {
                             Ok(sub) => {
                                 info!(name = %endpoint.name, "Subscribed to pendingTransactions");
-                                return Ok(Box::pin(sub.into_stream()));
+                                return Ok(owned_stream(provider, sub.into_stream()));
                             }
                             Err(e) => {
                                 warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -235,7 +265,7 @@ impl WsPool {
                         match provider.subscribe_logs(filter).await {
                             Ok(sub) => {
                                 info!(name = %endpoint.name, "Subscribed to logs");
-                                return Ok(Box::pin(sub.into_stream()));
+                                return Ok(owned_stream(provider, sub.into_stream()));
                             }
                             Err(e) => {
                                 warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -312,7 +342,7 @@ pub async fn connect_and_subscribe_blocks(
         RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e))
     })?;
 
-    Ok(Box::pin(sub.into_stream()))
+    Ok(owned_stream(provider, sub.into_stream()))
 }
 
 /// Connect to a WebSocket endpoint and create a log subscription.
@@ -335,7 +365,7 @@ pub async fn connect_and_subscribe_logs(
         RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e))
     })?;
 
-    Ok(Box::pin(sub.into_stream()))
+    Ok(owned_stream(provider, sub.into_stream()))
 }
 
 #[cfg(test)]
@@ -434,5 +464,61 @@ mod tests {
 
         let pool = WsPool::with_config(create_ws_endpoints(), config).unwrap();
         assert_eq!(pool.endpoint_count(), 2);
+    }
+
+    #[tokio::test]
+    async fn test_owned_stream_keeps_items_flowing() {
+        use futures_util::StreamExt;
+
+        // Simulate a provider (any Send + 'static type) with a channel-backed stream.
+        // If the owner were dropped, a real WS stream would close immediately.
+        let (tx, rx) = tokio::sync::mpsc::channel::<u64>(4);
+        let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
+
+        let owner = String::from("fake-provider");
+        let mut stream = owned_stream(owner, inner);
+
+        tx.send(1).await.unwrap();
+        tx.send(2).await.unwrap();
+        drop(tx); // close sender so stream ends
+
+        let mut items = Vec::new();
+        while let Some(v) = stream.next().await {
+            items.push(v);
+        }
+        assert_eq!(items, vec![1, 2]);
+    }
+
+    #[tokio::test]
+    async fn test_owned_stream_owner_outlives_stream() {
+        use futures_util::StreamExt;
+        use std::sync::Arc;
+        use std::sync::atomic::{AtomicBool, Ordering};
+
+        let dropped = Arc::new(AtomicBool::new(false));
+
+        struct DropDetector(Arc<AtomicBool>);
+        impl Drop for DropDetector {
+            fn drop(&mut self) {
+                self.0.store(true, Ordering::SeqCst);
+            }
+        }
+
+        let detector = DropDetector(dropped.clone());
+        let (tx, rx) = tokio::sync::mpsc::channel::<u64>(4);
+        let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
+
+        let mut stream = owned_stream(detector, inner);
+
+        // Owner must not be dropped while stream is alive
+        assert!(!dropped.load(Ordering::SeqCst));
+
+        tx.send(42).await.unwrap();
+        assert_eq!(stream.next().await, Some(42));
+        assert!(!dropped.load(Ordering::SeqCst));
+
+        // Drop the stream — now the owner should be dropped too
+        drop(stream);
+        assert!(dropped.load(Ordering::SeqCst));
     }
 }
