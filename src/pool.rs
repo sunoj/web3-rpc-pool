@@ -5,7 +5,8 @@ use crate::error::RpcPoolError;
 use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
 use crate::strategies::SelectionStrategy;
 
-use alloy::providers::{Provider, ProviderBuilder};
+use alloy::providers::{Provider, RootProvider};
+use alloy::transports::http::Http;
 use parking_lot::RwLock;
 use std::collections::{HashMap, HashSet};
 use std::future::Future;
@@ -165,6 +166,10 @@ pub struct RpcPool {
 
     /// Handle to the health check task (if running).
     health_check_handle: RwLock<Option<AbortHandleWrapper>>,
+
+    /// Shared HTTP client for health check probes (avoids creating a new
+    /// reqwest::Client + TLS CA store per probe — prevents memory leak).
+    probe_client: alloy::transports::http::reqwest::Client,
 }
 
 impl RpcPool {
@@ -234,6 +239,11 @@ impl RpcPool {
             cancelled: AtomicBool::new(false),
             cancel_notify: tokio::sync::Notify::new(),
             health_check_handle: RwLock::new(None),
+            probe_client: alloy::transports::http::reqwest::Client::builder()
+                .pool_max_idle_per_host(1)
+                .pool_idle_timeout(std::time::Duration::from_secs(10))
+                .build()
+                .expect("failed to build health-check HTTP client"),
         })
     }
 
@@ -533,7 +543,10 @@ impl RpcPool {
             // Try to recover with a simple probe (with timeout)
             let url: Result<url::Url, _> = endpoint.url.parse();
             if let Ok(url) = url {
-                let provider = ProviderBuilder::new().connect_http(url);
+                let transport = Http::with_client(self.probe_client.clone(), url);
+                let provider = RootProvider::<alloy::network::Ethereum>::new(
+                    alloy::rpc::client::RpcClient::new(transport, true),
+                );
 
                 let probe_result = tokio::select! {
                     biased;
