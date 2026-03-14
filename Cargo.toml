@@ -22,7 +22,7 @@ live-tests = ["dep:reqwest"]
 tokio = { version = "1.35", features = ["rt-multi-thread", "macros", "sync", "time"] }
 
 # Alloy for RPC
-alloy = { version = "1.0", default-features = false, features = ["providers", "transports", "rpc-client", "transport-http", "reqwest"] }
+alloy = { version = "1.0", default-features = false, features = ["providers", "transports", "rpc-client", "transport-http", "reqwest", "reqwest-rustls-tls"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
