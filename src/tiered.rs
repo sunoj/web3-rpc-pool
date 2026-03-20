@@ -70,6 +70,9 @@ pub struct TieredEndpoint {
 
     /// Rate limit (requests per second), 0 = unlimited.
     pub rate_limit: u32,
+
+    /// Whether this tier should bypass pool health checks and retries.
+    pub trusted: bool,
 }
 
 impl TieredEndpoint {
@@ -79,6 +82,7 @@ impl TieredEndpoint {
             endpoint: RpcEndpoint::new(url),
             tier,
             rate_limit: 0,
+            trusted: false,
         }
     }
 
@@ -146,6 +150,9 @@ pub struct TieredPool {
     /// Pool for each tier.
     pools: HashMap<EndpointTier, Arc<RpcPool>>,
 
+    /// Trusted tier URLs that bypass pool health checks and retries.
+    trusted_urls: HashMap<EndpointTier, url::Url>,
+
     /// Fallback configuration.
     allow_critical_fallback: bool,
     allow_low_escalation: bool,
@@ -154,14 +161,11 @@ pub struct TieredPool {
 impl TieredPool {
     /// Create a new tiered pool from configuration.
     pub fn new(config: TieredPoolConfig) -> Result<Self, RpcPoolError> {
-        let mut tier_endpoints: HashMap<EndpointTier, Vec<RpcEndpoint>> = HashMap::new();
+        let mut tier_endpoints: HashMap<EndpointTier, Vec<TieredEndpoint>> = HashMap::new();
 
         // Group endpoints by tier
         for te in config.endpoints {
-            tier_endpoints
-                .entry(te.tier)
-                .or_default()
-                .push(te.endpoint);
+            tier_endpoints.entry(te.tier).or_default().push(te);
         }
 
         if tier_endpoints.is_empty() {
@@ -170,9 +174,17 @@ impl TieredPool {
 
         // Create a pool for each tier
         let mut pools = HashMap::new();
+        let mut trusted_urls = HashMap::new();
 
         for (tier, endpoints) in tier_endpoints {
             if endpoints.is_empty() {
+                continue;
+            }
+
+            if endpoints.iter().all(|endpoint| endpoint.trusted) {
+                let url = url::Url::parse(&endpoints[0].endpoint.url)?;
+                info!(tier = ?tier, url = %url, "Configured trusted tier URL");
+                trusted_urls.insert(tier, url);
                 continue;
             }
 
@@ -188,7 +200,7 @@ impl TieredPool {
             };
 
             let pool_config = RpcPoolConfig::new()
-                .with_endpoints(endpoints)
+                .with_endpoints(endpoints.into_iter().map(|endpoint| endpoint.endpoint).collect())
                 .with_strategy(strategy)
                 .with_health_check_interval(config.health_check_interval)
                 .with_max_consecutive_errors(config.max_consecutive_errors)
@@ -201,6 +213,7 @@ impl TieredPool {
 
         Ok(Self {
             pools,
+            trusted_urls,
             allow_critical_fallback: config.allow_critical_fallback,
             allow_low_escalation: config.allow_low_escalation,
         })
@@ -253,6 +266,27 @@ impl TieredPool {
         let mut tried_tiers = Vec::new();
 
         for tier in &tiers {
+            if let Some(url) = self.trusted_urls.get(tier) {
+                debug!(priority = ?priority, tier = ?tier, "Attempting trusted tier");
+                tried_tiers.push(*tier);
+
+                match tokio::time::timeout(Duration::from_secs(30), f(url.clone())).await {
+                    Ok(Ok(result)) => return Ok(result),
+                    Ok(Err(e)) => {
+                        warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
+                    }
+                    Err(_) => {
+                        warn!(tier = ?tier, "Trusted tier timed out");
+                        return Err(RpcPoolError::AllEndpointsFailed(
+                            "Trusted endpoint request timed out after 30s".to_string(),
+                        ));
+                    }
+                }
+
+                continue;
+            }
+
             if let Some(pool) = self.pools.get(tier) {
                 debug!(priority = ?priority, tier = ?tier, "Attempting tier");
                 tried_tiers.push(*tier);
@@ -295,6 +329,27 @@ impl TieredPool {
         let mut tried_tiers = Vec::new();
 
         for tier in &tiers {
+            if let Some(url) = self.trusted_urls.get(tier) {
+                debug!(priority = ?priority, tier = ?tier, "Attempting trusted tier with URL string");
+                tried_tiers.push(*tier);
+
+                match tokio::time::timeout(Duration::from_secs(30), f(url.to_string())).await {
+                    Ok(Ok(result)) => return Ok(result),
+                    Ok(Err(e)) => {
+                        warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
+                    }
+                    Err(_) => {
+                        warn!(tier = ?tier, "Trusted tier timed out");
+                        return Err(RpcPoolError::AllEndpointsFailed(
+                            "Trusted endpoint request timed out after 30s".to_string(),
+                        ));
+                    }
+                }
+
+                continue;
+            }
+
             if let Some(pool) = self.pools.get(tier) {
                 debug!(priority = ?priority, tier = ?tier, "Attempting tier with URL string");
                 tried_tiers.push(*tier);
@@ -328,7 +383,7 @@ impl TieredPool {
 
     /// Check if a tier is available.
     pub fn has_tier(&self, tier: EndpointTier) -> bool {
-        self.pools.contains_key(&tier)
+        self.pools.contains_key(&tier) || self.trusted_urls.contains_key(&tier)
     }
 
     /// Start health checks for all tiers.
@@ -341,17 +396,31 @@ impl TieredPool {
 
     /// Get all available tiers.
     pub fn available_tiers(&self) -> Vec<EndpointTier> {
-        let mut tiers: Vec<_> = self.pools.keys().copied().collect();
+        let mut tiers: HashSet<_> = self.pools.keys().copied().collect();
+        tiers.extend(self.trusted_urls.keys().copied());
+        let mut tiers: Vec<_> = tiers.into_iter().collect();
         tiers.sort();
         tiers
     }
 
     /// Get endpoint count for each tier (useful for debugging).
     pub fn tier_endpoint_counts(&self) -> HashMap<EndpointTier, usize> {
-        self.pools
+        let mut counts: HashMap<_, _> = self
+            .pools
             .iter()
             .map(|(tier, pool)| (*tier, pool.get_all_urls().len()))
-            .collect()
+            .collect();
+        for tier in self.trusted_urls.keys() {
+            counts.insert(*tier, 1);
+        }
+        counts
+    }
+
+    /// Get the trusted URL for the highest-priority matching tier.
+    pub fn trusted_url(&self, priority: RequestPriority) -> Option<url::Url> {
+        self.tier_order(priority)
+            .into_iter()
+            .find_map(|tier| self.trusted_urls.get(&tier).cloned())
     }
 
     /// Log current tier configuration for debugging.
@@ -426,6 +495,40 @@ impl TieredPoolBuilder {
         self
     }
 
+    /// Add a trusted premium endpoint.
+    pub fn add_premium_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self {
+        let mut endpoint = TieredEndpoint::new(url, EndpointTier::Premium)
+            .with_name(name)
+            .with_priority(10);
+        endpoint.trusted = true;
+        self.endpoints.push(endpoint);
+        self
+    }
+
+    /// Add a trusted standard endpoint.
+    pub fn add_standard_trusted(
+        mut self,
+        url: impl Into<String>,
+        name: impl Into<String>,
+    ) -> Self {
+        let mut endpoint = TieredEndpoint::new(url, EndpointTier::Standard)
+            .with_name(name)
+            .with_priority(50);
+        endpoint.trusted = true;
+        self.endpoints.push(endpoint);
+        self
+    }
+
+    /// Add a trusted free endpoint.
+    pub fn add_free_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self {
+        let mut endpoint = TieredEndpoint::new(url, EndpointTier::Free)
+            .with_name(name)
+            .with_priority(100);
+        endpoint.trusted = true;
+        self.endpoints.push(endpoint);
+        self
+    }
+
     /// Add a custom tiered endpoint.
     pub fn add_endpoint(mut self, endpoint: TieredEndpoint) -> Self {
         self.endpoints.push(endpoint);
@@ -454,6 +557,7 @@ impl TieredPoolBuilder {
                 endpoint: e,
                 tier: EndpointTier::Free,
                 rate_limit: 0,
+                trusted: false,
             });
         }
         self
@@ -607,6 +711,81 @@ mod tests {
         assert_eq!(counts.get(&EndpointTier::Premium), Some(&1));
         assert_eq!(counts.get(&EndpointTier::Standard), Some(&2));
         assert_eq!(counts.get(&EndpointTier::Free), Some(&3));
+    }
+
+    #[test]
+    fn test_trusted_endpoint_creation() {
+        let mut endpoint = TieredEndpoint::new("https://trusted.example.com", EndpointTier::Premium);
+        assert!(!endpoint.trusted);
+
+        endpoint.trusted = true;
+        assert!(endpoint.trusted);
+    }
+
+    #[test]
+    fn test_trusted_url_returns_url() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium_trusted("https://trusted-premium.example.com", "Trusted Premium")
+            .build()
+            .unwrap();
+
+        assert_eq!(
+            pool.trusted_url(RequestPriority::Critical)
+                .map(|url| url.to_string()),
+            Some("https://trusted-premium.example.com/".to_string())
+        );
+    }
+
+    #[test]
+    fn test_trusted_url_returns_none() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .build()
+            .unwrap();
+
+        assert!(pool.trusted_url(RequestPriority::Critical).is_none());
+    }
+
+    #[tokio::test]
+    async fn test_mixed_trusted_and_pool() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium_trusted("https://trusted-premium.example.com", "Trusted Premium")
+            .add_free("https://free.example.com", "Free")
+            .build()
+            .unwrap();
+
+        assert_eq!(
+            pool.execute(RequestPriority::Critical, |url| async move {
+                Ok::<_, std::io::Error>(url.to_string())
+            })
+            .await
+            .unwrap(),
+            "https://trusted-premium.example.com/"
+        );
+
+        assert_eq!(
+            pool.execute(RequestPriority::Low, |url| async move {
+                Ok::<_, std::io::Error>(url.to_string())
+            })
+            .await
+            .unwrap(),
+            "https://free.example.com/"
+        );
+    }
+
+    #[test]
+    fn test_trusted_tier_no_pool_created() {
+        let pool = TieredPoolBuilder::new()
+            .add_standard_trusted("https://trusted-standard.example.com", "Trusted Standard")
+            .build()
+            .unwrap();
+
+        assert!(pool.get_tier_pool(EndpointTier::Standard).is_none());
+        assert_eq!(
+            pool.trusted_url(RequestPriority::Normal)
+                .map(|url| url.to_string()),
+            Some("https://trusted-standard.example.com/".to_string())
+        );
     }
 
     #[test]
