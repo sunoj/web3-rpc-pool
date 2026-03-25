@@ -418,9 +418,9 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
 /// Default endpoints for Arbitrum One (20 verified endpoints).
 pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
     vec![
-        RpcEndpoint::new("https://arb1.arbitrum.io/rpc")
-            .with_name("Arbitrum Official")
-            .with_ws_url("wss://arb1.arbitrum.io/rpc")
+        RpcEndpoint::new("https://arbitrum-mainnet.core.chainstack.com/607535c9ce0b9a8ba93cb46f0bdbe2af")
+            .with_name("Chainstack")
+            .with_ws_url("wss://arbitrum-mainnet.core.chainstack.com/607535c9ce0b9a8ba93cb46f0bdbe2af")
             .with_priority(50)
             .with_chain_id(chain_id::ARBITRUM_ONE)
             .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
