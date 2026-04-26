@@ -34,9 +34,17 @@ impl SelectionStrategy for LatencyBasedStrategy {
 
         // Sort by average latency (ascending)
         healthy.sort_by(|a, b| {
-            let lat_a = stats.get(&a.url).map(|s| s.avg_latency_ms).unwrap_or(f64::MAX);
-            let lat_b = stats.get(&b.url).map(|s| s.avg_latency_ms).unwrap_or(f64::MAX);
-            lat_a.partial_cmp(&lat_b).unwrap_or(std::cmp::Ordering::Equal)
+            let lat_a = stats
+                .get(&a.url)
+                .map(|s| s.avg_latency_ms)
+                .unwrap_or(f64::MAX);
+            let lat_b = stats
+                .get(&b.url)
+                .map(|s| s.avg_latency_ms)
+                .unwrap_or(f64::MAX);
+            lat_a
+                .partial_cmp(&lat_b)
+                .unwrap_or(std::cmp::Ordering::Equal)
         });
 
         healthy.first().copied()

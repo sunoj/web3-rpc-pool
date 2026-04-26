@@ -13,7 +13,7 @@ use std::future::Future;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tracing::{debug, error, info, trace, warn, instrument};
+use tracing::{debug, error, info, instrument, trace, warn};
 
 /// Maximum length for error messages to prevent unbounded memory growth.
 const MAX_ERROR_MESSAGE_LENGTH: usize = 512;
@@ -325,7 +325,10 @@ impl RpcPool {
 
             // Check for shutdown
             if self.is_shutdown() {
-                debug!(request_id, attempt, "Request cancelled: pool shutdown in progress");
+                debug!(
+                    request_id,
+                    attempt, "Request cancelled: pool shutdown in progress"
+                );
                 return Err(RpcPoolError::PoolShutdown);
             }
 
@@ -333,7 +336,9 @@ impl RpcPool {
             let endpoint = {
                 let stats_map = self.collect_stats_snapshot();
                 let mut strategy = self.strategy.write();
-                strategy.select(&self.endpoints, &stats_map, &tried).cloned()
+                strategy
+                    .select(&self.endpoints, &stats_map, &tried)
+                    .cloned()
             };
 
             let endpoint = match endpoint {
@@ -413,7 +418,10 @@ impl RpcPool {
                     );
                 }
                 Err(_timeout) => {
-                    let error_msg = format!("Request timeout after {}ms", self.request_timeout.as_millis());
+                    let error_msg = format!(
+                        "Request timeout after {}ms",
+                        self.request_timeout.as_millis()
+                    );
                     if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         let marked_unhealthy =
                             stats.record_failure(error_msg.clone(), self.max_consecutive_errors);
@@ -466,7 +474,9 @@ impl RpcPool {
                 let url: url::Url = url_str.parse().map_err(|e: url::ParseError| {
                     std::io::Error::other(format!("Invalid URL: {}", e))
                 })?;
-                f(url).await.map_err(|e| std::io::Error::other(e.to_string()))
+                f(url)
+                    .await
+                    .map_err(|e| std::io::Error::other(e.to_string()))
             }
         })
         .await

@@ -234,7 +234,12 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://ethereum-rpc.publicnode.com")
             .with_priority(50)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/eth")
             .with_name("1RPC")
             .with_priority(51)
@@ -243,47 +248,92 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_priority(52)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
             .with_priority(53)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth.merkle.io")
             .with_name("Merkle")
             .with_priority(54)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.flashbots.net")
             .with_name("Flashbots")
             .with_priority(55)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(56)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth.meowrpc.com")
             .with_name("MeowRPC")
             .with_priority(57)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(58)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.mevblocker.io")
             .with_name("MEV Blocker")
             .with_priority(59)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://ethereum.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(60)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://0xrpc.io/eth")
             .with_name("0xRPC")
             .with_priority(61)
@@ -292,53 +342,103 @@ pub fn ethereum_endpoints() -> Vec<RpcEndpoint> {
             .with_name("BlockRazor")
             .with_priority(62)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://eth.rpc.blxrbdn.com")
             .with_name("BloXroute")
             .with_priority(64)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.eth.gateway.fm")
             .with_name("Gateway.fm")
             .with_priority(65)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://core.gashawk.io/rpc")
             .with_name("GasHawk")
             .with_priority(66)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.tornadoeth.cash/eth")
             .with_name("TornadoETH")
             .with_priority(67)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://mainnet.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(68)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.mevblocker.io/fast")
             .with_name("MEV Blocker Fast")
             .with_priority(69)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.mevblocker.io/noreverts")
             .with_name("MEV Blocker NoReverts")
             .with_priority(70)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.mevblocker.io/fullprivacy")
             .with_name("MEV Blocker FullPrivacy")
             .with_priority(71)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://eth.llamarpc.com")
             .with_name("LlamaNodes")
             .with_priority(73)
             .with_chain_id(chain_id::ETHEREUM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://public-eth.nownodes.io")
             .with_name("NOWNodes")
             .with_priority(74)
@@ -423,93 +523,183 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://arb1.arbitrum.io/rpc")
             .with_priority(50)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum-one-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://arbitrum-one-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/arb")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum-one.public.blastapi.io")
             .with_name("BlastAPI")
             .with_priority(54)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(55)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.meowrpc.com")
             .with_name("MeowRPC")
             .with_priority(56)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arb-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(57)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(58)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(59)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum-one-public.nodies.app")
             .with_name("Nodies Public")
             .with_priority(60)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://api.zan.top/arb-one")
             .with_name("ZAN")
             .with_priority(62)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(500),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arb1.lava.build")
             .with_name("Lava")
             .with_priority(63)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arb-one-mainnet.gateway.tatum.io")
             .with_name("Tatum")
             .with_priority(64)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://public-arb-mainnet.fastnode.io")
             .with_name("FastNode")
             .with_priority(65)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arbitrum.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(66)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arb-one.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(67)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://arb.leorpc.com/?api_key=FREE")
             .with_name("LeoRPC")
             .with_priority(68)
             .with_chain_id(chain_id::ARBITRUM_ONE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://gateway.tenderly.co/public/arbitrum")
             .with_name("Tenderly Public")
@@ -543,69 +733,134 @@ pub fn base_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://mainnet.base.org")
             .with_priority(50)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://base-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/base")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
             .with_priority(54)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.meowrpc.com")
             .with_name("MeowRPC")
             .with_priority(55)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(56)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(57)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://developer-access-mainnet.base.org")
             .with_name("Base Developer")
             .with_priority(58)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(59)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base-public.nodies.app")
             .with_name("Nodies Public")
             .with_priority(62)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.api.pocket.network")
             .with_name("Pocket")
             .with_priority(63)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://base.llamarpc.com")
             .with_name("LlamaNodes")
             .with_priority(66)
             .with_chain_id(chain_id::BASE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://base.lava.build")
             .with_name("Lava")
             .with_priority(68)
@@ -661,53 +916,103 @@ pub fn optimism_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Optimism Official")
             .with_priority(50)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://optimism-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/op")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(54)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(50), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(50),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://op-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(55)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(56)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(60)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism-public.nodies.app")
             .with_name("Nodies Public")
             .with_priority(63)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://optimism.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(64)
             .with_chain_id(chain_id::OPTIMISM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://api.zan.top/opt-mainnet")
             .with_name("ZAN")
             .with_priority(66)
@@ -764,120 +1069,235 @@ pub fn bsc_endpoints() -> Vec<RpcEndpoint> {
             .with_name("BNB Chain Official")
             .with_priority(50)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed1.bnbchain.org")
             .with_name("BNB Chain 1")
             .with_priority(51)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed2.bnbchain.org")
             .with_name("BNB Chain 2")
             .with_priority(52)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed3.bnbchain.org")
             .with_name("BNB Chain 3")
             .with_priority(53)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed4.bnbchain.org")
             .with_name("BNB Chain 4")
             .with_priority(54)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         // Third-party verified endpoints
         RpcEndpoint::new("https://bsc-dataseed1.defibit.io")
             .with_name("Defibit 1")
             .with_priority(55)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed2.defibit.io")
             .with_name("Defibit 2")
             .with_priority(56)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed3.defibit.io")
             .with_name("Defibit 3")
             .with_priority(57)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed4.defibit.io")
             .with_name("Defibit 4")
             .with_priority(58)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed1.ninicoin.io")
             .with_name("Ninicoin 1")
             .with_priority(59)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed2.ninicoin.io")
             .with_name("Ninicoin 2")
             .with_priority(60)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed3.ninicoin.io")
             .with_name("Ninicoin 3")
             .with_priority(61)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-dataseed4.ninicoin.io")
             .with_name("Ninicoin 4")
             .with_priority(62)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://bsc-rpc.publicnode.com")
             .with_priority(63)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc.publicnode.com")
             .with_name("PublicNode Alt")
             .with_priority(64)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/bnb")
             .with_name("1RPC")
             .with_priority(65)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc.drpc.org")
             .with_name("dRPC")
             .with_priority(66)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-mainnet.public.blastapi.io")
             .with_name("BlastAPI")
             .with_priority(67)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc.meowrpc.com")
             .with_name("MeowRPC")
             .with_priority(68)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(69)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bnb.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(71)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3")
             .with_name("NodeReal")
             .with_priority(73)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://binance.llamarpc.com")
             .with_name("LlamaNodes")
             .with_priority(74)
             .with_chain_id(chain_id::BSC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://bsc.blockrazor.xyz")
             .with_name("BlockRazor")
             .with_priority(75)
@@ -909,38 +1329,73 @@ pub fn avalanche_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Avalanche Official")
             .with_priority(50)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://avalanche-c-chain-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://avalanche-c-chain-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/avax/c")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://avalanche.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://avalanche.api.onfinality.io/public/ext/bc/C/rpc")
             .with_name("OnFinality")
             .with_priority(54)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://avax-pokt.nodies.app/ext/bc/C/rpc")
             .with_name("Nodies")
             .with_priority(55)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://avalanche.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(56)
             .with_chain_id(chain_id::AVALANCHE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         // Phase 4: endpoints from blockchain protocol repos and aggregators
         RpcEndpoint::new("https://rpc.ankr.com/avalanche")
             .with_name("Ankr")
@@ -964,48 +1419,93 @@ pub fn polygon_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Polygon Official")
             .with_priority(50)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon-bor-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://polygon-bor-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/matic")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(54)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(55)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon.rpc.subquery.network/public")
             .with_name("SubQuery")
             .with_priority(56)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(50), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(50),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(58)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc-mainnet.matic.quiknode.pro")
             .with_name("QuickNode")
             .with_priority(59)
             .with_chain_id(chain_id::POLYGON)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         // Phase 3: additional endpoints
         RpcEndpoint::new("https://polygon.lava.build")
             .with_name("Lava")
@@ -1058,38 +1558,73 @@ pub fn fantom_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Fantom Official")
             .with_priority(51)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc2.fantom.network")
             .with_name("Fantom Official 2")
             .with_priority(52)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc3.fantom.network")
             .with_name("Fantom Official 3")
             .with_priority(53)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/ftm")
             .with_name("1RPC")
             .with_priority(55)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://fantom.drpc.org")
             .with_name("dRPC")
             .with_ws_url("wss://fantom.drpc.org")
             .with_priority(56)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://fantom.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(59)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://fantom-pokt.nodies.app")
             .with_name("Nodies")
             .with_priority(61)
             .with_chain_id(chain_id::FANTOM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(50), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(50),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://fantom-json-rpc.stakely.io")
             .with_name("Stakely")
             .with_priority(62)
@@ -1127,22 +1662,42 @@ pub fn zksync_era_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://mainnet.era.zksync.io/ws")
             .with_priority(50)
             .with_chain_id(chain_id::ZKSYNC_ERA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/zksync2-era")
             .with_name("1RPC")
             .with_priority(51)
             .with_chain_id(chain_id::ZKSYNC_ERA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://zksync.drpc.org")
             .with_name("dRPC")
             .with_priority(52)
             .with_chain_id(chain_id::ZKSYNC_ERA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc.ankr.com/zksync_era")
             .with_name("Ankr")
             .with_priority(54)
             .with_chain_id(chain_id::ZKSYNC_ERA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://zksync.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(55)
@@ -1180,23 +1735,43 @@ pub fn linea_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://rpc.linea.build")
             .with_priority(50)
             .with_chain_id(chain_id::LINEA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://linea-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://linea-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::LINEA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/linea")
             .with_name("1RPC")
             .with_priority(52)
             .with_chain_id(chain_id::LINEA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://linea.drpc.org")
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::LINEA)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://linea.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(54)
@@ -1224,13 +1799,23 @@ pub fn hyperliquid_evm_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Hyperliquid Official")
             .with_priority(50)
             .with_chain_id(chain_id::HYPERLIQUID_EVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://hyperliquid.drpc.org")
             .with_name("dRPC")
             .with_ws_url("wss://hyperliquid.drpc.org")
             .with_priority(52)
             .with_chain_id(chain_id::HYPERLIQUID_EVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/hyperliquid")
             .with_name("1RPC")
             .with_priority(53)
@@ -1245,13 +1830,23 @@ pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Scroll Official")
             .with_priority(50)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(5000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(5000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://scroll-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://scroll-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/scroll")
             .with_name("1RPC")
             .with_priority(52)
@@ -1260,27 +1855,52 @@ pub fn scroll_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(5000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(5000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://scroll.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(56)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://scroll-public.nodies.app")
             .with_name("Nodies")
             .with_priority(57)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://534352.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(59)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://scroll.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(60)
             .with_chain_id(chain_id::SCROLL)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://scroll-mainnet.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(61)
@@ -1320,28 +1940,53 @@ pub fn polygon_zkevm_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Polygon zkEVM Official")
             .with_priority(50)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon-zkevm.drpc.org")
             .with_name("dRPC")
             .with_ws_url("wss://polygon-zkevm.drpc.org")
             .with_priority(53)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(5000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(5000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon-zkevm-public.nodies.app")
             .with_name("Nodies")
             .with_priority(54)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://polygon-zkevm.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(56)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://poly-zkevm.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(57)
             .with_chain_id(chain_id::POLYGON_ZKEVM)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(500),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/polygon/zkevm")
             .with_name("1RPC")
             .with_priority(58)
@@ -1356,38 +2001,73 @@ pub fn blast_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Blast Official")
             .with_priority(50)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://blast-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast.drpc.org")
             .with_name("dRPC")
             .with_priority(52)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast.api.pocket.network")
             .with_name("Pocket Network")
             .with_priority(56)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://81457.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(58)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast.din.dev/rpc")
             .with_name("DIN")
             .with_priority(59)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast-public.nodies.app")
             .with_name("Nodies")
             .with_priority(60)
             .with_chain_id(chain_id::BLAST)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://blast.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(61)
@@ -1423,13 +2103,23 @@ pub fn mantle_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Mantle Official")
             .with_priority(50)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(10), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(10),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://mantle-rpc.publicnode.com")
             .with_name("PublicNode")
             .with_ws_url("wss://mantle-rpc.publicnode.com")
             .with_priority(51)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(false), max_batch_size: Some(0), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(false),
+                max_batch_size: Some(0),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/mantle")
             .with_name("1RPC")
             .with_priority(52)
@@ -1438,27 +2128,52 @@ pub fn mantle_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_priority(53)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://mantle-public.nodies.app")
             .with_name("Nodies")
             .with_priority(55)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://mantle.api.onfinality.io/public")
             .with_name("OnFinality")
             .with_priority(56)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://api.zan.top/mantle-mainnet")
             .with_name("ZAN")
             .with_priority(57)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(500), max_block_range: Some(10000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(500),
+                max_block_range: Some(10000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://5000.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(61)
             .with_chain_id(chain_id::MANTLE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://mantle.gateway.tenderly.co")
             .with_name("Tenderly")
             .with_priority(62)
@@ -1481,7 +2196,12 @@ pub fn mode_endpoints() -> Vec<RpcEndpoint> {
             .with_name("Mode Official")
             .with_priority(50)
             .with_chain_id(chain_id::MODE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(100), max_block_range: Some(0), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(100),
+                max_block_range: Some(0),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/mode")
             .with_name("1RPC")
             .with_priority(51)
@@ -1491,12 +2211,22 @@ pub fn mode_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://mode.drpc.org")
             .with_priority(52)
             .with_chain_id(chain_id::MODE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://34443.rpc.thirdweb.com")
             .with_name("thirdweb")
             .with_priority(53)
             .with_chain_id(chain_id::MODE)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://rpc-mode-mainnet-0.t.conduit.xyz")
             .with_name("Conduit")
             .with_priority(54)
@@ -1512,7 +2242,12 @@ pub fn manta_pacific_endpoints() -> Vec<RpcEndpoint> {
             .with_ws_url("wss://pacific-rpc.manta.network/ws")
             .with_priority(50)
             .with_chain_id(chain_id::MANTA_PACIFIC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(100), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(100),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://1rpc.io/manta")
             .with_name("1RPC")
             .with_priority(51)
@@ -1521,17 +2256,32 @@ pub fn manta_pacific_endpoints() -> Vec<RpcEndpoint> {
             .with_name("dRPC")
             .with_priority(52)
             .with_chain_id(chain_id::MANTA_PACIFIC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(1), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(1),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://manta-pacific-gascap.calderachain.xyz/http")
             .with_name("Caldera")
             .with_priority(54)
             .with_chain_id(chain_id::MANTA_PACIFIC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
         RpcEndpoint::new("https://manta-pacific-aperture.calderachain.xyz/http")
             .with_name("Caldera Aperture")
             .with_priority(55)
             .with_chain_id(chain_id::MANTA_PACIFIC)
-            .with_capabilities(EndpointCapabilities { supports_eth_get_logs: Some(true), max_batch_size: Some(0), max_block_range: Some(1000), ..Default::default() }),
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_batch_size: Some(0),
+                max_block_range: Some(1000),
+                ..Default::default()
+            }),
     ]
 }
 
@@ -2271,119 +3021,187 @@ mod tests {
     fn test_ethereum_endpoints() {
         let endpoints = ethereum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ETHEREUM);
-        assert!(endpoints.len() >= 40, "Should have at least 40 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 40,
+            "Should have at least 40 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_arbitrum_endpoints() {
         let endpoints = arbitrum_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ARBITRUM_ONE);
-        assert!(endpoints.len() >= 20, "Should have at least 20 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 20,
+            "Should have at least 20 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_optimism_endpoints() {
         let endpoints = optimism_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::OPTIMISM);
-        assert!(endpoints.len() >= 16, "Should have at least 16 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 16,
+            "Should have at least 16 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_base_endpoints() {
         let endpoints = base_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BASE);
-        assert!(endpoints.len() >= 21, "Should have at least 21 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 21,
+            "Should have at least 21 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_polygon_endpoints() {
         let endpoints = polygon_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::POLYGON);
-        assert!(endpoints.len() >= 14, "Should have at least 14 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 14,
+            "Should have at least 14 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_bsc_endpoints() {
         let endpoints = bsc_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BSC);
-        assert!(endpoints.len() >= 25, "Should have at least 25 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 25,
+            "Should have at least 25 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_avalanche_endpoints() {
         let endpoints = avalanche_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::AVALANCHE);
-        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 7,
+            "Should have at least 7 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_fantom_endpoints() {
         let endpoints = fantom_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::FANTOM);
-        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 7,
+            "Should have at least 7 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_zksync_era_endpoints() {
         let endpoints = zksync_era_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::ZKSYNC_ERA);
-        assert!(endpoints.len() >= 7, "Should have at least 7 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 7,
+            "Should have at least 7 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_linea_endpoints() {
         let endpoints = linea_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::LINEA);
-        assert!(endpoints.len() >= 6, "Should have at least 6 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 6,
+            "Should have at least 6 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_hyperliquid_evm_endpoints() {
         let endpoints = hyperliquid_evm_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::HYPERLIQUID_EVM);
-        assert!(endpoints.len() >= 3, "Should have at least 3 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 3,
+            "Should have at least 3 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_scroll_endpoints() {
         let endpoints = scroll_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::SCROLL);
-        assert!(endpoints.len() >= 11, "Should have at least 11 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 11,
+            "Should have at least 11 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_polygon_zkevm_endpoints() {
         let endpoints = polygon_zkevm_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::POLYGON_ZKEVM);
-        assert!(endpoints.len() >= 6, "Should have at least 6 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 6,
+            "Should have at least 6 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_blast_endpoints() {
         let endpoints = blast_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::BLAST);
-        assert!(endpoints.len() >= 9, "Should have at least 9 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 9,
+            "Should have at least 9 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_mantle_endpoints() {
         let endpoints = mantle_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::MANTLE);
-        assert!(endpoints.len() >= 11, "Should have at least 11 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 11,
+            "Should have at least 11 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_mode_endpoints() {
         let endpoints = mode_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::MODE);
-        assert!(endpoints.len() >= 5, "Should have at least 5 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 5,
+            "Should have at least 5 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
     fn test_manta_pacific_endpoints() {
         let endpoints = manta_pacific_endpoints();
         assert_valid_endpoints(&endpoints, chain_id::MANTA_PACIFIC);
-        assert!(endpoints.len() >= 5, "Should have at least 5 endpoints, got {}", endpoints.len());
+        assert!(
+            endpoints.len() >= 5,
+            "Should have at least 5 endpoints, got {}",
+            endpoints.len()
+        );
     }
 
     #[test]
@@ -2447,7 +3265,11 @@ mod tests {
             .map(|&id| default_endpoints(id).len())
             .sum();
 
-        assert!(total >= 350, "Should have at least 350 total endpoints, got {}", total);
+        assert!(
+            total >= 350,
+            "Should have at least 350 total endpoints, got {}",
+            total
+        );
     }
 
     #[test]

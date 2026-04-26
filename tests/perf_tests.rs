@@ -68,7 +68,10 @@ impl PerfResult {
         );
         println!("  Min duration:  {} ns", self.min_duration_ns);
         println!("  Max duration:  {} ns", self.max_duration_ns);
-        println!("  Throughput:    {:.2} ops/sec", self.throughput_ops_per_sec);
+        println!(
+            "  Throughput:    {:.2} ops/sec",
+            self.throughput_ops_per_sec
+        );
     }
 }
 
@@ -357,7 +360,10 @@ fn test_memory_efficiency() {
     println!("  Endpoints/pool:    {}", ENDPOINTS_PER_POOL);
     println!("  Creation time:     {:?}", creation_time);
     println!("  Access time:       {:?}", access_time);
-    println!("  Avg creation:      {:?}", creation_time / POOL_COUNT as u32);
+    println!(
+        "  Avg creation:      {:?}",
+        creation_time / POOL_COUNT as u32
+    );
     println!("  Avg access:        {:?}", access_time / POOL_COUNT as u32);
 }
 

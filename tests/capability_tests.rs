@@ -180,11 +180,7 @@ fn test_all_chain_ids_complete() {
 fn test_chain_names_not_unknown() {
     for &cid in &presets::all_chain_ids() {
         let name = presets::chain_name(cid);
-        assert_ne!(
-            name, "Unknown",
-            "Chain ID {} should have a known name",
-            cid
-        );
+        assert_ne!(name, "Unknown", "Chain ID {} should have a known name", cid);
     }
 }
 
@@ -231,8 +227,7 @@ fn test_priority_adjustment_values() {
 
 #[test]
 fn test_ws_url_sets_supports_websocket() {
-    let endpoint = RpcEndpoint::new("https://rpc.example.com")
-        .with_ws_url("wss://rpc.example.com");
+    let endpoint = RpcEndpoint::new("https://rpc.example.com").with_ws_url("wss://rpc.example.com");
     assert!(endpoint.capabilities.supports_websocket);
 }
 

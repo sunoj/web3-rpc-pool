@@ -88,7 +88,11 @@ impl EndpointCapabilities {
                 let has_any_data = self.supports_eth_get_logs.is_some()
                     || self.max_batch_size.is_some()
                     || self.max_block_range.is_some();
-                if has_any_data { 10 } else { 0 }
+                if has_any_data {
+                    10
+                } else {
+                    0
+                }
             }
             EndpointGrade::F => 50,
         }
@@ -320,7 +324,9 @@ impl EndpointStats {
         match &self.last_error_time {
             Some(t) => {
                 let backoff_multiplier = 2u64.saturating_pow(self.recovery_attempts);
-                let backoff_secs = base_retry_delay.as_secs().saturating_mul(backoff_multiplier);
+                let backoff_secs = base_retry_delay
+                    .as_secs()
+                    .saturating_mul(backoff_multiplier);
                 let capped_secs = backoff_secs.min(MAX_RECOVERY_BACKOFF_SECS);
                 let actual_delay = std::time::Duration::from_secs(capped_secs);
                 t.elapsed() >= actual_delay
@@ -330,9 +336,14 @@ impl EndpointStats {
     }
 
     /// Get the current retry delay with exponential backoff applied.
-    pub fn current_retry_delay(&self, base_retry_delay: std::time::Duration) -> std::time::Duration {
+    pub fn current_retry_delay(
+        &self,
+        base_retry_delay: std::time::Duration,
+    ) -> std::time::Duration {
         let backoff_multiplier = 2u64.saturating_pow(self.recovery_attempts);
-        let backoff_secs = base_retry_delay.as_secs().saturating_mul(backoff_multiplier);
+        let backoff_secs = base_retry_delay
+            .as_secs()
+            .saturating_mul(backoff_multiplier);
         let capped_secs = backoff_secs.min(MAX_RECOVERY_BACKOFF_SECS);
         std::time::Duration::from_secs(capped_secs)
     }
@@ -428,7 +439,7 @@ mod tests {
     fn test_grade_a_unlimited() {
         let caps = EndpointCapabilities {
             supports_eth_get_logs: Some(true),
-            max_batch_size: Some(0), // unlimited
+            max_batch_size: Some(0),  // unlimited
             max_block_range: Some(0), // unlimited
             ..Default::default()
         };
@@ -493,15 +504,14 @@ mod tests {
             max_block_range: Some(10_000),
             ..Default::default()
         };
-        let endpoint = RpcEndpoint::new("https://rpc.example.com")
-            .with_capabilities(caps);
+        let endpoint = RpcEndpoint::new("https://rpc.example.com").with_capabilities(caps);
         assert_eq!(endpoint.capabilities.grade(), EndpointGrade::A);
     }
 
     #[test]
     fn test_with_ws_url_sets_websocket_capability() {
-        let endpoint = RpcEndpoint::new("https://rpc.example.com")
-            .with_ws_url("wss://rpc.example.com");
+        let endpoint =
+            RpcEndpoint::new("https://rpc.example.com").with_ws_url("wss://rpc.example.com");
         assert!(endpoint.capabilities.supports_websocket);
     }
 
