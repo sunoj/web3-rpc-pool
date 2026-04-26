@@ -20,7 +20,10 @@ fn create_test_endpoints(count: usize) -> Vec<RpcEndpoint> {
         .collect()
 }
 
-fn create_test_stats(endpoints: &[RpcEndpoint], healthy_ratio: f64) -> HashMap<String, EndpointStats> {
+fn create_test_stats(
+    endpoints: &[RpcEndpoint],
+    healthy_ratio: f64,
+) -> HashMap<String, EndpointStats> {
     let healthy_count = (endpoints.len() as f64 * healthy_ratio) as usize;
     endpoints
         .iter()

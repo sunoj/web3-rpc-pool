@@ -200,7 +200,12 @@ impl TieredPool {
             };
 
             let pool_config = RpcPoolConfig::new()
-                .with_endpoints(endpoints.into_iter().map(|endpoint| endpoint.endpoint).collect())
+                .with_endpoints(
+                    endpoints
+                        .into_iter()
+                        .map(|endpoint| endpoint.endpoint)
+                        .collect(),
+                )
                 .with_strategy(strategy)
                 .with_health_check_interval(config.health_check_interval)
                 .with_max_consecutive_errors(config.max_consecutive_errors)
@@ -426,7 +431,11 @@ impl TieredPool {
     /// Log current tier configuration for debugging.
     pub fn log_tier_info(&self) {
         let counts = self.tier_endpoint_counts();
-        for tier in [EndpointTier::Premium, EndpointTier::Standard, EndpointTier::Free] {
+        for tier in [
+            EndpointTier::Premium,
+            EndpointTier::Standard,
+            EndpointTier::Free,
+        ] {
             if let Some(count) = counts.get(&tier) {
                 info!(tier = ?tier, endpoint_count = count, "Tier configuration");
             } else {
@@ -506,11 +515,7 @@ impl TieredPoolBuilder {
     }
 
     /// Add a trusted standard endpoint.
-    pub fn add_standard_trusted(
-        mut self,
-        url: impl Into<String>,
-        name: impl Into<String>,
-    ) -> Self {
+    pub fn add_standard_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self {
         let mut endpoint = TieredEndpoint::new(url, EndpointTier::Standard)
             .with_name(name)
             .with_priority(50);
@@ -715,7 +720,8 @@ mod tests {
 
     #[test]
     fn test_trusted_endpoint_creation() {
-        let mut endpoint = TieredEndpoint::new("https://trusted.example.com", EndpointTier::Premium);
+        let mut endpoint =
+            TieredEndpoint::new("https://trusted.example.com", EndpointTier::Premium);
         assert!(!endpoint.trusted);
 
         endpoint.trusted = true;
@@ -848,18 +854,15 @@ mod tests {
 
         let pool = TieredPoolBuilder::new()
             .add_premium("https://premium.example.com", "Premium")
-            .with_default_free_endpoints_for_chains(&[
-                chain_id::ETHEREUM,
-                chain_id::ARBITRUM_ONE,
-            ])
+            .with_default_free_endpoints_for_chains(&[chain_id::ETHEREUM, chain_id::ARBITRUM_ONE])
             .build()
             .unwrap();
 
         let counts = pool.tier_endpoint_counts();
         let free_count = counts.get(&EndpointTier::Free).unwrap_or(&0);
 
-        let expected_count = crate::presets::ethereum_endpoints().len()
-            + crate::presets::arbitrum_endpoints().len();
+        let expected_count =
+            crate::presets::ethereum_endpoints().len() + crate::presets::arbitrum_endpoints().len();
         assert_eq!(*free_count, expected_count);
     }
 }

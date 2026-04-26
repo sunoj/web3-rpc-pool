@@ -25,9 +25,9 @@
 use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
 
+use alloy::primitives::B256;
 use alloy::providers::{Provider, ProviderBuilder};
 use alloy::rpc::types::{Filter, Header, Log};
-use alloy::primitives::B256;
 use alloy::transports::ws::WsConnect;
 use futures_util::stream::Stream;
 use std::pin::Pin;
@@ -135,10 +135,7 @@ impl WsPool {
         // Sort by priority (lower = higher priority)
         endpoints.sort_by_key(|e| e.priority);
 
-        info!(
-            ws_endpoints = endpoints.len(),
-            "WebSocket pool initialized"
-        );
+        info!(ws_endpoints = endpoints.len(), "WebSocket pool initialized");
         for ep in &endpoints {
             debug!(
                 name = %ep.name,
@@ -172,9 +169,7 @@ impl WsPool {
     ///
     /// Tries each WebSocket endpoint in priority order until one connects
     /// and establishes a subscription. Returns a stream of block headers.
-    pub async fn subscribe_new_heads(
-        &self,
-    ) -> Result<BoxSubscriptionStream<Header>, RpcPoolError> {
+    pub async fn subscribe_new_heads(&self) -> Result<BoxSubscriptionStream<Header>, RpcPoolError> {
         let mut last_error = None;
 
         for endpoint in &self.endpoints {
@@ -182,20 +177,19 @@ impl WsPool {
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for newHeads subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
-                    Ok(provider) => {
-                        match provider.subscribe_blocks().await {
-                            Ok(sub) => {
-                                info!(name = %endpoint.name, "Subscribed to newHeads");
-                                return Ok(owned_stream(provider, sub.into_stream()));
-                            }
-                            Err(e) => {
-                                warn!(name = %endpoint.name, error = %e, "Subscribe failed");
-                                last_error = Some(RpcPoolError::WebSocketError(
-                                    format!("Subscribe failed on {}: {}", endpoint.name, e),
-                                ));
-                            }
+                    Ok(provider) => match provider.subscribe_blocks().await {
+                        Ok(sub) => {
+                            info!(name = %endpoint.name, "Subscribed to newHeads");
+                            return Ok(owned_stream(provider, sub.into_stream()));
                         }
-                    }
+                        Err(e) => {
+                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            last_error = Some(RpcPoolError::WebSocketError(format!(
+                                "Subscribe failed on {}: {}",
+                                endpoint.name, e
+                            )));
+                        }
+                    },
                     Err(e) => {
                         warn!(name = %endpoint.name, error = %e, "WS connect failed");
                         last_error = Some(e);
@@ -221,20 +215,19 @@ impl WsPool {
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for pendingTransactions subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
-                    Ok(provider) => {
-                        match provider.subscribe_pending_transactions().await {
-                            Ok(sub) => {
-                                info!(name = %endpoint.name, "Subscribed to pendingTransactions");
-                                return Ok(owned_stream(provider, sub.into_stream()));
-                            }
-                            Err(e) => {
-                                warn!(name = %endpoint.name, error = %e, "Subscribe failed");
-                                last_error = Some(RpcPoolError::WebSocketError(
-                                    format!("Subscribe failed on {}: {}", endpoint.name, e),
-                                ));
-                            }
+                    Ok(provider) => match provider.subscribe_pending_transactions().await {
+                        Ok(sub) => {
+                            info!(name = %endpoint.name, "Subscribed to pendingTransactions");
+                            return Ok(owned_stream(provider, sub.into_stream()));
                         }
-                    }
+                        Err(e) => {
+                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            last_error = Some(RpcPoolError::WebSocketError(format!(
+                                "Subscribe failed on {}: {}",
+                                endpoint.name, e
+                            )));
+                        }
+                    },
                     Err(e) => {
                         warn!(name = %endpoint.name, error = %e, "WS connect failed");
                         last_error = Some(e);
@@ -261,20 +254,19 @@ impl WsPool {
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for logs subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
-                    Ok(provider) => {
-                        match provider.subscribe_logs(filter).await {
-                            Ok(sub) => {
-                                info!(name = %endpoint.name, "Subscribed to logs");
-                                return Ok(owned_stream(provider, sub.into_stream()));
-                            }
-                            Err(e) => {
-                                warn!(name = %endpoint.name, error = %e, "Subscribe failed");
-                                last_error = Some(RpcPoolError::WebSocketError(
-                                    format!("Subscribe failed on {}: {}", endpoint.name, e),
-                                ));
-                            }
+                    Ok(provider) => match provider.subscribe_logs(filter).await {
+                        Ok(sub) => {
+                            info!(name = %endpoint.name, "Subscribed to logs");
+                            return Ok(owned_stream(provider, sub.into_stream()));
                         }
-                    }
+                        Err(e) => {
+                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            last_error = Some(RpcPoolError::WebSocketError(format!(
+                                "Subscribe failed on {}: {}",
+                                endpoint.name, e
+                            )));
+                        }
+                    },
                     Err(e) => {
                         warn!(name = %endpoint.name, error = %e, "WS connect failed");
                         last_error = Some(e);
@@ -338,9 +330,10 @@ pub async fn connect_and_subscribe_blocks(
             RpcPoolError::WebSocketError(format!("Failed to connect to {}: {}", ws_url, e))
         })?;
 
-    let sub = provider.subscribe_blocks().await.map_err(|e| {
-        RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e))
-    })?;
+    let sub = provider
+        .subscribe_blocks()
+        .await
+        .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
 
     Ok(owned_stream(provider, sub.into_stream()))
 }
@@ -361,9 +354,10 @@ pub async fn connect_and_subscribe_logs(
             RpcPoolError::WebSocketError(format!("Failed to connect to {}: {}", ws_url, e))
         })?;
 
-    let sub = provider.subscribe_logs(filter).await.map_err(|e| {
-        RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e))
-    })?;
+    let sub = provider
+        .subscribe_logs(filter)
+        .await
+        .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
 
     Ok(owned_stream(provider, sub.into_stream()))
 }
@@ -492,8 +486,8 @@ mod tests {
     #[tokio::test]
     async fn test_owned_stream_owner_outlives_stream() {
         use futures_util::StreamExt;
-        use std::sync::Arc;
         use std::sync::atomic::{AtomicBool, Ordering};
+        use std::sync::Arc;
 
         let dropped = Arc::new(AtomicBool::new(false));
 

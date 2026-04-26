@@ -118,14 +118,11 @@ async fn rpc_call(
         return Err(format!("RPC error: {}", err));
     }
 
-    json.result.ok_or_else(|| "No result in response".to_string())
+    json.result
+        .ok_or_else(|| "No result in response".to_string())
 }
 
-async fn rpc_batch_call(
-    client: &Client,
-    url: &str,
-    batch_size: usize,
-) -> Result<(), String> {
+async fn rpc_batch_call(client: &Client, url: &str, batch_size: usize) -> Result<(), String> {
     let batch: Vec<serde_json::Value> = (0..batch_size)
         .map(|i| {
             serde_json::json!({
@@ -246,7 +243,11 @@ async fn evaluate_endpoint(
         }
     }
     // If all succeeded including 1000, treat as unlimited
-    let max_batch_size = if max_batch >= 1000 { Some(0) } else { Some(max_batch) };
+    let max_batch_size = if max_batch >= 1000 {
+        Some(0)
+    } else {
+        Some(max_batch)
+    };
 
     // Step 4: Block range test for eth_getLogs
     let max_block_range = if supports_logs {
@@ -313,10 +314,7 @@ fn print_table(report: &EvaluationReport) {
     for ep in &report.endpoints {
         if ep.chain_id != current_chain {
             current_chain = ep.chain_id;
-            println!(
-                "\n--- {} (chain_id: {}) ---",
-                ep.chain_name, ep.chain_id
-            );
+            println!("\n--- {} (chain_id: {}) ---", ep.chain_name, ep.chain_id);
         }
 
         let latency = ep

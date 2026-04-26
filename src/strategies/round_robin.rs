@@ -81,10 +81,26 @@ mod tests {
         let exclude = HashSet::new();
 
         // Should cycle through all endpoints
-        let first = strategy.select(&endpoints, &stats, &exclude).unwrap().url.clone();
-        let second = strategy.select(&endpoints, &stats, &exclude).unwrap().url.clone();
-        let third = strategy.select(&endpoints, &stats, &exclude).unwrap().url.clone();
-        let fourth = strategy.select(&endpoints, &stats, &exclude).unwrap().url.clone();
+        let first = strategy
+            .select(&endpoints, &stats, &exclude)
+            .unwrap()
+            .url
+            .clone();
+        let second = strategy
+            .select(&endpoints, &stats, &exclude)
+            .unwrap()
+            .url
+            .clone();
+        let third = strategy
+            .select(&endpoints, &stats, &exclude)
+            .unwrap()
+            .url
+            .clone();
+        let fourth = strategy
+            .select(&endpoints, &stats, &exclude)
+            .unwrap()
+            .url
+            .clone();
 
         // Fourth should wrap around to first
         assert_eq!(first, fourth);
