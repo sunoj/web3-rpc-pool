@@ -688,6 +688,20 @@ impl RpcPool {
         }
     }
 
+    /// Manually mark an endpoint as healthy.
+    pub fn mark_healthy(&self, url: &str) {
+        if let Some(stats) = self.stats.write().get_mut(url) {
+            stats.mark_recovered();
+            debug!(
+                endpoint_name = %stats.name,
+                endpoint_url = %url,
+                "Endpoint manually marked healthy"
+            );
+        } else {
+            warn!(endpoint_url = %url, "Attempted to mark unknown endpoint as healthy");
+        }
+    }
+
     /// Get current metrics.
     pub fn metrics(&self) -> RpcPoolMetrics {
         let endpoints: Vec<EndpointMetrics> = self
