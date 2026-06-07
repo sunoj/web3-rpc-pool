@@ -109,6 +109,13 @@ impl TieredEndpoint {
         self.endpoint = self.endpoint.with_chain_id(chain_id);
         self
     }
+
+    /// Mark this endpoint as preferred (fast, unlimited, co-located node). Selection
+    /// strategies pick it first within its tier and never rate-shed onto it.
+    pub fn with_preferred(mut self, preferred: bool) -> Self {
+        self.endpoint = self.endpoint.with_preferred(preferred);
+        self
+    }
 }
 
 /// Configuration for the tiered RPC pool.
@@ -495,6 +502,25 @@ impl TieredPoolBuilder {
         self
     }
 
+    /// Add a PREFERRED endpoint to a tier — a fast, unlimited, co-located node that
+    /// the tier's selection strategy picks first and never rate-sheds. Use the SAME
+    /// node URL across multiple tiers (e.g. Standard + Free); the per-(tier,url) dedup
+    /// keeps each, so the node leads both the Normal and Low read paths.
+    pub fn add_preferred(
+        mut self,
+        url: impl Into<String>,
+        name: impl Into<String>,
+        tier: EndpointTier,
+    ) -> Self {
+        self.endpoints.push(
+            TieredEndpoint::new(url, tier)
+                .with_name(name)
+                .with_priority(0)
+                .with_preferred(true),
+        );
+        self
+    }
+
     /// Add a trusted premium endpoint.
     pub fn add_premium_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self {
         let mut endpoint = TieredEndpoint::new(url, EndpointTier::Premium)
@@ -621,16 +647,19 @@ impl TieredPoolBuilder {
 
     /// Build the tiered pool.
     pub fn build(self) -> Result<TieredPool, RpcPoolError> {
-        // Deduplicate endpoints by URL, keeping the first occurrence (higher tier / earlier added wins)
+        // Deduplicate endpoints by (tier, URL). The same endpoint legitimately serves
+        // multiple priority classes — e.g. a self-hosted node in BOTH Standard (Normal
+        // reads) and Free (Low/background reads) — so dedup is per-tier, not global. A
+        // global URL dedup silently dropped such an endpoint from the lower tier.
         let mut seen = HashSet::new();
         let mut deduped = Vec::with_capacity(self.endpoints.len());
         for ep in self.endpoints {
-            if !seen.insert(ep.endpoint.url.clone()) {
+            if !seen.insert((ep.tier, ep.endpoint.url.clone())) {
                 warn!(
                     url = %ep.endpoint.url,
                     name = %ep.endpoint.name,
                     tier = ?ep.tier,
-                    "Duplicate endpoint removed during pool build"
+                    "Duplicate endpoint removed during pool build (same url+tier)"
                 );
                 continue;
             }
@@ -861,5 +890,40 @@ mod tests {
         let expected_count = crate::presets::ethereum_endpoints().len()
             + crate::presets::arbitrum_endpoints().len();
         assert_eq!(*free_count, expected_count);
+    }
+
+    #[test]
+    fn test_same_url_kept_across_tiers_deduped_within_tier() {
+        let node = "http://node.local:8545";
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .add_standard(node, "Node-Std")
+            .add_free(node, "Node-Free") // same URL, different tier -> kept
+            .add_free(node, "Node-Free-dup") // same URL, same tier -> deduped
+            .add_free("https://other-free.example.com", "Other")
+            .build()
+            .unwrap();
+        let counts = pool.tier_endpoint_counts();
+        // Node survives in BOTH Standard and Free (cross-tier dedup removed).
+        assert_eq!(*counts.get(&EndpointTier::Standard).unwrap(), 1);
+        // Free has the node once (same-tier dup removed) + the other endpoint = 2.
+        assert_eq!(*counts.get(&EndpointTier::Free).unwrap(), 2);
+    }
+
+    #[test]
+    fn test_add_preferred_marks_endpoint_and_top_priority() {
+        // with_preferred only sets the flag.
+        let ep = TieredEndpoint::new("http://node.local:8545", EndpointTier::Free)
+            .with_preferred(true);
+        assert!(ep.endpoint.preferred);
+
+        // The add_preferred builder convenience also sets top priority (0).
+        let built = TieredPoolBuilder::new()
+            .add_preferred("http://node.local:8545", "Node", EndpointTier::Standard)
+            .endpoints[0]
+            .clone();
+        assert!(built.endpoint.preferred);
+        assert_eq!(built.endpoint.priority, 0);
+        assert_eq!(built.tier, EndpointTier::Standard);
     }
 }
