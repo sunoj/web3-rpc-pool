@@ -1,0 +1,186 @@
+# web3-rpc-pool: eRPC compatibility options
+# Three features that eliminate redundancy when using eRPC as the backend.
+#
+# All three are opt-in via TieredPoolBuilder methods:
+#   .add_premium_trusted(url, name)   — trusted mode, skip pool failover + health check
+#   .skip_default_presets(true)       — don't add preset free endpoints
+#   .trusted_url(priority)            — return URL without probe (for healthy_url callers)
+
+[[task]]
+name = "trusted-endpoint"
+agent = "codex"
+dir = "/Users/mingsun/Develop/web3/web3-rpc-pool"
+worktree = "feat/erpc-compat"
+verify = "cargo test"
+prompt = """
+Add "trusted endpoint" support to web3-rpc-pool. This is for when the endpoint is a local load balancer (like eRPC) that already handles failover, health checks, and retries internally — so web3-rpc-pool should skip its own redundant checks.
+
+## Changes needed:
+
+### 1. `src/tiered.rs` — TieredEndpoint + TieredPool + TieredPoolBuilder
+
+**TieredEndpoint**: Add a `trusted: bool` field (default false):
+```rust
+pub struct TieredEndpoint {
+    pub endpoint: RpcEndpoint,
+    pub tier: EndpointTier,
+    pub rate_limit: u32,
+    pub trusted: bool,  // NEW
+}
+```
+Update `TieredEndpoint::new()` to set `trusted: false`.
+
+**TieredPool**:
+- Add a new field `trusted_urls: HashMap<EndpointTier, url::Url>` to store trusted tier URLs.
+- In `TieredPool::new()`: when building, if ALL endpoints in a tier have `trusted: true`, don't create an RpcPool for that tier. Instead, parse the first endpoint's URL and store it in `trusted_urls`.
+- Modify `execute()`: before trying `pool.execute()`, check if the tier has a trusted URL. If so, call `f(url)` directly wrapped in `tokio::time::timeout(Duration::from_secs(30))`. On timeout, return `RpcPoolError::AllEndpointsFailed`. On success, return immediately. On error, log warning and fall through to next tier (same as current behavior).
+- Add method `pub fn trusted_url(&self, priority: RequestPriority) -> Option<url::Url>` that returns the trusted URL for the first tier in the priority's tier order that has a trusted URL. Returns None if no trusted tier matches.
+
+**TieredPoolBuilder**: Add three new builder methods:
+```rust
+pub fn add_premium_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self
+pub fn add_standard_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self
+pub fn add_free_trusted(mut self, url: impl Into<String>, name: impl Into<String>) -> Self
+```
+These work like `add_premium/add_standard/add_free` but set `trusted: true`.
+
+### 2. `src/tiered.rs` — TieredPoolBuilder: skip_default_presets option
+
+Add a `skip_default_presets: bool` field to `TieredPoolBuilder` (default false).
+Add builder method:
+```rust
+pub fn skip_default_presets(mut self, skip: bool) -> Self
+```
+
+This flag is NOT enforced inside web3-rpc-pool itself — it's just stored and exposed via:
+```rust
+pub fn should_skip_default_presets(&self) -> bool
+```
+
+The caller (smart-router's setup.rs) reads this flag to decide whether to call `add_free_endpoints()`. This keeps the logic in the caller where the presets::default_endpoints() call happens.
+
+Wait — actually that doesn't work because build() consumes self. Instead, just add a field directly to `TieredPool`:
+```rust
+pub struct TieredPool {
+    pools: HashMap<EndpointTier, Arc<RpcPool>>,
+    trusted_urls: HashMap<EndpointTier, url::Url>,
+    allow_critical_fallback: bool,
+    allow_low_escalation: bool,
+    has_trusted_free: bool,  // NEW: true if Free tier has a trusted endpoint
+}
+```
+And expose `pub fn has_trusted_free(&self) -> bool`. The caller can check this BEFORE calling `add_free_endpoints()`.
+
+Actually simpler approach: just add a method to `TieredPoolBuilder`:
+```rust
+pub fn skip_default_presets(mut self, skip: bool) -> Self {
+    self.skip_default_presets = skip;
+    self
+}
+```
+And in `build()`, store it in the TieredPool so callers don't need it. But really the caller needs this BEFORE build().
+
+Simplest approach: The builder already has `add_free_endpoints()` and `with_default_free_endpoints()`. Just DON'T call these methods when a trusted free endpoint is configured. The caller controls this. No new flag needed in web3-rpc-pool.
+
+So: SKIP direction 3 inside web3-rpc-pool. The caller (SR) will just not call `add_free_endpoints(presets)` when it has a trusted Free URL.
+
+### 3. Tests
+
+Add tests in `src/tiered.rs` mod tests:
+- `test_trusted_endpoint_creation`: verify TieredEndpoint with trusted=true
+- `test_trusted_url_returns_url`: build pool with trusted premium, verify `trusted_url(Critical)` returns Some
+- `test_trusted_url_returns_none`: build pool with non-trusted premium, verify `trusted_url(Critical)` returns None
+- `test_mixed_trusted_and_pool`: build pool with trusted premium + non-trusted free, verify both work
+- `test_trusted_tier_no_pool_created`: build with trusted standard, verify `get_tier_pool(Standard)` returns None but trusted_url works
+
+### Important constraints:
+- Do NOT modify pool.rs, endpoint.rs, strategies/, presets.rs, or error.rs
+- Only modify src/tiered.rs
+- Keep all existing tests passing
+- Use `url::Url` (already in Cargo.toml deps) for trusted_urls
+- The 30s timeout for trusted execute should use `tokio::time::timeout`
+"""
+
+[[task]]
+name = "sr-use-trusted"
+agent = "codex"
+dir = "/Users/mingsun/Develop/web3/swap_solver/smart-router"
+worktree = "feat/rpc-trusted-mode"
+depends_on = ["trusted-endpoint"]
+verify = "cargo check"
+prompt = """
+Update smart-router to use web3-rpc-pool's new "trusted endpoint" feature when eRPC URLs are configured.
+
+## Context:
+web3-rpc-pool now supports "trusted endpoints" — endpoints that are local load balancers (eRPC) that handle their own failover. When a tier has a trusted endpoint, web3-rpc-pool skips its internal health checks and failover, just passing through requests directly.
+
+## Changes:
+
+### 1. `crates/sr-service/src/setup.rs` — `build_rpc_pools()`
+
+When env vars point to eRPC (localhost:4000), use trusted builder methods:
+
+Replace the current pattern:
+```rust
+builder = builder.add_premium(url.to_string(), name);
+```
+
+With detection logic:
+```rust
+fn is_erpc_url(url: &str) -> bool {
+    url.contains("127.0.0.1:4000") || url.contains("localhost:4000")
+}
+
+// In the env var loop:
+if is_erpc_url(url) {
+    builder = builder.add_premium_trusted(url.to_string(), name);
+} else {
+    builder = builder.add_premium(url.to_string(), name);
+}
+```
+
+Apply the same pattern for standard and free tiers.
+
+When the Free tier has a trusted endpoint (eRPC free URL), skip adding preset endpoints:
+```rust
+// After processing env vars, before adding presets:
+let has_trusted_free = /* check if any free endpoint was added as trusted */;
+if !has_trusted_free {
+    let preset_endpoints = web3_rpc_pool::presets::default_endpoints(cc.chain_id);
+    endpoint_count += preset_endpoints.len() as u32;
+    builder = builder.add_free_endpoints(preset_endpoints);
+}
+```
+
+Track whether a trusted free was added with a local `bool` variable set during the env var processing loop.
+
+### 2. `crates/sr-pool-cache/src/sync.rs` — `healthy_url()`
+
+When the pool has a trusted URL for the requested priority, skip the `get_block_number` probe:
+
+```rust
+pub async fn healthy_url(
+    pool: &TieredPool,
+    priority: RequestPriority,
+    client: &reqwest::Client,
+) -> Result<url::Url, web3_rpc_pool::RpcPoolError> {
+    // Fast path: trusted endpoint (eRPC) — skip probe
+    if let Some(url) = pool.trusted_url(priority) {
+        return Ok(url);
+    }
+    // Existing probe logic...
+    let client = client.clone();
+    match tokio::time::timeout(Duration::from_secs(15), pool.execute(priority, move |url| {
+        ...
+    })).await {
+        ...
+    }
+}
+```
+
+### Important constraints:
+- Do NOT change any other files
+- Keep the existing behavior for non-eRPC endpoints (direct QuickNode URLs)
+- `is_erpc_url` should be a simple private function in setup.rs
+- The web3-rpc-pool dependency in Cargo.toml does NOT need updating yet (we'll update the git ref after the web3-rpc-pool PR is merged)
+"""

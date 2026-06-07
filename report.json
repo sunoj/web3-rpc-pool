@@ -1,0 +1,6356 @@
+{
+  "timestamp": "2026-02-27T02:15:07.860831+00:00",
+  "endpoints": [
+    {
+      "name": "0xRPC",
+      "url": "https://0xrpc.io/eth",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/eth",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 165,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/eth",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://eth-mainnet.public.blastapi.io",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 352,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "BlinkLabs",
+      "url": "https://ethereum.blinklabs.xyz",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 568,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "BloXroute",
+      "url": "https://eth.rpc.blxrbdn.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 87,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BloXroute Protect",
+      "url": "https://eth-protect.rpc.blxrbdn.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 97,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BloXroute Singapore",
+      "url": "https://singapore.rpc.blxrbdn.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BloXroute UK",
+      "url": "https://uk.rpc.blxrbdn.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BloXroute Virginia",
+      "url": "https://virginia.rpc.blxrbdn.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlockRazor",
+      "url": "https://eth.blockrazor.xyz",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 379,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Blocknative",
+      "url": "https://rpc.blocknative.com/boost",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Cloudflare",
+      "url": "https://cloudflare-eth.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Flashbots",
+      "url": "https://rpc.flashbots.net",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 2838,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "GasHawk",
+      "url": "https://core.gashawk.io/rpc",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 810,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Gateway.fm",
+      "url": "https://rpc.eth.gateway.fm",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 582,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "LeoRPC",
+      "url": "https://eth.leorpc.com/?api_key=FREE",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 598,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://eth.llamarpc.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 306,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "MEV Blocker",
+      "url": "https://rpc.mevblocker.io",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 618,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "MEV Blocker Fast",
+      "url": "https://rpc.mevblocker.io/fast",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 571,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "MEV Blocker FullPrivacy",
+      "url": "https://rpc.mevblocker.io/fullprivacy",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 574,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "MEV Blocker NoReverts",
+      "url": "https://rpc.mevblocker.io/noreverts",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 585,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://eth.meowrpc.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 314,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Merkle",
+      "url": "https://eth.merkle.io",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 313,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "NOWNodes",
+      "url": "https://public-eth.nownodes.io",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 373,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "NodeRPC",
+      "url": "https://api.noderpc.xyz/rpc-mainnet/public",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 857,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://eth-pokt.nodies.app",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 318,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies Public",
+      "url": "https://ethereum-public.nodies.app",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 347,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/eth/mainnet/public",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://eth.api.onfinality.io/public",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 184,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Payload",
+      "url": "https://rpc.payload.de",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://eth.api.pocket.network",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 649,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://ethereum-rpc.publicnode.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 285,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Reddio",
+      "url": "https://eth-mainnet.reddio.com",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 499,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "SecureRPC",
+      "url": "https://api.securerpc.com/v1",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Stakely",
+      "url": "https://ethereum-json-rpc.stakely.io",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 442,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://ethereum.rpc.subquery.network/public",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 455,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://mainnet.gateway.tenderly.co",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 212,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "TornadoETH",
+      "url": "https://rpc.tornadoeth.cash/eth",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 677,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://eth.drpc.org",
+      "chain_id": 1,
+      "chain_name": "Ethereum",
+      "reachable": true,
+      "avg_latency_ms": 96,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/op",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 266,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/optimism",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://optimism-mainnet.public.blastapi.io",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "FastNode",
+      "url": "https://public-op-mainnet.fastnode.io",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 425,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://optimism.llamarpc.com",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://optimism.meowrpc.com",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://op-pokt.nodies.app",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 282,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Nodies Public",
+      "url": "https://optimism-public.nodies.app",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 282,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/op/mainnet/public",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://optimism.api.onfinality.io/public",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 481,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Optimism Official",
+      "url": "https://mainnet.optimism.io",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 380,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://op.api.pocket.network",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 611,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://optimism-rpc.publicnode.com",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 255,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Sentio",
+      "url": "https://rpc.sentio.xyz/optimism",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 306,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://optimism.rpc.subquery.network/public",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 389,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tatum",
+      "url": "https://optimism-mainnet.gateway.tatum.io",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 62,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://optimism.gateway.tenderly.co",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 216,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly Public",
+      "url": "https://gateway.tenderly.co/public/optimism",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 213,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "ZAN",
+      "url": "https://api.zan.top/opt-mainnet",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 181,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://optimism.drpc.org",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 90,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://optimism.rpc.thirdweb.com",
+      "chain_id": 10,
+      "chain_name": "Optimism",
+      "reachable": true,
+      "avg_latency_ms": 401,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/cro",
+      "chain_id": 25,
+      "chain_name": "Cronos",
+      "reachable": true,
+      "avg_latency_ms": 609,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Cronos Official",
+      "url": "https://evm.cronos.org",
+      "chain_id": 25,
+      "chain_name": "Cronos",
+      "reachable": true,
+      "avg_latency_ms": 102,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://cronos-evm-rpc.publicnode.com",
+      "chain_id": 25,
+      "chain_name": "Cronos",
+      "reachable": true,
+      "avg_latency_ms": 259,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://cronos.drpc.org",
+      "chain_id": 25,
+      "chain_name": "Cronos",
+      "reachable": true,
+      "avg_latency_ms": 131,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "MyCrypto RSK",
+      "url": "https://mycrypto.rsk.co",
+      "chain_id": 30,
+      "chain_name": "Rootstock",
+      "reachable": true,
+      "avg_latency_ms": 432,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Rootstock Official",
+      "url": "https://public-node.rsk.co",
+      "chain_id": 30,
+      "chain_name": "Rootstock",
+      "reachable": true,
+      "avg_latency_ms": 464,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://rootstock.drpc.org",
+      "chain_id": 30,
+      "chain_name": "Rootstock",
+      "reachable": true,
+      "avg_latency_ms": 107,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/bnb",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 41,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/bsc",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BNB Chain 1",
+      "url": "https://bsc-dataseed1.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 239,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BNB Chain 2",
+      "url": "https://bsc-dataseed2.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 234,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BNB Chain 3",
+      "url": "https://bsc-dataseed3.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 237,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BNB Chain 4",
+      "url": "https://bsc-dataseed4.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 244,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BNB Chain Official",
+      "url": "https://bsc-dataseed.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 241,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BNB Chain Public",
+      "url": "https://bsc-dataseed-public.bnbchain.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 237,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://bsc-mainnet.public.blastapi.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 354,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "BlockRazor",
+      "url": "https://bsc.blockrazor.xyz",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 204,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Defibit 1",
+      "url": "https://bsc-dataseed1.defibit.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 232,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Defibit 2",
+      "url": "https://bsc-dataseed2.defibit.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 228,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Defibit 3",
+      "url": "https://bsc-dataseed3.defibit.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 227,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Defibit 4",
+      "url": "https://bsc-dataseed4.defibit.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 228,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://binance.llamarpc.com",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 494,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://bsc.meowrpc.com",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 266,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ninicoin 1",
+      "url": "https://bsc-dataseed1.ninicoin.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 228,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ninicoin 2",
+      "url": "https://bsc-dataseed2.ninicoin.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 223,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ninicoin 3",
+      "url": "https://bsc-dataseed3.ninicoin.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 230,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ninicoin 4",
+      "url": "https://bsc-dataseed4.ninicoin.io",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 244,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "NodeReal",
+      "url": "https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 234,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://bsc-pokt.nodies.app",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 283,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/bsc/mainnet/public",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://bsc.api.pocket.network",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 412,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://bsc-rpc.publicnode.com",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 261,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode Alt",
+      "url": "https://bsc.publicnode.com",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 258,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://bnb.rpc.subquery.network/public",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 293,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://bsc.drpc.org",
+      "chain_id": 56,
+      "chain_name": "BNB Smart Chain",
+      "reachable": true,
+      "avg_latency_ms": 91,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "0xRPC",
+      "url": "https://0xrpc.io/gno",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/gnosis",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 172,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/gnosis",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://gnosis-mainnet.public.blastapi.io",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlockPI",
+      "url": "https://gnosis.blockpi.network/v1/rpc/public",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Gateway.fm",
+      "url": "https://rpc.gnosis.gateway.fm",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 402,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Gnosis Official",
+      "url": "https://rpc.gnosischain.com",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 391,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://gnosis-pokt.nodies.app",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 277,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://gnosis.api.onfinality.io/public",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 1118,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://gnosis-rpc.publicnode.com",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 270,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 500,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://gnosis.gateway.tenderly.co",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 354,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://gnosis.drpc.org",
+      "chain_id": 100,
+      "chain_name": "Gnosis",
+      "reachable": true,
+      "avg_latency_ms": 110,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Fuse Official",
+      "url": "https://rpc.fuse.io",
+      "chain_id": 122,
+      "chain_name": "Fuse",
+      "reachable": true,
+      "avg_latency_ms": 413,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://fuse-pokt.nodies.app",
+      "chain_id": 122,
+      "chain_name": "Fuse",
+      "reachable": true,
+      "avg_latency_ms": 290,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://fuse.drpc.org",
+      "chain_id": 122,
+      "chain_name": "Fuse",
+      "reachable": true,
+      "avg_latency_ms": 104,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/unichain",
+      "chain_id": 130,
+      "chain_name": "Unichain",
+      "reachable": true,
+      "avg_latency_ms": 234,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://unichain-rpc.publicnode.com",
+      "chain_id": 130,
+      "chain_name": "Unichain",
+      "reachable": true,
+      "avg_latency_ms": 254,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Unichain Official",
+      "url": "https://mainnet.unichain.org",
+      "chain_id": 130,
+      "chain_name": "Unichain",
+      "reachable": true,
+      "avg_latency_ms": 328,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://unichain.drpc.org",
+      "chain_id": 130,
+      "chain_name": "Unichain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/matic",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 40,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/polygon",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://polygon-mainnet.public.blastapi.io",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Lava",
+      "url": "https://polygon.lava.build",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 152,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://polygon.llamarpc.com",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://polygon.meowrpc.com",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://polygon-pokt.nodies.app",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 296,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/matic/mainnet/public",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://polygon.api.onfinality.io/public",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 642,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://poly.api.pocket.network",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 453,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Polygon Official",
+      "url": "https://polygon-rpc.com",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://polygon-bor-rpc.publicnode.com",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 261,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "QuickNode",
+      "url": "https://rpc-mainnet.matic.quiknode.pro",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 524,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://polygon.rpc.subquery.network/public",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 439,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tatum",
+      "url": "https://polygon-mainnet.gateway.tatum.io",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 61,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://polygon.gateway.tenderly.co",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 370,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Tenderly Public",
+      "url": "https://gateway.tenderly.co/public/polygon",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 358,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "ZAN",
+      "url": "https://api.zan.top/polygon-mainnet",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 157,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://polygon.drpc.org",
+      "chain_id": 137,
+      "chain_name": "Polygon",
+      "reachable": true,
+      "avg_latency_ms": 123,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/sonic",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 386,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://sonic.api.onfinality.io/public",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 566,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://sonic-rpc.publicnode.com",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 265,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Sonic Official",
+      "url": "https://rpc.soniclabs.com",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 698,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://sonic.gateway.tenderly.co",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 374,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://sonic.drpc.org",
+      "chain_id": 146,
+      "chain_name": "Sonic",
+      "reachable": true,
+      "avg_latency_ms": 106,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/manta",
+      "chain_id": 169,
+      "chain_name": "Manta Pacific",
+      "reachable": true,
+      "avg_latency_ms": 43,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Caldera",
+      "url": "https://manta-pacific-gascap.calderachain.xyz/http",
+      "chain_id": 169,
+      "chain_name": "Manta Pacific",
+      "reachable": true,
+      "avg_latency_ms": 391,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Caldera Aperture",
+      "url": "https://manta-pacific-aperture.calderachain.xyz/http",
+      "chain_id": 169,
+      "chain_name": "Manta Pacific",
+      "reachable": true,
+      "avg_latency_ms": 389,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Manta Official",
+      "url": "https://pacific-rpc.manta.network/http",
+      "chain_id": 169,
+      "chain_name": "Manta Pacific",
+      "reachable": true,
+      "avg_latency_ms": 282,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://manta-pacific.drpc.org",
+      "chain_id": 169,
+      "chain_name": "Manta Pacific",
+      "reachable": true,
+      "avg_latency_ms": 103,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/opbnb",
+      "chain_id": 204,
+      "chain_name": "opBNB",
+      "reachable": true,
+      "avg_latency_ms": 170,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://opbnb-rpc.publicnode.com",
+      "chain_id": 204,
+      "chain_name": "opBNB",
+      "reachable": true,
+      "avg_latency_ms": 256,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://opbnb.drpc.org",
+      "chain_id": 204,
+      "chain_name": "opBNB",
+      "reachable": true,
+      "avg_latency_ms": 123,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "opBNB Official",
+      "url": "https://opbnb-mainnet-rpc.bnbchain.org",
+      "chain_id": 204,
+      "chain_name": "opBNB",
+      "reachable": true,
+      "avg_latency_ms": 225,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/ftm",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 242,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/fantom",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://fantom-mainnet.public.blastapi.io",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "FTM Tools",
+      "url": "https://rpc.ftm.tools",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Fantom Official",
+      "url": "https://rpc.fantom.network",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 449,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Fantom Official 2",
+      "url": "https://rpc2.fantom.network",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 450,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Fantom Official 3",
+      "url": "https://rpc3.fantom.network",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 448,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Fantom RPC API",
+      "url": "https://rpcapi.fantom.network",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 455,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://fantom-pokt.nodies.app",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 293,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://fantom.api.onfinality.io/public",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 528,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://fantom-rpc.publicnode.com",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Stakely",
+      "url": "https://fantom-json-rpc.stakely.io",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 456,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://fantom.drpc.org",
+      "chain_id": 250,
+      "chain_name": "Fantom Opera",
+      "reachable": true,
+      "avg_latency_ms": 223,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Fraxtal Official",
+      "url": "https://rpc.frax.com",
+      "chain_id": 252,
+      "chain_name": "Fraxtal",
+      "reachable": true,
+      "avg_latency_ms": 196,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://fraxtal-rpc.publicnode.com",
+      "chain_id": 252,
+      "chain_name": "Fraxtal",
+      "reachable": true,
+      "avg_latency_ms": 544,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://fraxtal.drpc.org",
+      "chain_id": 252,
+      "chain_name": "Fraxtal",
+      "reachable": true,
+      "avg_latency_ms": 108,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/zksync2-era",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 131,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/zksync_era",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 37,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://zksync.meowrpc.com",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/zksync-era/mainnet/public",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://zksync.api.onfinality.io/public",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 748,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://zksync-era.api.pocket.network",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 399,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://zksync-era-rpc.publicnode.com",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://zksync.gateway.tenderly.co",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 358,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://zksync.drpc.org",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 145,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "zkSync Official",
+      "url": "https://mainnet.era.zksync.io",
+      "chain_id": 324,
+      "chain_name": "zkSync Era",
+      "reachable": true,
+      "avg_latency_ms": 291,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Alchemy",
+      "url": "https://worldchain-mainnet.g.alchemy.com/public",
+      "chain_id": 480,
+      "chain_name": "World Chain",
+      "reachable": true,
+      "avg_latency_ms": 118,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://worldchain-mainnet.gateway.tenderly.co",
+      "chain_id": 480,
+      "chain_name": "World Chain",
+      "reachable": true,
+      "avg_latency_ms": 296,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://worldchain.drpc.org",
+      "chain_id": 480,
+      "chain_name": "World Chain",
+      "reachable": true,
+      "avg_latency_ms": 170,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://480.rpc.thirdweb.com",
+      "chain_id": 480,
+      "chain_name": "World Chain",
+      "reachable": true,
+      "avg_latency_ms": 514,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/hyperliquid",
+      "chain_id": 999,
+      "chain_name": "Hyperliquid EVM",
+      "reachable": true,
+      "avg_latency_ms": 246,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Hyperliquid Official",
+      "url": "https://rpc.hyperliquid.xyz/evm",
+      "chain_id": 999,
+      "chain_name": "Hyperliquid EVM",
+      "reachable": true,
+      "avg_latency_ms": 174,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://hyperliquid.drpc.org",
+      "chain_id": 999,
+      "chain_name": "Hyperliquid EVM",
+      "reachable": true,
+      "avg_latency_ms": 122,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Metis Official",
+      "url": "https://andromeda.metis.io/?owner=1088",
+      "chain_id": 1088,
+      "chain_name": "Metis",
+      "reachable": true,
+      "avg_latency_ms": 352,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://metis-pokt.nodies.app",
+      "chain_id": 1088,
+      "chain_name": "Metis",
+      "reachable": true,
+      "avg_latency_ms": 319,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://metis-rpc.publicnode.com",
+      "chain_id": 1088,
+      "chain_name": "Metis",
+      "reachable": true,
+      "avg_latency_ms": 566,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://metis.drpc.org",
+      "chain_id": 1088,
+      "chain_name": "Metis",
+      "reachable": true,
+      "avg_latency_ms": 120,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/polygon/zkevm",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 134,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://polygon-zkevm-public.nodies.app",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 227,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://poly-zkevm.api.pocket.network",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 605,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Polygon zkEVM Official",
+      "url": "https://zkevm-rpc.com",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 405,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://polygon-zkevm.drpc.org",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 160,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://polygon-zkevm.rpc.thirdweb.com",
+      "chain_id": 1101,
+      "chain_name": "Polygon zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 553,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Lisk Official",
+      "url": "https://rpc.api.lisk.com",
+      "chain_id": 1135,
+      "chain_name": "Lisk",
+      "reachable": true,
+      "avg_latency_ms": 401,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://lisk.drpc.org",
+      "chain_id": 1135,
+      "chain_name": "Lisk",
+      "reachable": true,
+      "avg_latency_ms": 173,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/glmr",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/moonbeam",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://moonbeam.public.blastapi.io",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Dwellir",
+      "url": "https://moonbeam-rpc.dwellir.com",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Moonbeam Official",
+      "url": "https://rpc.api.moonbeam.network",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": true,
+      "avg_latency_ms": 411,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://moonbeam.api.onfinality.io/public",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": true,
+      "avg_latency_ms": 364,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://moonbeam-rpc.publicnode.com",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": true,
+      "avg_latency_ms": 257,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "UnitedBloc",
+      "url": "https://moonbeam.unitedbloc.com",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": true,
+      "avg_latency_ms": 478,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://moonbeam.drpc.org",
+      "chain_id": 1284,
+      "chain_name": "Moonbeam",
+      "reachable": true,
+      "avg_latency_ms": 237,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://sei-evm-rpc.publicnode.com",
+      "chain_id": 1329,
+      "chain_name": "Sei",
+      "reachable": true,
+      "avg_latency_ms": 544,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Sei Official",
+      "url": "https://evm-rpc.sei-apis.com",
+      "chain_id": 1329,
+      "chain_name": "Sei",
+      "reachable": true,
+      "avg_latency_ms": 163,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://sei.drpc.org",
+      "chain_id": 1329,
+      "chain_name": "Sei",
+      "reachable": true,
+      "avg_latency_ms": 111,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/story",
+      "chain_id": 1514,
+      "chain_name": "Story",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Story Official",
+      "url": "https://mainnet.storyrpc.io",
+      "chain_id": 1514,
+      "chain_name": "Story",
+      "reachable": true,
+      "avg_latency_ms": 147,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://story.drpc.org",
+      "chain_id": 1514,
+      "chain_name": "Story",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/gravity",
+      "chain_id": 1625,
+      "chain_name": "Gravity",
+      "reachable": true,
+      "avg_latency_ms": 36,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Gravity Official",
+      "url": "https://rpc.gravity.xyz",
+      "chain_id": 1625,
+      "chain_name": "Gravity",
+      "reachable": true,
+      "avg_latency_ms": 266,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://gravity.drpc.org",
+      "chain_id": 1625,
+      "chain_name": "Gravity",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Soneium Official",
+      "url": "https://rpc.soneium.org",
+      "chain_id": 1868,
+      "chain_name": "Soneium",
+      "reachable": true,
+      "avg_latency_ms": 424,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://soneium.drpc.org",
+      "chain_id": 1868,
+      "chain_name": "Soneium",
+      "reachable": true,
+      "avg_latency_ms": 137,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/kava_evm",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 59,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Kava Official",
+      "url": "https://evm.kava.io",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 607,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Kava RPC",
+      "url": "https://evm.kava-rpc.com",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 95,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://kava-pokt.nodies.app",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 284,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://kava-evm-rpc.publicnode.com",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 256,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://kava.drpc.org",
+      "chain_id": 2222,
+      "chain_name": "Kava",
+      "reachable": true,
+      "avg_latency_ms": 96,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Abstract Official",
+      "url": "https://api.mainnet.abs.xyz",
+      "chain_id": 2741,
+      "chain_name": "Abstract",
+      "reachable": true,
+      "avg_latency_ms": 399,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://abstract.drpc.org",
+      "chain_id": 2741,
+      "chain_name": "Abstract",
+      "reachable": true,
+      "avg_latency_ms": 98,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Morph Official",
+      "url": "https://rpc.morphl2.io",
+      "chain_id": 2818,
+      "chain_name": "Morph",
+      "reachable": true,
+      "avg_latency_ms": 186,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Morph QuickNode",
+      "url": "https://rpc-quicknode.morphl2.io",
+      "chain_id": 2818,
+      "chain_name": "Morph",
+      "reachable": true,
+      "avg_latency_ms": 380,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/mantle",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Mantle Official",
+      "url": "https://rpc.mantle.xyz",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 87,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://mantle-public.nodies.app",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 279,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://mantle.api.onfinality.io/public",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 299,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://mantle-rpc.publicnode.com",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 262,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "QuickNode",
+      "url": "https://rpc.mantle.quicknode.com",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 88,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://mantle.gateway.tenderly.co",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 360,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "ZAN",
+      "url": "https://api.zan.top/mantle-mainnet",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 97,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "ZAN Public",
+      "url": "https://api.zan.top/public/mantle-mainnet",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 159,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://mantle.drpc.org",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 110,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://5000.rpc.thirdweb.com",
+      "chain_id": 5000,
+      "chain_name": "Mantle",
+      "reachable": true,
+      "avg_latency_ms": 660,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "AllThatNode",
+      "url": "https://zetachain-mainnet.g.allthatnode.com/archive/evm",
+      "chain_id": 7000,
+      "chain_name": "ZetaChain",
+      "reachable": true,
+      "avg_latency_ms": 920,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://zetachain-mainnet.public.blastapi.io",
+      "chain_id": 7000,
+      "chain_name": "ZetaChain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlockPI",
+      "url": "https://zetachain-evm.blockpi.network/v1/rpc/public",
+      "chain_id": 7000,
+      "chain_name": "ZetaChain",
+      "reachable": true,
+      "avg_latency_ms": 236,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://zeta-chain.drpc.org",
+      "chain_id": 7000,
+      "chain_name": "ZetaChain",
+      "reachable": true,
+      "avg_latency_ms": 109,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://7000.rpc.thirdweb.com",
+      "chain_id": 7000,
+      "chain_name": "ZetaChain",
+      "reachable": true,
+      "avg_latency_ms": 550,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Klaytn Official",
+      "url": "https://public-en.node.kaia.io",
+      "chain_id": 8217,
+      "chain_name": "Klaytn",
+      "reachable": true,
+      "avg_latency_ms": 250,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://klaytn-pokt.nodies.app",
+      "chain_id": 8217,
+      "chain_name": "Klaytn",
+      "reachable": true,
+      "avg_latency_ms": 274,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://klaytn.drpc.org",
+      "chain_id": 8217,
+      "chain_name": "Klaytn",
+      "reachable": true,
+      "avg_latency_ms": 105,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/base",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 38,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/base",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Base Developer",
+      "url": "https://developer-access-mainnet.base.org",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 611,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Base Official",
+      "url": "https://mainnet.base.org",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 358,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://base-mainnet.public.blastapi.io",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 334,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "BloXroute",
+      "url": "https://base.rpc.blxrbdn.com",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 559,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Lava",
+      "url": "https://base.lava.build",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 285,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "LeoRPC",
+      "url": "https://base.leorpc.com/?api_key=FREE",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 727,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://base.llamarpc.com",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 495,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://base.meowrpc.com",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 331,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://base-pokt.nodies.app",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 298,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Nodies Public",
+      "url": "https://base-public.nodies.app",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 319,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "NotADegen",
+      "url": "https://rpc.notadegen.com/base",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/base/mainnet/public",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality Public",
+      "url": "https://base.api.onfinality.io/public",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Pocket",
+      "url": "https://base.api.pocket.network",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 537,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://base-rpc.publicnode.com",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 296,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Sentio",
+      "url": "https://rpc.sentio.xyz/base",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 365,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://base.rpc.subquery.network/public",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 533,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tatum",
+      "url": "https://base-mainnet.gateway.tatum.io",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 59,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://base.gateway.tenderly.co",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 212,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Tenderly Public",
+      "url": "https://gateway.tenderly.co/public/base",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 190,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "ZAN",
+      "url": "https://api.zan.top/base-mainnet",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 205,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://base.drpc.org",
+      "chain_id": 8453,
+      "chain_name": "Base",
+      "reachable": true,
+      "avg_latency_ms": 101,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Immutable Official",
+      "url": "https://rpc.immutable.com",
+      "chain_id": 13371,
+      "chain_name": "Immutable zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 329,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://immutable-zkevm.drpc.org",
+      "chain_id": 13371,
+      "chain_name": "Immutable zkEVM",
+      "reachable": true,
+      "avg_latency_ms": 100,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/mode",
+      "chain_id": 34443,
+      "chain_name": "Mode",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Conduit",
+      "url": "https://rpc-mode-mainnet-0.t.conduit.xyz",
+      "chain_id": 34443,
+      "chain_name": "Mode",
+      "reachable": true,
+      "avg_latency_ms": 283,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Mode Official",
+      "url": "https://mainnet.mode.network",
+      "chain_id": 34443,
+      "chain_name": "Mode",
+      "reachable": true,
+      "avg_latency_ms": 253,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://mode.drpc.org",
+      "chain_id": 34443,
+      "chain_name": "Mode",
+      "reachable": true,
+      "avg_latency_ms": 99,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://34443.rpc.thirdweb.com",
+      "chain_id": 34443,
+      "chain_name": "Mode",
+      "reachable": true,
+      "avg_latency_ms": 304,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/arb",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 158,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/arbitrum",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Arbitrum Official",
+      "url": "https://arb1.arbitrum.io/rpc",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 396,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://arbitrum-one.public.blastapi.io",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 345,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "FastNode",
+      "url": "https://public-arb-mainnet.fastnode.io",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 358,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Lava",
+      "url": "https://arb1.lava.build",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 336,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Lava",
+      "url": "https://arbitrum.lava.build",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 521,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "LeoRPC",
+      "url": "https://arb.leorpc.com/?api_key=FREE",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 880,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "LlamaNodes",
+      "url": "https://arbitrum.llamarpc.com",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "MeowRPC",
+      "url": "https://arbitrum.meowrpc.com",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 249,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://arb-pokt.nodies.app",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 261,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Nodies Public",
+      "url": "https://arbitrum-one-public.nodies.app",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 282,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/arbitrum/one/public",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://arbitrum.api.onfinality.io/public",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 360,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://arb-one.api.pocket.network",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 458,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://arbitrum-one-rpc.publicnode.com",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 259,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "SubQuery",
+      "url": "https://arbitrum.rpc.subquery.network/public",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 453,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 50,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tatum",
+      "url": "https://arb-one-mainnet.gateway.tatum.io",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 59,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://arbitrum.gateway.tenderly.co",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 270,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Tenderly Public",
+      "url": "https://gateway.tenderly.co/public/arbitrum",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 272,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "ZAN",
+      "url": "https://api.zan.top/arb-one",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 232,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 500,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://arbitrum.drpc.org",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 76,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://arbitrum.rpc.thirdweb.com",
+      "chain_id": 42161,
+      "chain_name": "Arbitrum One",
+      "reachable": true,
+      "avg_latency_ms": 467,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/celo",
+      "chain_id": 42220,
+      "chain_name": "Celo",
+      "reachable": true,
+      "avg_latency_ms": 146,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/celo",
+      "chain_id": 42220,
+      "chain_name": "Celo",
+      "reachable": true,
+      "avg_latency_ms": 93,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Celo Official",
+      "url": "https://forno.celo.org",
+      "chain_id": 42220,
+      "chain_name": "Celo",
+      "reachable": true,
+      "avg_latency_ms": 245,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://celo-rpc.publicnode.com",
+      "chain_id": 42220,
+      "chain_name": "Celo",
+      "reachable": true,
+      "avg_latency_ms": 270,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://celo.drpc.org",
+      "chain_id": 42220,
+      "chain_name": "Celo",
+      "reachable": true,
+      "avg_latency_ms": 110,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/avax/c",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 159,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/avalanche",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Avalanche Official",
+      "url": "https://api.avax.network/ext/bc/C/rpc",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 262,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://avax-pokt.nodies.app/ext/bc/C/rpc",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 291,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://avalanche.api.onfinality.io/public/ext/bc/C/rpc",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 482,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Public RPC",
+      "url": "https://avalanche.public-rpc.com",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://avalanche-c-chain-rpc.publicnode.com",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 310,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://avalanche.gateway.tenderly.co",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 359,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://avalanche.drpc.org",
+      "chain_id": 43114,
+      "chain_name": "Avalanche C-Chain",
+      "reachable": true,
+      "avg_latency_ms": 104,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ink Gelato",
+      "url": "https://rpc-gel.inkonchain.com",
+      "chain_id": 57073,
+      "chain_name": "Ink",
+      "reachable": true,
+      "avg_latency_ms": 417,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Ink QuickNode",
+      "url": "https://rpc-qnd.inkonchain.com",
+      "chain_id": 57073,
+      "chain_name": "Ink",
+      "reachable": true,
+      "avg_latency_ms": 262,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://ink.drpc.org",
+      "chain_id": 57073,
+      "chain_name": "Ink",
+      "reachable": true,
+      "avg_latency_ms": 306,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/linea",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/linea",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlockPI",
+      "url": "https://linea.blockpi.network/v1/rpc/public",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Linea Official",
+      "url": "https://rpc.linea.build",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": true,
+      "avg_latency_ms": 459,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://linea.api.pocket.network",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": true,
+      "avg_latency_ms": 416,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://linea-rpc.publicnode.com",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": true,
+      "avg_latency_ms": 356,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://linea.gateway.tenderly.co",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": true,
+      "avg_latency_ms": 375,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://linea.drpc.org",
+      "chain_id": 59144,
+      "chain_name": "Linea",
+      "reachable": true,
+      "avg_latency_ms": 105,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "BOB Official",
+      "url": "https://rpc.gobob.xyz",
+      "chain_id": 60808,
+      "chain_name": "BOB",
+      "reachable": true,
+      "avg_latency_ms": 259,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://bob-mainnet.public.blastapi.io",
+      "chain_id": 60808,
+      "chain_name": "BOB",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://bob.drpc.org",
+      "chain_id": 60808,
+      "chain_name": "BOB",
+      "reachable": true,
+      "avg_latency_ms": 101,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/berachain",
+      "chain_id": 80094,
+      "chain_name": "Berachain",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Berachain APIs",
+      "url": "https://rpc.berachain-apis.com",
+      "chain_id": 80094,
+      "chain_name": "Berachain",
+      "reachable": true,
+      "avg_latency_ms": 156,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Berachain Official",
+      "url": "https://rpc.berachain.com",
+      "chain_id": 80094,
+      "chain_name": "Berachain",
+      "reachable": true,
+      "avg_latency_ms": 441,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 100,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://berachain-rpc.publicnode.com",
+      "chain_id": 80094,
+      "chain_name": "Berachain",
+      "reachable": true,
+      "avg_latency_ms": 271,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://berachain.drpc.org",
+      "chain_id": 80094,
+      "chain_name": "Berachain",
+      "reachable": true,
+      "avg_latency_ms": 104,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/blast",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/blast",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Blast Official",
+      "url": "https://rpc.blast.io",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 120,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "BlastAPI L2",
+      "url": "https://blastl2-mainnet.public.blastapi.io",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlockPI",
+      "url": "https://blast.blockpi.network/v1/rpc/public",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "DIN",
+      "url": "https://blast.din.dev/rpc",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 460,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "LeoRPC",
+      "url": "https://blast.leorpc.com/?api_key=FREE",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 1506,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 1,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://blast-public.nodies.app",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 284,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://blast.api.pocket.network",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 421,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://blast-rpc.publicnode.com",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 262,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://blast.gateway.tenderly.co",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 362,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://blast.drpc.org",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 109,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://81457.rpc.thirdweb.com",
+      "chain_id": 81457,
+      "chain_name": "Blast",
+      "reachable": true,
+      "avg_latency_ms": 470,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/taiko",
+      "chain_id": 167000,
+      "chain_name": "Taiko",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/taiko",
+      "chain_id": 167000,
+      "chain_name": "Taiko",
+      "reachable": true,
+      "avg_latency_ms": 35,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://taiko-rpc.publicnode.com",
+      "chain_id": 167000,
+      "chain_name": "Taiko",
+      "reachable": true,
+      "avg_latency_ms": 269,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Taiko Official",
+      "url": "https://rpc.mainnet.taiko.xyz",
+      "chain_id": 167000,
+      "chain_name": "Taiko",
+      "reachable": true,
+      "avg_latency_ms": 252,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://taiko.drpc.org",
+      "chain_id": 167000,
+      "chain_name": "Taiko",
+      "reachable": true,
+      "avg_latency_ms": 109,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/scroll",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/scroll",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "BlastAPI",
+      "url": "https://scroll-mainnet.public.blastapi.io",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Chainstack",
+      "url": "https://scroll-mainnet.chainstacklabs.com",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "LeoRPC",
+      "url": "https://scroll.leorpc.com/?api_key=FREE",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 806,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Nodies",
+      "url": "https://scroll-public.nodies.app",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 298,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 100,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/scroll/mainnet/public",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "OnFinality",
+      "url": "https://scroll.api.onfinality.io/public",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 425,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "Pocket Network",
+      "url": "https://scroll.api.pocket.network",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 405,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "PublicNode",
+      "url": "https://scroll-rpc.publicnode.com",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 257,
+      "capabilities": {
+        "supports_eth_get_logs": false,
+        "max_batch_size": 0,
+        "max_block_range": 0,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "D"
+    },
+    {
+      "name": "Scroll Official",
+      "url": "https://rpc.scroll.io",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 126,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Sentio",
+      "url": "https://rpc.sentio.xyz/scroll",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 349,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Tenderly",
+      "url": "https://scroll-mainnet.gateway.tenderly.co",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 377,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 10,
+        "max_block_range": 5000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://scroll.drpc.org",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 132,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "thirdweb",
+      "url": "https://534352.rpc.thirdweb.com",
+      "chain_id": 534352,
+      "chain_name": "Scroll",
+      "reachable": true,
+      "avg_latency_ms": 490,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/aurora",
+      "chain_id": 1313161554,
+      "chain_name": "Aurora",
+      "reachable": true,
+      "avg_latency_ms": 161,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "A"
+    },
+    {
+      "name": "Aurora Official",
+      "url": "https://mainnet.aurora.dev",
+      "chain_id": 1313161554,
+      "chain_name": "Aurora",
+      "reachable": true,
+      "avg_latency_ms": 443,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 50,
+        "max_block_range": 10000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Omnia",
+      "url": "https://endpoints.omniatech.io/v1/aurora/mainnet/public",
+      "chain_id": 1313161554,
+      "chain_name": "Aurora",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://aurora.drpc.org",
+      "chain_id": 1313161554,
+      "chain_name": "Aurora",
+      "reachable": true,
+      "avg_latency_ms": 111,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    },
+    {
+      "name": "1RPC",
+      "url": "https://1rpc.io/one",
+      "chain_id": 1666600000,
+      "chain_name": "Harmony",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Ankr",
+      "url": "https://rpc.ankr.com/harmony",
+      "chain_id": 1666600000,
+      "chain_name": "Harmony",
+      "reachable": false,
+      "avg_latency_ms": null,
+      "capabilities": {
+        "supports_eth_get_logs": null,
+        "max_batch_size": null,
+        "max_block_range": null,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "F"
+    },
+    {
+      "name": "Harmony Official",
+      "url": "https://api.harmony.one",
+      "chain_id": 1666600000,
+      "chain_name": "Harmony",
+      "reachable": true,
+      "avg_latency_ms": 421,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "Harmony S0",
+      "url": "https://api.s0.t.hmny.io",
+      "chain_id": 1666600000,
+      "chain_name": "Harmony",
+      "reachable": true,
+      "avg_latency_ms": 453,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 0,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "B"
+    },
+    {
+      "name": "dRPC",
+      "url": "https://harmony-0.drpc.org",
+      "chain_id": 1666600000,
+      "chain_name": "Harmony",
+      "reachable": true,
+      "avg_latency_ms": 216,
+      "capabilities": {
+        "supports_eth_get_logs": true,
+        "max_batch_size": 1,
+        "max_block_range": 1000,
+        "supports_debug_trace": null,
+        "supports_websocket": false,
+        "rate_limit_rps": null
+      },
+      "grade": "C"
+    }
+  ],
+  "summary": {
+    "total": 373,
+    "reachable": 300,
+    "unreachable": 73,
+    "grade_a": 52,
+    "grade_b": 71,
+    "grade_c": 100,
+    "grade_d": 77,
+    "grade_f": 73
+  }
+}
