@@ -82,11 +82,22 @@ impl SelectionStrategy for RateAwareStrategy {
         stats: &HashMap<String, EndpointStats>,
         exclude: &HashSet<String>,
     ) -> Option<&'a RpcEndpoint> {
-        // Collect healthy, non-excluded endpoints with their idle time
+        let is_healthy = |e: &&'a RpcEndpoint| {
+            !exclude.contains(&e.url) && stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true)
+        };
+
+        // A healthy `preferred` endpoint (fast unlimited local node) is always chosen
+        // first and never load-shed onto rate-limited third parties — it has no rate
+        // limit to respect, so idle-time distribution does not apply to it.
+        if let Some(e) = endpoints.iter().find(|e| is_healthy(e) && e.preferred) {
+            self.record_request(&e.url);
+            return Some(e);
+        }
+
+        // Otherwise distribute across the remaining (rate-limited) endpoints by idle time.
         let mut candidates: Vec<_> = endpoints
             .iter()
-            .filter(|e| !exclude.contains(&e.url))
-            .filter(|e| stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true))
+            .filter(is_healthy)
             .map(|e| (e, self.time_since_last(&e.url)))
             .collect();
 
@@ -190,5 +201,21 @@ mod tests {
 
         // Should have used all 3 endpoints
         assert_eq!(seen.len(), 3);
+    }
+
+    #[test]
+    fn test_preferred_always_selected_not_load_shed() {
+        let mut strategy = RateAwareStrategy::with_min_interval(Duration::from_millis(1));
+        let mut endpoints = create_test_endpoints();
+        endpoints[1].preferred = true; // RPC2 is the preferred (unlimited local) node
+        let stats = create_stats(&endpoints);
+        let exclude = HashSet::new();
+
+        // Even back-to-back, the preferred endpoint is always chosen — it is never
+        // load-shed onto the rate-limited third parties by idle-time distribution.
+        for _ in 0..5 {
+            let selected = strategy.select(&endpoints, &stats, &exclude).unwrap();
+            assert_eq!(selected.url, "https://rpc2.example.com");
+        }
     }
 }
