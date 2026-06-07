@@ -20,14 +20,18 @@ impl SelectionStrategy for FailoverStrategy {
         stats: &HashMap<String, EndpointStats>,
         exclude: &HashSet<String>,
     ) -> Option<&'a RpcEndpoint> {
-        // Try to find a healthy, non-excluded endpoint (endpoints are pre-sorted by priority)
-        let healthy = endpoints
-            .iter()
-            .filter(|e| !exclude.contains(&e.url))
-            .find(|e| stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true));
+        // Healthy, non-excluded predicate (the slice is pre-sorted by priority).
+        let is_healthy = |e: &&'a RpcEndpoint| {
+            !exclude.contains(&e.url) && stats.get(&e.url).map(|s| s.is_healthy).unwrap_or(true)
+        };
 
-        // Fallback: any non-excluded endpoint
-        healthy.or_else(|| endpoints.iter().find(|e| !exclude.contains(&e.url)))
+        // Prefer a healthy `preferred` endpoint (fast unlimited local node) over the
+        // highest-priority healthy one; then fall back to any non-excluded endpoint.
+        endpoints
+            .iter()
+            .find(|e| is_healthy(e) && e.preferred)
+            .or_else(|| endpoints.iter().find(is_healthy))
+            .or_else(|| endpoints.iter().find(|e| !exclude.contains(&e.url)))
     }
 
     fn name(&self) -> &'static str {
@@ -77,6 +81,29 @@ mod tests {
         let exclude = HashSet::new();
         let selected = strategy.select(&endpoints, &stats, &exclude);
         assert_eq!(selected.unwrap().url, "https://secondary.rpc");
+    }
+
+    #[test]
+    fn test_preferred_wins_over_higher_priority() {
+        let mut strategy = FailoverStrategy;
+        let mut endpoints = create_test_endpoints();
+        // Mark the WORST-priority endpoint as preferred; it must still win.
+        endpoints[2].preferred = true;
+        let stats = create_stats(&endpoints);
+        let selected = strategy.select(&endpoints, &stats, &HashSet::new());
+        assert_eq!(selected.unwrap().url, "https://tertiary.rpc");
+    }
+
+    #[test]
+    fn test_unhealthy_preferred_falls_back_to_priority() {
+        let mut strategy = FailoverStrategy;
+        let mut endpoints = create_test_endpoints();
+        endpoints[2].preferred = true;
+        let mut stats = create_stats(&endpoints);
+        // Preferred endpoint unhealthy → fall back to highest-priority healthy.
+        stats.get_mut("https://tertiary.rpc").unwrap().is_healthy = false;
+        let selected = strategy.select(&endpoints, &stats, &HashSet::new());
+        assert_eq!(selected.unwrap().url, "https://primary.rpc");
     }
 
     #[test]

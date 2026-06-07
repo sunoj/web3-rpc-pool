@@ -151,6 +151,13 @@ pub struct RpcEndpoint {
     /// Capability metadata (supports backward-compatible deserialization).
     #[serde(default)]
     pub capabilities: EndpointCapabilities,
+
+    /// Preferred endpoint: a fast, unlimited, co-located source (e.g. a
+    /// self-hosted node) that selection strategies pick FIRST and never throttle.
+    /// Decouples pool-selection preference from array order / priority number, so
+    /// the node can lead the pool without being the standalone raw provider.
+    #[serde(default)]
+    pub preferred: bool,
 }
 
 fn default_name() -> String {
@@ -172,7 +179,15 @@ impl RpcEndpoint {
             priority: 100,
             chain_id: 0,
             capabilities: EndpointCapabilities::default(),
+            preferred: false,
         }
+    }
+
+    /// Builder: mark this endpoint as preferred (fast, unlimited, co-located).
+    /// Selection strategies pick preferred endpoints first and skip rate throttling.
+    pub fn with_preferred(mut self, preferred: bool) -> Self {
+        self.preferred = preferred;
+        self
     }
 
     /// Builder: set endpoint name.
