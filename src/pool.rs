@@ -516,10 +516,21 @@ impl RpcPool {
     }
 
     /// Perform health check on all endpoints.
+    ///
+    /// Probes **every** endpoint each cycle, in two roles:
+    /// - **Detection** (currently-healthy endpoints): a live probe runs every
+    ///   cycle. Repeated probe failures call `record_failure`, marking the
+    ///   endpoint unhealthy once `max_consecutive_errors` is reached so that
+    ///   `get_current_url()` fails over. This is essential for callers that use
+    ///   the pool only as a URL selector (their own provider sends the real
+    ///   traffic, so request failures never flow back into the pool).
+    /// - **Recovery** (currently-unhealthy endpoints): probed subject to the
+    ///   existing exponential backoff; a success marks the endpoint recovered.
     async fn check_health(&self) {
         trace!("Starting health check cycle");
         let mut checked_count = 0u32;
         let mut recovered_count = 0u32;
+        let mut downed_count = 0u32;
 
         for endpoint in &self.endpoints {
             // Check for shutdown
@@ -528,29 +539,26 @@ impl RpcPool {
                 return;
             }
 
-            let should_check = {
+            // Decide whether to probe, and remember pre-probe health so the
+            // result routes to detection (healthy) or recovery (unhealthy).
+            // Healthy endpoints are probed every cycle; unhealthy ones honor
+            // the recovery backoff window.
+            let was_healthy = {
                 let stats = self.stats.read();
                 match stats.get(&endpoint.url) {
-                    Some(s) => {
-                        // Only check unhealthy endpoints
-                        if s.is_healthy {
-                            false
-                        } else {
-                            s.can_retry(self.retry_delay)
-                        }
-                    }
-                    None => true,
+                    Some(s) if s.is_healthy => Some(true),
+                    Some(s) if s.can_retry(self.retry_delay) => Some(false),
+                    Some(_) => None, // unhealthy, still within backoff — skip
+                    None => Some(true),
                 }
             };
-
-            if !should_check {
+            let Some(was_healthy) = was_healthy else {
                 continue;
-            }
+            };
 
-            trace!(endpoint_name = %endpoint.name, "Probing unhealthy endpoint");
             checked_count += 1;
 
-            // Try to recover with a simple probe (with timeout)
+            // Probe with a simple block-number request (with timeout).
             let url: Result<url::Url, _> = endpoint.url.parse();
             if let Ok(url) = url {
                 let transport = Http::with_client(self.probe_client.clone(), url);
@@ -558,6 +566,7 @@ impl RpcPool {
                     alloy::rpc::client::RpcClient::new(transport, true),
                 );
 
+                let probe_start = Instant::now();
                 let probe_result = tokio::select! {
                     biased;
 
@@ -573,40 +582,68 @@ impl RpcPool {
                     }
                 };
 
-                match probe_result {
-                    Ok(Ok(_)) => {
+                // Normalize so detection/recovery share one match.
+                let outcome: Result<(), String> = match probe_result {
+                    Ok(Ok(_)) => Ok(()),
+                    Ok(Err(e)) => Err(e.to_string()),
+                    Err(_) => Err(format!(
+                        "health probe timed out after {}ms",
+                        self.health_check_timeout.as_millis()
+                    )),
+                };
+
+                match outcome {
+                    Ok(()) => {
                         if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
-                            stats.mark_recovered();
-                            info!(endpoint = %endpoint.name, "Endpoint recovered");
-                            recovered_count += 1;
+                            let latency_ms = probe_start.elapsed().as_millis() as u64;
+                            if was_healthy {
+                                // Liveness confirmed — record latency, reset any
+                                // partial failure streak.
+                                stats.record_success(latency_ms);
+                            } else {
+                                stats.mark_recovered();
+                                recovered_count += 1;
+                                info!(endpoint = %endpoint.name, "Endpoint recovered");
+                            }
                         }
                     }
-                    Ok(Err(e)) => {
+                    Err(error) => {
                         if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
-                            stats.last_error_time = Some(Instant::now());
-                            stats.increment_recovery_attempts();
-                            let next_retry = stats.current_retry_delay(self.retry_delay);
-                            trace!(
-                                endpoint_name = %endpoint.name,
-                                error = %e,
-                                recovery_attempts = stats.recovery_attempts,
-                                next_retry_secs = next_retry.as_secs(),
-                                "Endpoint health check failed, increasing backoff"
-                            );
-                        }
-                    }
-                    Err(_) => {
-                        if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
-                            stats.last_error_time = Some(Instant::now());
-                            stats.increment_recovery_attempts();
-                            let next_retry = stats.current_retry_delay(self.retry_delay);
-                            trace!(
-                                endpoint_name = %endpoint.name,
-                                timeout_ms = self.health_check_timeout.as_millis() as u64,
-                                recovery_attempts = stats.recovery_attempts,
-                                next_retry_secs = next_retry.as_secs(),
-                                "Endpoint health check timed out, increasing backoff"
-                            );
+                            if was_healthy {
+                                // Detection: count the failure; mark unhealthy at
+                                // the threshold so get_current_url() fails over.
+                                let now_down = stats
+                                    .record_failure(error.clone(), self.max_consecutive_errors);
+                                if now_down {
+                                    downed_count += 1;
+                                    warn!(
+                                        endpoint = %endpoint.name,
+                                        %error,
+                                        consecutive_errors = stats.consecutive_errors,
+                                        "Endpoint detected down — marked unhealthy, will fail over"
+                                    );
+                                } else {
+                                    warn!(
+                                        endpoint = %endpoint.name,
+                                        %error,
+                                        consecutive_errors = stats.consecutive_errors,
+                                        max = self.max_consecutive_errors,
+                                        "Endpoint probe failed"
+                                    );
+                                }
+                            } else {
+                                // Recovery backoff (existing behavior).
+                                stats.last_error_time = Some(Instant::now());
+                                stats.increment_recovery_attempts();
+                                let next_retry = stats.current_retry_delay(self.retry_delay);
+                                trace!(
+                                    endpoint_name = %endpoint.name,
+                                    %error,
+                                    recovery_attempts = stats.recovery_attempts,
+                                    next_retry_secs = next_retry.as_secs(),
+                                    "Endpoint health check failed, increasing backoff"
+                                );
+                            }
                         }
                     }
                 }
@@ -617,6 +654,7 @@ impl RpcPool {
             debug!(
                 checked = checked_count,
                 recovered = recovered_count,
+                downed = downed_count,
                 "Health check cycle completed"
             );
         }
@@ -907,5 +945,54 @@ mod tests {
         assert_eq!(summary.unhealthy, 2);
         assert!(summary.all_unhealthy());
         assert_eq!(summary.health_percentage(), 0.0);
+    }
+
+    /// Regression for the failover-detection gap: a *currently healthy*
+    /// endpoint that goes down must be detected by the background probe and
+    /// marked unhealthy, even though no request traffic flows through the pool
+    /// (callers that use the pool only as a URL selector via
+    /// `get_current_url()`). Before the fix, `check_health` probed only
+    /// already-unhealthy endpoints, so a dead primary stayed "healthy" forever
+    /// and never failed over.
+    #[tokio::test]
+    async fn health_check_detects_dead_healthy_endpoint() {
+        // Closed local ports → connection refused immediately (no network).
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("http://127.0.0.1:1")
+                    .with_name("dead-primary")
+                    .with_priority(1),
+                RpcEndpoint::new("http://127.0.0.1:2")
+                    .with_name("dead-backup")
+                    .with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_consecutive_errors(2)
+            .with_health_check_timeout(Duration::from_millis(500));
+        let pool = RpcPool::new(config).unwrap();
+
+        // Initially healthy → primary selected, nothing unhealthy.
+        assert_eq!(pool.health_summary().unhealthy, 0);
+        assert_eq!(
+            pool.get_current_url().as_deref(),
+            Some("http://127.0.0.1:1")
+        );
+
+        // One failing probe is below the threshold — must stay healthy.
+        pool.check_health().await;
+        assert_eq!(
+            pool.health_summary().unhealthy,
+            0,
+            "a single probe failure must not flip a healthy endpoint"
+        );
+
+        // The second consecutive failing probe reaches max_consecutive_errors
+        // → endpoints are actively marked unhealthy.
+        pool.check_health().await;
+        assert_eq!(
+            pool.health_summary().unhealthy,
+            2,
+            "consecutive probe failures must mark healthy endpoints down"
+        );
     }
 }
