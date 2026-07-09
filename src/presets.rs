@@ -59,6 +59,7 @@ pub mod chain_id {
     pub const BOB: u64 = 60808;
     pub const GRAVITY: u64 = 1625;
     pub const STORY: u64 = 1514;
+    pub const ROBINHOOD: u64 = 4663;
 }
 
 /// Get default endpoints for a chain by chain ID.
@@ -111,8 +112,20 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
         chain_id::BOB => bob_endpoints(),
         chain_id::GRAVITY => gravity_endpoints(),
         chain_id::STORY => story_endpoints(),
+        chain_id::ROBINHOOD => robinhood_endpoints(),
         _ => vec![],
     }
+}
+
+/// Default public endpoints for Robinhood Chain (chainId 4663, Arbitrum-Orbit L2).
+/// Public mainnet RPC is rate-limited; this pool is the free-public failover tier
+/// only — the bot's primary reads go through erpc (RPC_URL). QuickNode/Alchemy/etc.
+/// dedicated endpoints live in erpc, not here.
+pub fn robinhood_endpoints() -> Vec<RpcEndpoint> {
+    vec![RpcEndpoint::new("https://rpc.mainnet.chain.robinhood.com")
+        .with_name("Robinhood Official")
+        .with_priority(50)
+        .with_chain_id(chain_id::ROBINHOOD)]
 }
 
 /// Return all supported mainnet chain IDs.
