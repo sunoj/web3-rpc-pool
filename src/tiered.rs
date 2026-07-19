@@ -132,6 +132,12 @@ pub struct TieredPoolConfig {
     /// Delay before retrying unhealthy endpoint.
     pub retry_delay: Duration,
 
+    /// Per-attempt request timeout, applied to every single endpoint attempt
+    /// (both the pooled tiers, via the inner `RpcPool`, and the trusted tier).
+    /// This bounds each attempt so a hung endpoint fails fast and fails over,
+    /// while the pool still records its health — it is NOT a total budget.
+    pub request_timeout: Duration,
+
     /// Whether to allow fallback to lower tiers for critical requests.
     pub allow_critical_fallback: bool,
 
@@ -146,6 +152,7 @@ impl Default for TieredPoolConfig {
             health_check_interval: Duration::from_secs(60),
             max_consecutive_errors: 3,
             retry_delay: Duration::from_secs(5),
+            request_timeout: Duration::from_secs(30),
             allow_critical_fallback: true,
             allow_low_escalation: false,
         }
@@ -159,6 +166,10 @@ pub struct TieredPool {
 
     /// Trusted tier URLs that bypass pool health checks and retries.
     trusted_urls: HashMap<EndpointTier, url::Url>,
+
+    /// Per-attempt request timeout for the trusted tier (the pooled tiers get
+    /// this via their inner `RpcPool`'s own request timeout).
+    request_timeout: Duration,
 
     /// Fallback configuration.
     allow_critical_fallback: bool,
@@ -216,7 +227,8 @@ impl TieredPool {
                 .with_strategy(strategy)
                 .with_health_check_interval(config.health_check_interval)
                 .with_max_consecutive_errors(config.max_consecutive_errors)
-                .with_retry_delay(config.retry_delay);
+                .with_retry_delay(config.retry_delay)
+                .with_request_timeout(config.request_timeout);
 
             let pool = RpcPool::new(pool_config)?;
             info!(tier = ?tier, "Created RPC pool for tier");
@@ -226,6 +238,7 @@ impl TieredPool {
         Ok(Self {
             pools,
             trusted_urls,
+            request_timeout: config.request_timeout,
             allow_critical_fallback: config.allow_critical_fallback,
             allow_low_escalation: config.allow_low_escalation,
         })
@@ -282,16 +295,18 @@ impl TieredPool {
                 debug!(priority = ?priority, tier = ?tier, "Attempting trusted tier");
                 tried_tiers.push(*tier);
 
-                match tokio::time::timeout(Duration::from_secs(30), f(url.clone())).await {
+                match tokio::time::timeout(self.request_timeout, f(url.clone())).await {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
                         warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
                         last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
                     }
                     Err(_) => {
-                        warn!(tier = ?tier, "Trusted tier timed out");
-                        return Err(RpcPoolError::AllEndpointsFailed(
-                            "Trusted endpoint request timed out after 30s".to_string(),
+                        // Fail over to the next tier instead of aborting: a hung
+                        // trusted endpoint must not kill the whole request.
+                        warn!(tier = ?tier, timeout = ?self.request_timeout, "Trusted tier timed out, falling back to next tier");
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(
+                            "trusted endpoint request timed out".to_string(),
                         ));
                     }
                 }
@@ -345,16 +360,18 @@ impl TieredPool {
                 debug!(priority = ?priority, tier = ?tier, "Attempting trusted tier with URL string");
                 tried_tiers.push(*tier);
 
-                match tokio::time::timeout(Duration::from_secs(30), f(url.to_string())).await {
+                match tokio::time::timeout(self.request_timeout, f(url.to_string())).await {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
                         warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
                         last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
                     }
                     Err(_) => {
-                        warn!(tier = ?tier, "Trusted tier timed out");
-                        return Err(RpcPoolError::AllEndpointsFailed(
-                            "Trusted endpoint request timed out after 30s".to_string(),
+                        // Fail over to the next tier instead of aborting: a hung
+                        // trusted endpoint must not kill the whole request.
+                        warn!(tier = ?tier, timeout = ?self.request_timeout, "Trusted tier timed out, falling back to next tier");
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(
+                            "trusted endpoint request timed out".to_string(),
                         ));
                     }
                 }
@@ -458,6 +475,7 @@ pub struct TieredPoolBuilder {
     health_check_interval: Duration,
     max_consecutive_errors: u32,
     retry_delay: Duration,
+    request_timeout: Duration,
     allow_critical_fallback: bool,
     allow_low_escalation: bool,
 }
@@ -476,6 +494,7 @@ impl TieredPoolBuilder {
             health_check_interval: Duration::from_secs(60),
             max_consecutive_errors: 3,
             retry_delay: Duration::from_secs(5),
+            request_timeout: Duration::from_secs(30),
             allow_critical_fallback: true,
             allow_low_escalation: false,
         }
@@ -650,6 +669,14 @@ impl TieredPoolBuilder {
         self
     }
 
+    /// Set the per-attempt request timeout applied to every endpoint attempt
+    /// (pooled tiers via their inner pool, and the trusted tier). Bounds each
+    /// attempt so a hung endpoint fails fast and fails over.
+    pub fn request_timeout(mut self, timeout: Duration) -> Self {
+        self.request_timeout = timeout;
+        self
+    }
+
     /// Build the tiered pool.
     pub fn build(self) -> Result<TieredPool, RpcPoolError> {
         // Deduplicate endpoints by (tier, URL). The same endpoint legitimately serves
@@ -676,6 +703,7 @@ impl TieredPoolBuilder {
             health_check_interval: self.health_check_interval,
             max_consecutive_errors: self.max_consecutive_errors,
             retry_delay: self.retry_delay,
+            request_timeout: self.request_timeout,
             allow_critical_fallback: self.allow_critical_fallback,
             allow_low_escalation: self.allow_low_escalation,
         })
