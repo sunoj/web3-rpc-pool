@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.8] - 2026-07-20
+
+### Fixed
+
+- **Selector-only consumers could keep picking a dead endpoint forever**: `check_health()` previously probed only endpoints already marked unhealthy, so a primary that died while healthy was never re-tested and `get_current_url()` kept returning it. Every healthy endpoint now gets one `eth_blockNumber` probe per health-check cycle; repeated failures trip `max_consecutive_errors` and failover proceeds. Cost is one probe per healthy endpoint per interval.
+
+### Added
+
+- **Robinhood Chain (4663) preset** — public mainnet RPC, free/read-only tier. Also added to `all_chain_ids()` and `chain_name()`, which it was missing.
+- **`NO_PUBLIC_WS_CHAINS`** — an explicit list of chains that publish no WebSocket endpoint (currently Robinhood). The WS-coverage invariant now skips them by name rather than being weakened for everyone, and a companion test asserts those chains really have no `ws_url`. A consumer that assumed `newHeads` existed on 4663 ran with a block clock frozen at 0 for eleven days.
+
 ## [0.5.2] - 2026-03-05
 
 ### Fixed
