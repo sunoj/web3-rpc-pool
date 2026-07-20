@@ -129,6 +129,11 @@ pub fn robinhood_endpoints() -> Vec<RpcEndpoint> {
 }
 
 /// Return all supported mainnet chain IDs.
+/// Chains with no public WebSocket endpoint at all. Kept explicit so the
+/// WS-coverage invariant stays meaningful for every other chain instead of
+/// being deleted the first time a WS-less chain is added.
+pub const NO_PUBLIC_WS_CHAINS: &[u64] = &[chain_id::ROBINHOOD];
+
 pub fn all_chain_ids() -> Vec<u64> {
     vec![
         chain_id::ETHEREUM,
@@ -161,6 +166,7 @@ pub fn all_chain_ids() -> Vec<u64> {
         chain_id::OPTIMISM,
         chain_id::POLYGON,
         chain_id::POLYGON_ZKEVM,
+        chain_id::ROBINHOOD,
         chain_id::ROOTSTOCK,
         chain_id::SCROLL,
         chain_id::SEI,
@@ -218,6 +224,7 @@ pub fn chain_name(chain_id: u64) -> &'static str {
         self::chain_id::OPTIMISM => "Optimism",
         self::chain_id::POLYGON => "Polygon",
         self::chain_id::POLYGON_ZKEVM => "Polygon zkEVM",
+        self::chain_id::ROBINHOOD => "Robinhood Chain",
         self::chain_id::ROOTSTOCK => "Rootstock",
         self::chain_id::SCROLL => "Scroll",
         self::chain_id::SEI => "Sei",
@@ -3359,11 +3366,38 @@ mod tests {
     #[test]
     fn test_all_chains_have_ws_url() {
         for &id in &all_chain_ids() {
+            if NO_PUBLIC_WS_CHAINS.contains(&id) {
+                continue;
+            }
             let endpoints = default_endpoints(id);
             let has_ws = endpoints.iter().any(|e| e.ws_url.is_some());
             assert!(
                 has_ws,
                 "Chain {} ({}) should have at least one endpoint with ws_url",
+                chain_name(id),
+                id
+            );
+        }
+    }
+
+    /// A chain listed here genuinely publishes no public WebSocket endpoint, so
+    /// consumers must not assume `newHeads` is available on it and need another
+    /// source for the block clock. Robinhood is the case that proved this:
+    /// assuming a subscription existed left a filler's block clock frozen at 0
+    /// for eleven days while it retried a subscription that cannot succeed.
+    #[test]
+    fn no_public_ws_chains_really_have_none() {
+        for &id in NO_PUBLIC_WS_CHAINS {
+            let endpoints = default_endpoints(id);
+            assert!(
+                !endpoints.is_empty(),
+                "{} ({}) is listed as WS-less but has no endpoints at all",
+                chain_name(id),
+                id
+            );
+            assert!(
+                endpoints.iter().all(|e| e.ws_url.is_none()),
+                "{} ({}) now has a WS endpoint — drop it from NO_PUBLIC_WS_CHAINS",
                 chain_name(id),
                 id
             );
