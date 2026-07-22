@@ -5,7 +5,7 @@
 
 [package]
 name = "web3-rpc-pool"
-version = "0.5.8"
+version = "0.5.9"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT"
@@ -19,15 +19,27 @@ default = ["http", "ws"]
 http = []
 ws = ["alloy/provider-ws", "alloy/rpc-types"]
 metrics = ["prometheus"]
-evaluator = ["dep:reqwest", "dep:clap", "dep:chrono"]
-live-tests = ["dep:reqwest"]
+evaluator = ["dep:clap", "dep:chrono"]
+live-tests = []
 
 [dependencies]
 # Async runtime
 tokio = { version = "1.35", features = ["rt-multi-thread", "macros", "sync", "time"] }
 
-# Alloy for RPC
-alloy = { version = "1.0", default-features = false, features = ["providers", "transports", "rpc-client", "transport-http", "reqwest", "reqwest-rustls-tls"] }
+# Alloy for RPC. We deliberately do NOT enable alloy's "reqwest-rustls-tls"
+# feature: reqwest 0.12.28 redefined its "rustls" feature to select the
+# aws-lc-rs provider (formerly ring), which drags in aws-lc-sys — a
+# cross-compile-hostile C/asm build. Instead we pull plain "reqwest" and pin
+# the TLS provider to ring via our own reqwest dependency below. This keeps the
+# HTTP transport (TieredPool) cross-compile clean on any alloy version.
+#
+# NOTE: the optional `ws` feature pulls alloy-transport-ws, which since alloy
+# 1.7.4 hard-codes rustls "aws_lc_rs" (not feature-gated) and reintroduces
+# aws-lc-sys. It cannot be fixed from here without pinning the entire alloy
+# stack (the sub-crates are not lockstep-versioned, so a cap only skews them).
+# Consumers that need WS AND cross-compile should pin the alloy stack to
+# <=1.7.3 or patch alloy-transport-ws. HTTP-only consumers are unaffected.
+alloy = { version = "1.0", default-features = false, features = ["providers", "transports", "rpc-client", "transport-http", "reqwest"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -47,8 +59,11 @@ prometheus = { version = "0.13", optional = true }
 # Error handling
 thiserror = "2"
 
-# Optional: RPC evaluator binary
-reqwest = { version = "0.12", features = ["json"], optional = true }
+# reqwest provides the TLS backend for alloy's HTTP transport. Pin it to the
+# ring-backed rustls provider (default-features off drops native-tls) so the
+# whole tree resolves to ring and aws-lc-rs/aws-lc-sys is never compiled.
+# Non-optional: alloy's transport-http needs a reqwest TLS provider regardless.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 clap = { version = "4", features = ["derive"], optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 
