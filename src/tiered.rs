@@ -12,6 +12,9 @@ use crate::pool::{RpcPool, RpcPoolConfig};
 use crate::presets;
 use crate::strategies::{FailoverStrategy, RateAwareStrategy, SelectionStrategy};
 
+use alloy::providers::RootProvider;
+use alloy::transports::http::reqwest;
+use alloy::transports::http::Http;
 use std::collections::{HashMap, HashSet};
 use std::future::Future;
 use std::sync::Arc;
@@ -174,6 +177,12 @@ pub struct TieredPool {
     /// Fallback configuration.
     allow_critical_fallback: bool,
     allow_low_escalation: bool,
+
+    /// Shared HTTP client for `execute_with_provider`. Every `connect_http(url)` builds a fresh
+    /// `reqwest::Client` whose keep-alive pool is dropped on return, so back-to-back RPC hops
+    /// re-pay the TCP+TLS handshake. Reusing one client (its connection pool is keyed per host)
+    /// lets sequential/concurrent calls to the same endpoint reuse a warm connection.
+    rpc_client: reqwest::Client,
 }
 
 impl TieredPool {
@@ -235,12 +244,21 @@ impl TieredPool {
             pools.insert(tier, Arc::new(pool));
         }
 
+        // Shared keep-alive client for pooled providers. A few idle connections per host cover the
+        // concurrent evaluation fan-out; the 90s idle timeout keeps them warm across quiet gaps.
+        let rpc_client = reqwest::Client::builder()
+            .pool_max_idle_per_host(8)
+            .pool_idle_timeout(Duration::from_secs(90))
+            .build()
+            .map_err(|e| RpcPoolError::ClientCreationFailed(format!("failed to build shared RPC client: {e}")))?;
+
         Ok(Self {
             pools,
             trusted_urls,
             request_timeout: config.request_timeout,
             allow_critical_fallback: config.allow_critical_fallback,
             allow_low_escalation: config.allow_low_escalation,
+            rpc_client,
         })
     }
 
@@ -338,6 +356,32 @@ impl TieredPool {
             "All tiers failed"
         );
         Err(last_error.unwrap_or(RpcPoolError::NoEndpointsConfigured))
+    }
+
+    /// Like [`execute`](Self::execute), but hands the closure a ready [`RootProvider`] built from the
+    /// pool's shared keep-alive client instead of a bare URL. Endpoint selection, tier fallback and
+    /// timeouts are identical (this wraps `execute`); the only difference is connection reuse — the
+    /// provider's transport shares one `reqwest::Client`, so hops to the same endpoint reuse a warm
+    /// TCP+TLS connection instead of re-handshaking per call.
+    pub async fn execute_with_provider<T, E, F, Fut>(
+        &self,
+        priority: RequestPriority,
+        f: F,
+    ) -> Result<T, RpcPoolError>
+    where
+        F: Fn(RootProvider) -> Fut + Clone,
+        Fut: Future<Output = Result<T, E>>,
+        E: std::error::Error,
+    {
+        let client = self.rpc_client.clone();
+        self.execute(priority, move |url| {
+            let provider = RootProvider::new(alloy::rpc::client::RpcClient::new(
+                Http::with_client(client.clone(), url),
+                false,
+            ));
+            f(provider)
+        })
+        .await
     }
 
     /// Execute with URL string instead of parsed URL.
