@@ -5,7 +5,7 @@
 
 [package]
 name = "web3-rpc-pool"
-version = "0.5.9"
+version = "0.5.10"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT"
