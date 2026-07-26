@@ -5,6 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-26
+
+### Changed
+
+- **`reqwest` 0.12 → 0.13, and the ring `CryptoProvider` is now installed by this library.**
+  This is a **breaking** change in behaviour, hence the minor bump, even though no public type
+  changed.
+
+  reqwest 0.13 offers only two rustls options and **removed `rustls-tls-webpki-roots`**:
+
+  | feature | provider | roots |
+  |---|---|---|
+  | `rustls` | `aws-lc-rs` → `aws-lc-sys` (C/asm, **hostile to cross-compilation**) | platform verifier |
+  | `rustls-no-provider` | none — the process must install one or `Client::build()` **panics** | platform verifier |
+
+  We take `rustls-no-provider` to stay cross-compile clean (macOS → Linux), and install `ring`
+  ourselves in the new `tls` module. `ensure_provider()` is `Once`-guarded, idempotent and
+  thread-safe, and is called before every client this crate builds: `TieredPool::new` (the shared
+  keep-alive RPC client) and `RpcPool::new` (the health-probe client).
+
+  **Doing this in the library rather than the caller is the point.** `RpcPool::new` builds a
+  `reqwest::Client` internally, so requiring callers to install a provider would make this bump
+  panic at pool construction for every existing consumer.
+
+### Breaking
+
+- **Root certificates now come from the OS trust store** (`rustls-platform-verifier`) instead of a
+  bundled `webpki-roots` set, because reqwest 0.13 deleted that feature. **Hosts must have a CA
+  bundle installed** (e.g. `ca-certificates`). Verify this before deploying.
+- **This crate no longer enables a provider-selecting reqwest feature.** A consumer that was
+  relying on our old `rustls-tls` (which implied `__rustls-ring`) to supply a provider for *its
+  own* clients must now either enable one itself or call
+  `web3_rpc_pool::tls::ensure_provider()`. Consumers that declare their own reqwest with a
+  provider feature are unaffected — `liquidation-engine` was checked and is fine, because it
+  declares `reqwest 0.12` with `rustls-tls`.
+
+### Fixed
+
+- **A comment in `Cargo.toml` documented an invariant that did not hold.** It claimed the ring
+  provider was pinned "via our own reqwest dependency", but in any tree where `alloy` pulls
+  reqwest 0.13, the alloy HTTP transport links *that*, not our 0.12 pin. Unifying on one reqwest
+  version makes the claim checkable and true.
+- **`tests/live_endpoint_tests.rs` builds a `reqwest::Client` directly**, not through `RpcPool`, so
+  the library's internal self-install did not cover it. It regressed on the first attempt at this
+  change and was caught by running the unmodified tree as a control. The general limit is worth
+  knowing: **`ensure_provider()` covers clients this library builds, not clients a consumer
+  builds.**
+
+### Verification
+
+- 115 tests pass, 0 fail — including the live network endpoint test making real calls.
+- `aws-lc` is **absent** under `--no-default-features --features http`. It still appears under
+  `--all-features` via the `ws` feature, because `alloy-transport-ws` hard-codes `aws_lc_rs`; that
+  is a pre-existing caveat already documented in `Cargo.toml`.
+- Verified to build from a clean clone of the release branch (an earlier commit had omitted
+  `src/tls.rs` entirely — `git commit -a` does not stage new files).
+
 ## [0.5.8] - 2026-07-20
 
 ### Fixed

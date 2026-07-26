@@ -5,7 +5,7 @@
 
 [package]
 name = "web3-rpc-pool"
-version = "0.5.10"
+version = "0.6.0"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT"
@@ -59,11 +59,20 @@ prometheus = { version = "0.13", optional = true }
 # Error handling
 thiserror = "2"
 
-# reqwest provides the TLS backend for alloy's HTTP transport. Pin it to the
-# ring-backed rustls provider (default-features off drops native-tls) so the
-# whole tree resolves to ring and aws-lc-rs/aws-lc-sys is never compiled.
+# reqwest provides the TLS backend for alloy's HTTP transport.
+#
+# reqwest 0.13 offers only `rustls` (which selects aws-lc-rs -> aws-lc-sys, a
+# C/asm build hostile to cross-compilation) or `rustls-no-provider` (no provider
+# at all). We take the latter to stay cross-compile clean, and install `ring`
+# ourselves in src/tls.rs -- the library must do it, because RpcPool::new builds
+# a Client internally and requiring callers to install a provider would be a
+# breaking change for every consumer.
+#
+# NOTE: 0.13 also REMOVED `rustls-tls-webpki-roots`; both options now use
+# rustls-platform-verifier (the OS trust store), so hosts need a CA bundle.
 # Non-optional: alloy's transport-http needs a reqwest TLS provider regardless.
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls-no-provider"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
 clap = { version = "4", features = ["derive"], optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 
