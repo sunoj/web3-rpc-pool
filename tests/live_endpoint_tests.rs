@@ -11,6 +11,10 @@
 use web3_rpc_pool::presets;
 
 async fn check_endpoint_reachable(url: &str) -> bool {
+    // This crate builds reqwest with `rustls-no-provider` (see src/tls.rs for
+    // why), so anything constructing a Client directly must install a provider
+    // first -- including this test, which does not go through RpcPool.
+    web3_rpc_pool::tls::ensure_provider();
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .build()

@@ -246,11 +246,16 @@ impl TieredPool {
 
         // Shared keep-alive client for pooled providers. A few idle connections per host cover the
         // concurrent evaluation fan-out; the 90s idle timeout keeps them warm across quiet gaps.
+        crate::tls::ensure_provider();
         let rpc_client = reqwest::Client::builder()
             .pool_max_idle_per_host(8)
             .pool_idle_timeout(Duration::from_secs(90))
             .build()
-            .map_err(|e| RpcPoolError::ClientCreationFailed(format!("failed to build shared RPC client: {e}")))?;
+            .map_err(|e| {
+                RpcPoolError::ClientCreationFailed(format!(
+                    "failed to build shared RPC client: {e}"
+                ))
+            })?;
 
         Ok(Self {
             pools,

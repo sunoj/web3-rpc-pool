@@ -239,11 +239,14 @@ impl RpcPool {
             cancelled: AtomicBool::new(false),
             cancel_notify: tokio::sync::Notify::new(),
             health_check_handle: RwLock::new(None),
-            probe_client: alloy::transports::http::reqwest::Client::builder()
-                .pool_max_idle_per_host(1)
-                .pool_idle_timeout(std::time::Duration::from_secs(10))
-                .build()
-                .expect("failed to build health-check HTTP client"),
+            probe_client: {
+                crate::tls::ensure_provider();
+                alloy::transports::http::reqwest::Client::builder()
+                    .pool_max_idle_per_host(1)
+                    .pool_idle_timeout(std::time::Duration::from_secs(10))
+                    .build()
+                    .expect("failed to build health-check HTTP client")
+            },
         })
     }
 

@@ -56,6 +56,7 @@ pub mod pool;
 pub mod presets;
 pub mod strategies;
 pub mod tiered;
+pub mod tls;
 #[cfg(feature = "ws")]
 pub mod ws;
 
