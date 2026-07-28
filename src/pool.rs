@@ -854,6 +854,22 @@ impl From<tokio::task::AbortHandle> for AbortHandleWrapper {
 /// Endpoints sitting at different `latest` heads can genuinely disagree, so not
 /// retrying may surface a revert that a further-ahead endpoint would not have
 /// produced. That is accepted — the alternative poisons the pool on every revert.
+///
+/// # Known limitation
+///
+/// The marker is searched for anywhere in the message, not anchored at its start,
+/// and that is deliberate. Consumers wrap: this crate's own `execute` re-wraps into
+/// `io::Error`, and callers wrap again into their own error types, so an anchored
+/// match would reject the very production errors this exists to classify.
+///
+/// The cost is that a message which merely *quotes* the marker is indistinguishable
+/// from one that wraps it — `Display` is all we have for a generic `E`, and the two
+/// are byte-identical. In practice the quoting case is close to unconstructible: the
+/// marker is Alloy's Rust-side rendering, not anything a node or proxy emits, so
+/// producing it means Rust code formatted a genuine revert error — which is a
+/// genuine revert. Closing the gap properly needs a typed error or provenance from
+/// the transport, not a better pattern; that is an API change, deliberately not made
+/// here.
 #[inline]
 pub(crate) fn is_call_failure(msg: &str) -> bool {
     // Alloy's rendering of a JSON-RPC error response, carrying the code as an exact

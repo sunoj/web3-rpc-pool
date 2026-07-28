@@ -326,7 +326,7 @@ impl TieredPool {
                         if crate::pool::is_call_failure(&message) {
                             return Err(RpcPoolError::CallFailed(message));
                         }
-                        warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
+                        warn!(tier = ?tier, error = %message, "Trusted tier failed, falling back to next tier");
                         last_error = Some(RpcPoolError::AllEndpointsFailed(message));
                     }
                     Err(_) => {
@@ -423,7 +423,7 @@ impl TieredPool {
                         if crate::pool::is_call_failure(&message) {
                             return Err(RpcPoolError::CallFailed(message));
                         }
-                        warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
+                        warn!(tier = ?tier, error = %message, "Trusted tier failed, falling back to next tier");
                         last_error = Some(RpcPoolError::AllEndpointsFailed(message));
                     }
                     Err(_) => {
@@ -826,6 +826,36 @@ mod tests {
         let counter = attempts.clone();
         let result: Result<(), RpcPoolError> = pool
             .execute(RequestPriority::Critical, move |_url| {
+                let counter = counter.clone();
+                async move {
+                    counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    Err::<(), _>(std::io::Error::other(REVERT_RESPONSE))
+                }
+            })
+            .await;
+
+        assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            1,
+            "the trusted tier must not fall through to the free tier"
+        );
+    }
+
+    /// The trusted guard exists separately in `execute_with_url`; without its own
+    /// test that copy could be deleted with the suite still green.
+    #[tokio::test]
+    async fn trusted_tier_execute_with_url_call_failure_does_not_cascade() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium_trusted("https://trusted-premium.example.com", "Trusted Premium")
+            .add_free("https://free.example.com", "Free")
+            .build()
+            .unwrap();
+
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let counter = attempts.clone();
+        let result: Result<(), RpcPoolError> = pool
+            .execute_with_url(RequestPriority::Critical, move |_url| {
                 let counter = counter.clone();
                 async move {
                     counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
