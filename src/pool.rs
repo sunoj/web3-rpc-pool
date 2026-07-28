@@ -398,7 +398,23 @@ impl RpcPool {
                     return Ok(value);
                 }
                 Ok(Err(e)) => {
-                    let error_msg = truncate_error_message(&e.to_string());
+                    let raw_error = e.to_string();
+                    let error_msg = truncate_error_message(&raw_error);
+
+                    // The node answered; the CALL failed. Failing over would replay
+                    // the same deterministic error on every remaining endpoint while
+                    // marking each one unhealthy, which is how a single reverting
+                    // call takes down a whole tier.
+                    if is_call_failure(&raw_error) {
+                        trace!(
+                            request_id,
+                            endpoint_name = %endpoint.name,
+                            error = %error_msg,
+                            "Call failed on a healthy endpoint; not retrying"
+                        );
+                        return Err(RpcPoolError::CallFailed(error_msg));
+                    }
+
                     if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         let marked_unhealthy =
                             stats.record_failure(error_msg.clone(), self.max_consecutive_errors);
@@ -808,6 +824,25 @@ impl From<tokio::task::AbortHandle> for AbortHandleWrapper {
     }
 }
 
+/// Does this error describe a failed CALL rather than a failed ENDPOINT?
+///
+/// `execution reverted` is an EVM execution outcome: the node received the request,
+/// ran it, and reported that the contract reverted. It is a property of the call —
+/// identical calldata against the same block reverts identically on every endpoint —
+/// so retrying elsewhere cannot succeed, and counting it against endpoint health
+/// marks healthy endpoints unhealthy. On a small tier that is fatal: the Base
+/// standard tier has two endpoints, so ~6 reverting requests take the tier down and
+/// subsequent legitimate reads fail with "All endpoints failed".
+///
+/// Deliberately narrow. Errors that merely *look* deterministic are still endpoint
+/// properties and must keep their failover: `header not found` (endpoint pruned the
+/// block), `method not found` (endpoint lacks the namespace), and every rate-limit
+/// or quota error all mean "ask a different endpoint".
+#[inline]
+pub(crate) fn is_call_failure(msg: &str) -> bool {
+    msg.contains("execution reverted")
+}
+
 /// Truncate error message to prevent unbounded memory growth.
 #[inline]
 fn truncate_error_message(msg: &str) -> String {
@@ -867,6 +902,79 @@ mod tests {
         // Should return all URLs
         let all = pool.get_all_urls();
         assert_eq!(all.len(), 2);
+    }
+
+    #[test]
+    fn call_failures_are_distinguished_from_endpoint_failures() {
+        // The Base standard tier's real payload — a node that answered correctly and
+        // reported that the contract reverted.
+        assert!(is_call_failure(
+            "server returned an error response: error code 3: execution reverted: \
+             Unexpected error, data: \"0x08c379a0\""
+        ));
+
+        // Endpoint properties: every one of these means "ask a different endpoint",
+        // so they must keep their failover and their health accounting.
+        for endpoint_error in [
+            "error sending request for url (https://rpc.example.com/base)",
+            "server returned an error response: error code -32001: rate limited",
+            "server returned an error response: error code -32000: header not found",
+            "server returned an error response: error code -32601: method not found",
+            "Request timeout after 2000ms",
+        ] {
+            assert!(
+                !is_call_failure(endpoint_error),
+                "must stay an endpoint failure: {endpoint_error}"
+            );
+        }
+    }
+
+    /// A reverting call must leave endpoint health completely untouched. Before this
+    /// distinction existed, ~6 reverting requests marked every endpoint in a
+    /// two-endpoint tier unhealthy and blinded the bot.
+    #[tokio::test]
+    async fn reverting_call_does_not_mark_endpoints_unhealthy() {
+        let pool = RpcPool::new(create_test_config()).unwrap();
+
+        for _ in 0..10 {
+            let result: Result<(), RpcPoolError> = pool
+                .execute_with_url(|_url| async {
+                    Err::<(), _>(std::io::Error::other(
+                        "server returned an error response: error code 3: \
+                         execution reverted: Unexpected error",
+                    ))
+                })
+                .await;
+            assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        }
+
+        assert_eq!(
+            pool.health_summary().healthy,
+            2,
+            "a reverting call must not consume endpoint health"
+        );
+    }
+
+    /// The contrast case: a genuine transport failure still marks endpoints unhealthy
+    /// and still fails over across all of them.
+    #[tokio::test]
+    async fn transport_failure_still_degrades_endpoint_health() {
+        let pool = RpcPool::new(create_test_config()).unwrap();
+
+        for _ in 0..10 {
+            let result: Result<(), RpcPoolError> = pool
+                .execute_with_url(|_url| async {
+                    Err::<(), _>(std::io::Error::other("error sending request for url"))
+                })
+                .await;
+            assert!(matches!(result, Err(RpcPoolError::AllEndpointsFailed(_))));
+        }
+
+        assert_eq!(
+            pool.health_summary().healthy,
+            0,
+            "a transport failure must still degrade endpoint health"
+        );
     }
 
     #[test]
