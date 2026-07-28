@@ -9,6 +9,14 @@ pub enum RpcPoolError {
     #[error("All RPC endpoints failed: {0}")]
     AllEndpointsFailed(String),
 
+    /// The node executed the request and the CALL failed — e.g. `execution
+    /// reverted`. The endpoint answered correctly, so this says nothing about its
+    /// health: it is never recorded against endpoint stats, never retried on
+    /// another endpoint, and never falls through to another tier, because each of
+    /// them would return the identical error.
+    #[error("RPC call failed: {0}")]
+    CallFailed(String),
+
     /// No endpoints are configured.
     #[error("No RPC endpoints configured")]
     NoEndpointsConfigured,

@@ -321,8 +321,13 @@ impl TieredPool {
                 match tokio::time::timeout(self.request_timeout, f(url.clone())).await {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
+                        // A revert is deterministic: the next tier would replay it.
+                        let message = e.to_string();
+                        if crate::pool::is_call_failure(&message) {
+                            return Err(RpcPoolError::CallFailed(message));
+                        }
                         warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
-                        last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(message));
                     }
                     Err(_) => {
                         // Fail over to the next tier instead of aborting: a hung
@@ -343,6 +348,7 @@ impl TieredPool {
 
                 match pool.execute(f.clone()).await {
                     Ok(result) => return Ok(result),
+                    Err(e @ RpcPoolError::CallFailed(_)) => return Err(e),
                     Err(e) => {
                         warn!(tier = ?tier, error = %e, "Tier failed, falling back to next tier");
                         last_error = Some(e);
@@ -412,8 +418,13 @@ impl TieredPool {
                 match tokio::time::timeout(self.request_timeout, f(url.to_string())).await {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
+                        // A revert is deterministic: the next tier would replay it.
+                        let message = e.to_string();
+                        if crate::pool::is_call_failure(&message) {
+                            return Err(RpcPoolError::CallFailed(message));
+                        }
                         warn!(tier = ?tier, error = %e, "Trusted tier failed, falling back to next tier");
-                        last_error = Some(RpcPoolError::AllEndpointsFailed(e.to_string()));
+                        last_error = Some(RpcPoolError::AllEndpointsFailed(message));
                     }
                     Err(_) => {
                         // Fail over to the next tier instead of aborting: a hung
@@ -434,6 +445,7 @@ impl TieredPool {
 
                 match pool.execute_with_url(f.clone()).await {
                     Ok(result) => return Ok(result),
+                    Err(e @ RpcPoolError::CallFailed(_)) => return Err(e),
                     Err(e) => {
                         warn!(tier = ?tier, error = %e, "Tier failed, falling back to next tier");
                         last_error = Some(e);
@@ -762,6 +774,40 @@ impl TieredPoolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A revert is deterministic, so falling through to the next tier only replays it
+    /// while burning that tier's endpoints too. It must surface to the caller from the
+    /// first tier that ran the call.
+    #[tokio::test]
+    async fn call_failure_does_not_cascade_across_tiers() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .add_free("https://free.example.com", "Free")
+            .build()
+            .unwrap();
+
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let counter = attempts.clone();
+        let result: Result<(), RpcPoolError> = pool
+            .execute_with_url(RequestPriority::Critical, move |_url| {
+                let counter = counter.clone();
+                async move {
+                    counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    Err::<(), _>(std::io::Error::other(
+                        "server returned an error response: error code 3: \
+                         execution reverted: Unexpected error",
+                    ))
+                }
+            })
+            .await;
+
+        assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            1,
+            "the call must run once, not once per tier"
+        );
+    }
 
     #[test]
     fn test_tier_order_critical() {
