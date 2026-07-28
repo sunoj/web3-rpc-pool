@@ -826,21 +826,37 @@ impl From<tokio::task::AbortHandle> for AbortHandleWrapper {
 
 /// Does this error describe a failed CALL rather than a failed ENDPOINT?
 ///
-/// `execution reverted` is an EVM execution outcome: the node received the request,
-/// ran it, and reported that the contract reverted. It is a property of the call —
-/// identical calldata against the same block reverts identically on every endpoint —
-/// so retrying elsewhere cannot succeed, and counting it against endpoint health
-/// marks healthy endpoints unhealthy. On a small tier that is fatal: the Base
-/// standard tier has two endpoints, so ~6 reverting requests take the tier down and
+/// An EVM revert is an outcome the node computed and reported: it received the
+/// request, ran it, and answered. Counting that against endpoint health marks
+/// healthy endpoints unhealthy, and on a small tier it is fatal — the Base standard
+/// tier has two endpoints, so ~6 reverting requests take the tier down and
 /// subsequent legitimate reads fail with "All endpoints failed".
 ///
-/// Deliberately narrow. Errors that merely *look* deterministic are still endpoint
-/// properties and must keep their failover: `header not found` (endpoint pruned the
-/// block), `method not found` (endpoint lacks the namespace), and every rate-limit
-/// or quota error all mean "ask a different endpoint".
+/// Two markers are required, and the conjunction is the point:
+///
+/// - **a JSON-RPC error *response*** (`error code 3`, EIP-1474's execution error) —
+///   evidence that a node answered, rather than text we found in a proxy's HTML,
+///   an HTTP body echoed by a transport error, or an error the caller's own closure
+///   constructed;
+/// - **the revert phrase itself**, matched case-insensitively.
+///
+/// The asymmetry drives the narrowness. A false negative costs nothing new: the
+/// error keeps today's failover and health accounting. A false positive is a real
+/// availability regression — a genuinely broken endpoint would escape both health
+/// accounting *and* failover, so the request fails without ever trying a working
+/// endpoint. When in doubt, treat it as an endpoint failure.
+///
+/// Consequently this does NOT match reverts a vendor reports under a different code
+/// (some use `-32000`), nor `invalid opcode` / out-of-gas / `VM Exception` phrasings.
+/// Those keep the old behaviour, which is safe, just not optimal.
+///
+/// One caveat on "deterministic": a revert is deterministic *at a given block*.
+/// Endpoints sitting at different `latest` heads can genuinely disagree, so not
+/// retrying may surface a revert that a further-ahead endpoint would not have
+/// produced. That is accepted — the alternative poisons the pool on every revert.
 #[inline]
 pub(crate) fn is_call_failure(msg: &str) -> bool {
-    msg.contains("execution reverted")
+    msg.contains("error code 3") && msg.to_ascii_lowercase().contains("execution reverted")
 }
 
 /// Truncate error message to prevent unbounded memory growth.
@@ -904,17 +920,22 @@ mod tests {
         assert_eq!(all.len(), 2);
     }
 
-    #[test]
-    fn call_failures_are_distinguished_from_endpoint_failures() {
-        // The Base standard tier's real payload — a node that answered correctly and
-        // reported that the contract reverted.
-        assert!(is_call_failure(
-            "server returned an error response: error code 3: execution reverted: \
-             Unexpected error, data: \"0x08c379a0\""
-        ));
+    /// The real Base standard-tier payload: a JSON-RPC error response reporting an
+    /// EVM revert.
+    const REVERT_RESPONSE: &str = "server returned an error response: error code 3: \
+         execution reverted: Unexpected error, data: \"0x08c379a0\"";
 
-        // Endpoint properties: every one of these means "ask a different endpoint",
-        // so they must keep their failover and their health accounting.
+    #[test]
+    fn classifies_json_rpc_reverts_as_call_failures() {
+        assert!(is_call_failure(REVERT_RESPONSE));
+        // Vendors differ on capitalisation of the phrase.
+        assert!(is_call_failure(
+            "server returned an error response: error code 3: Execution reverted"
+        ));
+    }
+
+    #[test]
+    fn endpoint_failures_keep_their_failover() {
         for endpoint_error in [
             "error sending request for url (https://rpc.example.com/base)",
             "server returned an error response: error code -32001: rate limited",
@@ -929,20 +950,47 @@ mod tests {
         }
     }
 
+    /// The dangerous direction. A false positive suppresses BOTH health accounting
+    /// and failover, so a genuinely broken endpoint would keep being selected and the
+    /// request would fail without ever trying a working one. Text that merely quotes
+    /// a revert — an HTTP body echoed by a transport error, a proxy error page, or an
+    /// error the caller's own closure built — must not qualify.
+    #[test]
+    fn quoted_revert_text_without_a_json_rpc_response_is_not_a_call_failure() {
+        for impostor in [
+            // Transport error whose Display includes the upstream response body.
+            "error sending request for url (https://proxy.example.com): \
+             body: {\"error\":\"execution reverted\"}",
+            // Proxy/rate-limit page that happens to echo the phrase.
+            "server returned an error response: error code -32001: upstream said \
+             execution reverted",
+            // An error constructed by the caller's own closure.
+            "failed to decode quote: execution reverted",
+        ] {
+            assert!(
+                !is_call_failure(impostor),
+                "must not suppress endpoint health: {impostor}"
+            );
+        }
+    }
+
     /// A reverting call must leave endpoint health completely untouched. Before this
     /// distinction existed, ~6 reverting requests marked every endpoint in a
     /// two-endpoint tier unhealthy and blinded the bot.
     #[tokio::test]
     async fn reverting_call_does_not_mark_endpoints_unhealthy() {
         let pool = RpcPool::new(create_test_config()).unwrap();
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
 
         for _ in 0..10 {
+            let counter = attempts.clone();
             let result: Result<(), RpcPoolError> = pool
-                .execute_with_url(|_url| async {
-                    Err::<(), _>(std::io::Error::other(
-                        "server returned an error response: error code 3: \
-                         execution reverted: Unexpected error",
-                    ))
+                .execute_with_url(move |_url| {
+                    let counter = counter.clone();
+                    async move {
+                        counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        Err::<(), _>(std::io::Error::other(REVERT_RESPONSE))
+                    }
                 })
                 .await;
             assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
@@ -952,6 +1000,16 @@ mod tests {
             pool.health_summary().healthy,
             2,
             "a reverting call must not consume endpoint health"
+        );
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            10,
+            "each call must run once, not once per endpoint"
+        );
+        assert_eq!(
+            pool.metrics().failovers,
+            0,
+            "a reverting call is not a failover"
         );
     }
 

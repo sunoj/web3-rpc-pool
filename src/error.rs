@@ -3,7 +3,12 @@
 use thiserror::Error;
 
 /// Errors that can occur during RPC pool operations.
+///
+/// `#[non_exhaustive]`: adding a variant is otherwise a compile break for every
+/// downstream exhaustive `match`. Callers must carry a wildcard arm, which lets
+/// future error kinds ship in a minor release instead of a coordinated one.
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RpcPoolError {
     /// All configured endpoints have failed.
     #[error("All RPC endpoints failed: {0}")]
