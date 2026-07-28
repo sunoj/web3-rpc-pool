@@ -856,7 +856,20 @@ impl From<tokio::task::AbortHandle> for AbortHandleWrapper {
 /// produced. That is accepted — the alternative poisons the pool on every revert.
 #[inline]
 pub(crate) fn is_call_failure(msg: &str) -> bool {
-    msg.contains("error code 3") && msg.to_ascii_lowercase().contains("execution reverted")
+    // Alloy's rendering of a JSON-RPC error response, carrying the code as an exact
+    // token. Matching the whole marker rather than "error code 3" is what makes the
+    // code a token instead of a prefix — otherwise `error code 30` also qualifies.
+    const REVERT_MARKER: &str = "server returned an error response: error code 3: ";
+
+    let Some(offset) = msg.find(REVERT_MARKER) else {
+        return false;
+    };
+    // The phrase must be what the node reported for THIS error, i.e. immediately
+    // after the marker — not merely present somewhere later in a response body that
+    // the error happens to quote.
+    msg[offset + REVERT_MARKER.len()..]
+        .to_ascii_lowercase()
+        .starts_with("execution reverted")
 }
 
 /// Truncate error message to prevent unbounded memory growth.
@@ -952,19 +965,25 @@ mod tests {
 
     /// The dangerous direction. A false positive suppresses BOTH health accounting
     /// and failover, so a genuinely broken endpoint would keep being selected and the
-    /// request would fail without ever trying a working one. Text that merely quotes
-    /// a revert — an HTTP body echoed by a transport error, a proxy error page, or an
-    /// error the caller's own closure built — must not qualify.
+    /// request would fail without ever trying a working one. Every case here carries
+    /// revert-looking text — several carry BOTH markers — and none may qualify.
     #[test]
-    fn quoted_revert_text_without_a_json_rpc_response_is_not_a_call_failure() {
+    fn revert_looking_text_that_is_not_this_error_is_not_a_call_failure() {
         for impostor in [
-            // Transport error whose Display includes the upstream response body.
+            // Transport failure whose Display quotes an upstream body.
             "error sending request for url (https://proxy.example.com): \
              body: {\"error\":\"execution reverted\"}",
-            // Proxy/rate-limit page that happens to echo the phrase.
+            // Both markers present, but the revert phrase is not what this code
+            // reported — it trails a body the transport error quoted.
+            "error sending request for url (https://proxy.example.com): body: \
+             error code 3, execution reverted",
+            // Code boundary: 30 and 300 are not 3.
+            "server returned an error response: error code 30: execution reverted",
+            "server returned an error response: error code 300: execution reverted",
+            // Rate limit that merely mentions the phrase.
             "server returned an error response: error code -32001: upstream said \
              execution reverted",
-            // An error constructed by the caller's own closure.
+            // Error built by the caller's own closure.
             "failed to decode quote: execution reverted",
         ] {
             assert!(
@@ -972,6 +991,13 @@ mod tests {
                 "must not suppress endpoint health: {impostor}"
             );
         }
+    }
+
+    /// A consumer that wraps the alloy error in its own type keeps the rendering
+    /// intact, and that IS a genuine revert — classification must survive nesting.
+    #[test]
+    fn wrapped_but_genuine_revert_is_still_a_call_failure() {
+        assert!(is_call_failure(&format!("RPC error: {REVERT_RESPONSE}")));
     }
 
     /// A reverting call must leave endpoint health completely untouched. Before this
