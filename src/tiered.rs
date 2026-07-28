@@ -809,6 +809,69 @@ mod tests {
         );
     }
 
+    const REVERT_RESPONSE: &str = "server returned an error response: error code 3: \
+         execution reverted: Unexpected error";
+
+    /// The trusted-tier path bypasses the pool entirely, so it needs its own guard:
+    /// without one it still replays a deterministic revert against every later tier.
+    #[tokio::test]
+    async fn trusted_tier_call_failure_does_not_cascade() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium_trusted("https://trusted-premium.example.com", "Trusted Premium")
+            .add_free("https://free.example.com", "Free")
+            .build()
+            .unwrap();
+
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let counter = attempts.clone();
+        let result: Result<(), RpcPoolError> = pool
+            .execute(RequestPriority::Critical, move |_url| {
+                let counter = counter.clone();
+                async move {
+                    counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    Err::<(), _>(std::io::Error::other(REVERT_RESPONSE))
+                }
+            })
+            .await;
+
+        assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            1,
+            "the trusted tier must not fall through to the free tier"
+        );
+    }
+
+    /// `execute` is a separate propagation arm from `execute_with_url`, and
+    /// `execute_with_provider` delegates to it.
+    #[tokio::test]
+    async fn pooled_execute_propagates_call_failure_without_cascading() {
+        let pool = TieredPoolBuilder::new()
+            .add_premium("https://premium.example.com", "Premium")
+            .add_free("https://free.example.com", "Free")
+            .build()
+            .unwrap();
+
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let counter = attempts.clone();
+        let result: Result<(), RpcPoolError> = pool
+            .execute(RequestPriority::Critical, move |_url| {
+                let counter = counter.clone();
+                async move {
+                    counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    Err::<(), _>(std::io::Error::other(REVERT_RESPONSE))
+                }
+            })
+            .await;
+
+        assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            1,
+            "a revert must not be retried across endpoints or tiers"
+        );
+    }
+
     #[test]
     fn test_tier_order_critical() {
         let pool = TieredPoolBuilder::new()
