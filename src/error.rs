@@ -3,11 +3,24 @@
 use thiserror::Error;
 
 /// Errors that can occur during RPC pool operations.
+///
+/// `#[non_exhaustive]`: adding a variant is otherwise a compile break for every
+/// downstream exhaustive `match`. Callers must carry a wildcard arm, which lets
+/// future error kinds ship in a minor release instead of a coordinated one.
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RpcPoolError {
     /// All configured endpoints have failed.
     #[error("All RPC endpoints failed: {0}")]
     AllEndpointsFailed(String),
+
+    /// The node executed the request and the CALL failed — e.g. `execution
+    /// reverted`. The endpoint answered correctly, so this says nothing about its
+    /// health: it is never recorded against endpoint stats, never retried on
+    /// another endpoint, and never falls through to another tier, because each of
+    /// them would return the identical error.
+    #[error("RPC call failed: {0}")]
+    CallFailed(String),
 
     /// No endpoints are configured.
     #[error("No RPC endpoints configured")]

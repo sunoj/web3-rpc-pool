@@ -398,7 +398,23 @@ impl RpcPool {
                     return Ok(value);
                 }
                 Ok(Err(e)) => {
-                    let error_msg = truncate_error_message(&e.to_string());
+                    let raw_error = e.to_string();
+                    let error_msg = truncate_error_message(&raw_error);
+
+                    // The node answered; the CALL failed. Failing over would replay
+                    // the same deterministic error on every remaining endpoint while
+                    // marking each one unhealthy, which is how a single reverting
+                    // call takes down a whole tier.
+                    if is_call_failure(&raw_error) {
+                        trace!(
+                            request_id,
+                            endpoint_name = %endpoint.name,
+                            error = %error_msg,
+                            "Call failed on a healthy endpoint; not retrying"
+                        );
+                        return Err(RpcPoolError::CallFailed(error_msg));
+                    }
+
                     if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         let marked_unhealthy =
                             stats.record_failure(error_msg.clone(), self.max_consecutive_errors);
@@ -808,6 +824,70 @@ impl From<tokio::task::AbortHandle> for AbortHandleWrapper {
     }
 }
 
+/// Does this error describe a failed CALL rather than a failed ENDPOINT?
+///
+/// An EVM revert is an outcome the node computed and reported: it received the
+/// request, ran it, and answered. Counting that against endpoint health marks
+/// healthy endpoints unhealthy, and on a small tier it is fatal — the Base standard
+/// tier has two endpoints, so ~6 reverting requests take the tier down and
+/// subsequent legitimate reads fail with "All endpoints failed".
+///
+/// Two markers are required, and the conjunction is the point:
+///
+/// - **a JSON-RPC error *response*** (`error code 3`, EIP-1474's execution error) —
+///   evidence that a node answered, rather than text we found in a proxy's HTML,
+///   an HTTP body echoed by a transport error, or an error the caller's own closure
+///   constructed;
+/// - **the revert phrase itself**, matched case-insensitively.
+///
+/// The asymmetry drives the narrowness. A false negative costs nothing new: the
+/// error keeps today's failover and health accounting. A false positive is a real
+/// availability regression — a genuinely broken endpoint would escape both health
+/// accounting *and* failover, so the request fails without ever trying a working
+/// endpoint. When in doubt, treat it as an endpoint failure.
+///
+/// Consequently this does NOT match reverts a vendor reports under a different code
+/// (some use `-32000`), nor `invalid opcode` / out-of-gas / `VM Exception` phrasings.
+/// Those keep the old behaviour, which is safe, just not optimal.
+///
+/// One caveat on "deterministic": a revert is deterministic *at a given block*.
+/// Endpoints sitting at different `latest` heads can genuinely disagree, so not
+/// retrying may surface a revert that a further-ahead endpoint would not have
+/// produced. That is accepted — the alternative poisons the pool on every revert.
+///
+/// # Known limitation
+///
+/// The marker is searched for anywhere in the message, not anchored at its start,
+/// and that is deliberate. Consumers wrap: this crate's own `execute` re-wraps into
+/// `io::Error`, and callers wrap again into their own error types, so an anchored
+/// match would reject the very production errors this exists to classify.
+///
+/// The cost is that a message which merely *quotes* the marker is indistinguishable
+/// from one that wraps it — `Display` is all we have for a generic `E`, and the two
+/// are byte-identical. In practice the quoting case is close to unconstructible: the
+/// marker is Alloy's Rust-side rendering, not anything a node or proxy emits, so
+/// producing it means Rust code formatted a genuine revert error — which is a
+/// genuine revert. Closing the gap properly needs a typed error or provenance from
+/// the transport, not a better pattern; that is an API change, deliberately not made
+/// here.
+#[inline]
+pub(crate) fn is_call_failure(msg: &str) -> bool {
+    // Alloy's rendering of a JSON-RPC error response, carrying the code as an exact
+    // token. Matching the whole marker rather than "error code 3" is what makes the
+    // code a token instead of a prefix — otherwise `error code 30` also qualifies.
+    const REVERT_MARKER: &str = "server returned an error response: error code 3: ";
+
+    let Some(offset) = msg.find(REVERT_MARKER) else {
+        return false;
+    };
+    // The phrase must be what the node reported for THIS error, i.e. immediately
+    // after the marker — not merely present somewhere later in a response body that
+    // the error happens to quote.
+    msg[offset + REVERT_MARKER.len()..]
+        .to_ascii_lowercase()
+        .starts_with("execution reverted")
+}
+
 /// Truncate error message to prevent unbounded memory growth.
 #[inline]
 fn truncate_error_message(msg: &str) -> String {
@@ -867,6 +947,134 @@ mod tests {
         // Should return all URLs
         let all = pool.get_all_urls();
         assert_eq!(all.len(), 2);
+    }
+
+    /// The real Base standard-tier payload: a JSON-RPC error response reporting an
+    /// EVM revert.
+    const REVERT_RESPONSE: &str = "server returned an error response: error code 3: \
+         execution reverted: Unexpected error, data: \"0x08c379a0\"";
+
+    #[test]
+    fn classifies_json_rpc_reverts_as_call_failures() {
+        assert!(is_call_failure(REVERT_RESPONSE));
+        // Vendors differ on capitalisation of the phrase.
+        assert!(is_call_failure(
+            "server returned an error response: error code 3: Execution reverted"
+        ));
+    }
+
+    #[test]
+    fn endpoint_failures_keep_their_failover() {
+        for endpoint_error in [
+            "error sending request for url (https://rpc.example.com/base)",
+            "server returned an error response: error code -32001: rate limited",
+            "server returned an error response: error code -32000: header not found",
+            "server returned an error response: error code -32601: method not found",
+            "Request timeout after 2000ms",
+        ] {
+            assert!(
+                !is_call_failure(endpoint_error),
+                "must stay an endpoint failure: {endpoint_error}"
+            );
+        }
+    }
+
+    /// The dangerous direction. A false positive suppresses BOTH health accounting
+    /// and failover, so a genuinely broken endpoint would keep being selected and the
+    /// request would fail without ever trying a working one. Every case here carries
+    /// revert-looking text — several carry BOTH markers — and none may qualify.
+    #[test]
+    fn revert_looking_text_that_is_not_this_error_is_not_a_call_failure() {
+        for impostor in [
+            // Transport failure whose Display quotes an upstream body.
+            "error sending request for url (https://proxy.example.com): \
+             body: {\"error\":\"execution reverted\"}",
+            // Both markers present, but the revert phrase is not what this code
+            // reported — it trails a body the transport error quoted.
+            "error sending request for url (https://proxy.example.com): body: \
+             error code 3, execution reverted",
+            // Code boundary: 30 and 300 are not 3.
+            "server returned an error response: error code 30: execution reverted",
+            "server returned an error response: error code 300: execution reverted",
+            // Rate limit that merely mentions the phrase.
+            "server returned an error response: error code -32001: upstream said \
+             execution reverted",
+            // Error built by the caller's own closure.
+            "failed to decode quote: execution reverted",
+        ] {
+            assert!(
+                !is_call_failure(impostor),
+                "must not suppress endpoint health: {impostor}"
+            );
+        }
+    }
+
+    /// A consumer that wraps the alloy error in its own type keeps the rendering
+    /// intact, and that IS a genuine revert — classification must survive nesting.
+    #[test]
+    fn wrapped_but_genuine_revert_is_still_a_call_failure() {
+        assert!(is_call_failure(&format!("RPC error: {REVERT_RESPONSE}")));
+    }
+
+    /// A reverting call must leave endpoint health completely untouched. Before this
+    /// distinction existed, ~6 reverting requests marked every endpoint in a
+    /// two-endpoint tier unhealthy and blinded the bot.
+    #[tokio::test]
+    async fn reverting_call_does_not_mark_endpoints_unhealthy() {
+        let pool = RpcPool::new(create_test_config()).unwrap();
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+
+        for _ in 0..10 {
+            let counter = attempts.clone();
+            let result: Result<(), RpcPoolError> = pool
+                .execute_with_url(move |_url| {
+                    let counter = counter.clone();
+                    async move {
+                        counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        Err::<(), _>(std::io::Error::other(REVERT_RESPONSE))
+                    }
+                })
+                .await;
+            assert!(matches!(result, Err(RpcPoolError::CallFailed(_))));
+        }
+
+        assert_eq!(
+            pool.health_summary().healthy,
+            2,
+            "a reverting call must not consume endpoint health"
+        );
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            10,
+            "each call must run once, not once per endpoint"
+        );
+        assert_eq!(
+            pool.metrics().failovers,
+            0,
+            "a reverting call is not a failover"
+        );
+    }
+
+    /// The contrast case: a genuine transport failure still marks endpoints unhealthy
+    /// and still fails over across all of them.
+    #[tokio::test]
+    async fn transport_failure_still_degrades_endpoint_health() {
+        let pool = RpcPool::new(create_test_config()).unwrap();
+
+        for _ in 0..10 {
+            let result: Result<(), RpcPoolError> = pool
+                .execute_with_url(|_url| async {
+                    Err::<(), _>(std::io::Error::other("error sending request for url"))
+                })
+                .await;
+            assert!(matches!(result, Err(RpcPoolError::AllEndpointsFailed(_))));
+        }
+
+        assert_eq!(
+            pool.health_summary().healthy,
+            0,
+            "a transport failure must still degrade endpoint health"
+        );
     }
 
     #[test]
