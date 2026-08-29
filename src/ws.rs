@@ -335,7 +335,7 @@ async fn connect_ws_with_timeout(
     ws_url: &str,
     timeout: Duration,
 ) -> Result<impl Provider, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(0);
 
     let provider = tokio::time::timeout(timeout, ProviderBuilder::new().connect_ws(connect))
         .await
@@ -359,7 +359,7 @@ async fn connect_ws_with_timeout(
 pub async fn connect_and_subscribe_blocks(
     ws_url: &str,
 ) -> Result<BoxSubscriptionStream<Header>, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(0);
 
     let provider = ProviderBuilder::new()
         .connect_ws(connect)
@@ -387,7 +387,7 @@ pub async fn connect_and_subscribe_logs(
     ws_url: &str,
     filter: &Filter,
 ) -> Result<BoxSubscriptionStream<Log>, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(0);
 
     let provider = ProviderBuilder::new()
         .connect_ws(connect)
