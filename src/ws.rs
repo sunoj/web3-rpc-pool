@@ -45,13 +45,18 @@ use tracing::{debug, info, warn};
 struct OwnedStream<T> {
     _owner: Box<dyn std::any::Any + Send>,
     stream: Pin<Box<dyn Stream<Item = T> + Send>>,
+    endpoint_failed: Arc<AtomicBool>,
 }
 
 impl<T> Stream for OwnedStream<T> {
     type Item = T;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        self.stream.as_mut().poll_next(cx)
+        let result = self.stream.as_mut().poll_next(cx);
+        if matches!(result, Poll::Ready(None)) {
+            self.endpoint_failed.store(true, Ordering::Release);
+        }
+        result
     }
 }
 
@@ -59,10 +64,12 @@ impl<T> Stream for OwnedStream<T> {
 fn owned_stream<T: 'static>(
     provider: impl std::any::Any + Send + 'static,
     stream: impl Stream<Item = T> + Send + 'static,
+    endpoint_failed: Arc<AtomicBool>,
 ) -> BoxSubscriptionStream<T> {
     Box::pin(OwnedStream {
         _owner: Box::new(provider),
         stream: Box::pin(stream),
+        endpoint_failed,
     })
 }
 
@@ -110,6 +117,8 @@ pub struct WsPool {
     config: WsPoolConfig,
     /// Shutdown flag.
     shutdown: Arc<AtomicBool>,
+    /// Endpoints whose subscriptions have terminated are retired for this pool.
+    endpoint_failures: Arc<Vec<Arc<AtomicBool>>>,
 }
 
 impl WsPool {
@@ -145,10 +154,18 @@ impl WsPool {
             );
         }
 
+        let endpoint_failures = Arc::new(
+            endpoints
+                .iter()
+                .map(|_| Arc::new(AtomicBool::new(false)))
+                .collect(),
+        );
+
         Ok(Self {
             endpoints,
             config,
             shutdown: Arc::new(AtomicBool::new(false)),
+            endpoint_failures,
         })
     }
 
@@ -172,15 +189,22 @@ impl WsPool {
     pub async fn subscribe_new_heads(&self) -> Result<BoxSubscriptionStream<Header>, RpcPoolError> {
         let mut last_error = None;
 
-        for endpoint in &self.endpoints {
+        for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
+                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                    continue;
+                }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for newHeads subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_blocks().await {
                         Ok(sub) => {
                             info!(name = %endpoint.name, "Subscribed to newHeads");
-                            return Ok(owned_stream(provider, sub.into_stream()));
+                            return Ok(owned_stream(
+                                provider,
+                                sub.into_stream(),
+                                Arc::clone(&self.endpoint_failures[index]),
+                            ));
                         }
                         Err(e) => {
                             warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -210,15 +234,22 @@ impl WsPool {
     ) -> Result<BoxSubscriptionStream<B256>, RpcPoolError> {
         let mut last_error = None;
 
-        for endpoint in &self.endpoints {
+        for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
+                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                    continue;
+                }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for pendingTransactions subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_pending_transactions().await {
                         Ok(sub) => {
                             info!(name = %endpoint.name, "Subscribed to pendingTransactions");
-                            return Ok(owned_stream(provider, sub.into_stream()));
+                            return Ok(owned_stream(
+                                provider,
+                                sub.into_stream(),
+                                Arc::clone(&self.endpoint_failures[index]),
+                            ));
                         }
                         Err(e) => {
                             warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -249,15 +280,22 @@ impl WsPool {
     ) -> Result<BoxSubscriptionStream<Log>, RpcPoolError> {
         let mut last_error = None;
 
-        for endpoint in &self.endpoints {
+        for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
+                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                    continue;
+                }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for logs subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_logs(filter).await {
                         Ok(sub) => {
                             info!(name = %endpoint.name, "Subscribed to logs");
-                            return Ok(owned_stream(provider, sub.into_stream()));
+                            return Ok(owned_stream(
+                                provider,
+                                sub.into_stream(),
+                                Arc::clone(&self.endpoint_failures[index]),
+                            ));
                         }
                         Err(e) => {
                             warn!(name = %endpoint.name, error = %e, "Subscribe failed");
@@ -297,7 +335,7 @@ async fn connect_ws_with_timeout(
     ws_url: &str,
     timeout: Duration,
 ) -> Result<impl Provider, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string());
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
 
     let provider = tokio::time::timeout(timeout, ProviderBuilder::new().connect_ws(connect))
         .await
@@ -321,7 +359,7 @@ async fn connect_ws_with_timeout(
 pub async fn connect_and_subscribe_blocks(
     ws_url: &str,
 ) -> Result<BoxSubscriptionStream<Header>, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string());
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
 
     let provider = ProviderBuilder::new()
         .connect_ws(connect)
@@ -335,7 +373,11 @@ pub async fn connect_and_subscribe_blocks(
         .await
         .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
 
-    Ok(owned_stream(provider, sub.into_stream()))
+    Ok(owned_stream(
+        provider,
+        sub.into_stream(),
+        Arc::new(AtomicBool::new(false)),
+    ))
 }
 
 /// Connect to a WebSocket endpoint and create a log subscription.
@@ -345,7 +387,7 @@ pub async fn connect_and_subscribe_logs(
     ws_url: &str,
     filter: &Filter,
 ) -> Result<BoxSubscriptionStream<Log>, RpcPoolError> {
-    let connect = WsConnect::new(ws_url.to_string());
+    let connect = WsConnect::new(ws_url.to_string()).with_max_retries(1);
 
     let provider = ProviderBuilder::new()
         .connect_ws(connect)
@@ -359,7 +401,11 @@ pub async fn connect_and_subscribe_logs(
         .await
         .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
 
-    Ok(owned_stream(provider, sub.into_stream()))
+    Ok(owned_stream(
+        provider,
+        sub.into_stream(),
+        Arc::new(AtomicBool::new(false)),
+    ))
 }
 
 #[cfg(test)]
@@ -470,7 +516,7 @@ mod tests {
         let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
 
         let owner = String::from("fake-provider");
-        let mut stream = owned_stream(owner, inner);
+        let mut stream = owned_stream(owner, inner, Arc::new(AtomicBool::new(false)));
 
         tx.send(1).await.unwrap();
         tx.send(2).await.unwrap();
@@ -502,7 +548,7 @@ mod tests {
         let (tx, rx) = tokio::sync::mpsc::channel::<u64>(4);
         let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
 
-        let mut stream = owned_stream(detector, inner);
+        let mut stream = owned_stream(detector, inner, Arc::new(AtomicBool::new(false)));
 
         // Owner must not be dropped while stream is alive
         assert!(!dropped.load(Ordering::SeqCst));
