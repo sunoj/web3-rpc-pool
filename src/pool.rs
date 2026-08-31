@@ -8,6 +8,7 @@ use crate::strategies::SelectionStrategy;
 use alloy::providers::{Provider, RootProvider};
 use alloy::transports::http::Http;
 use parking_lot::RwLock;
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::future::Future;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -73,6 +74,9 @@ pub struct RpcPoolConfig {
 
     /// Timeout for health check probes.
     pub health_check_timeout: Duration,
+
+    /// Maximum allowed lag behind the best-known endpoint head.
+    pub max_block_lag: Option<u64>,
 }
 
 impl Default for RpcPoolConfig {
@@ -85,6 +89,7 @@ impl Default for RpcPoolConfig {
             retry_delay: Duration::from_secs(5),
             request_timeout: Duration::from_secs(DEFAULT_REQUEST_TIMEOUT_SECS),
             health_check_timeout: Duration::from_secs(DEFAULT_HEALTH_CHECK_TIMEOUT_SECS),
+            max_block_lag: None,
         }
     }
 }
@@ -136,6 +141,12 @@ impl RpcPoolConfig {
         self.health_check_timeout = timeout;
         self
     }
+
+    /// Builder: set the maximum allowed block lag for endpoint selection.
+    pub fn with_max_block_lag(mut self, max_block_lag: u64) -> Self {
+        self.max_block_lag = Some(max_block_lag);
+        self
+    }
 }
 
 /// High-availability RPC connection pool with automatic failover.
@@ -155,6 +166,7 @@ pub struct RpcPool {
     health_check_interval: Duration,
     request_timeout: Duration,
     health_check_timeout: Duration,
+    max_block_lag: Option<u64>,
 
     /// Aggregated metrics.
     total_requests: AtomicU64,
@@ -215,6 +227,7 @@ impl RpcPool {
             health_check_timeout_ms = config.health_check_timeout.as_millis() as u64,
             health_check_interval_secs = config.health_check_interval.as_secs(),
             max_consecutive_errors = config.max_consecutive_errors,
+            max_block_lag = ?config.max_block_lag,
             retry_delay_secs = config.retry_delay.as_secs(),
             "RPC pool initialized"
         );
@@ -234,6 +247,7 @@ impl RpcPool {
             health_check_interval: config.health_check_interval,
             request_timeout: config.request_timeout,
             health_check_timeout: config.health_check_timeout,
+            max_block_lag: config.max_block_lag,
             total_requests: AtomicU64::new(0),
             failovers: AtomicU64::new(0),
             cancelled: AtomicBool::new(false),
@@ -253,6 +267,11 @@ impl RpcPool {
     /// Get the configured request timeout.
     pub fn request_timeout(&self) -> Duration {
         self.request_timeout
+    }
+
+    /// Get the configured maximum block lag for endpoint selection.
+    pub fn max_block_lag(&self) -> Option<u64> {
+        self.max_block_lag
     }
 
     /// Check if the pool has been shut down.
@@ -281,12 +300,8 @@ impl RpcPool {
 
     /// Get the URL of the currently selected endpoint.
     pub fn get_current_url(&self) -> Option<String> {
-        let stats_map = self.collect_stats_snapshot();
         let exclude = HashSet::new();
-        let mut strategy = self.strategy.write();
-        strategy
-            .select(&self.endpoints, &stats_map, &exclude)
-            .map(|e| e.url.clone())
+        self.select_endpoint(&exclude).map(|endpoint| endpoint.url)
     }
 
     /// Get all configured RPC URLs.
@@ -298,6 +313,63 @@ impl RpcPool {
     #[inline]
     fn collect_stats_snapshot(&self) -> HashMap<String, EndpointStats> {
         self.stats.read().clone()
+    }
+
+    fn select_endpoint(&self, exclude: &HashSet<String>) -> Option<RpcEndpoint> {
+        let stats_map = self.collect_stats_snapshot();
+        let candidates = self.selection_candidates(&stats_map);
+        let mut strategy = self.strategy.write();
+        strategy
+            .select(candidates.as_ref(), &stats_map, exclude)
+            .cloned()
+    }
+
+    fn selection_candidates<'a>(
+        &'a self,
+        stats: &HashMap<String, EndpointStats>,
+    ) -> Cow<'a, [RpcEndpoint]> {
+        let Some(max_block_lag) = self.max_block_lag else {
+            return Cow::Borrowed(&self.endpoints);
+        };
+
+        let Some(best_known_block) = stats.values().filter_map(|s| s.latest_block_number).max()
+        else {
+            warn!(
+                max_block_lag,
+                endpoint_count = self.endpoints.len(),
+                "No RPC endpoint head is known; using legacy endpoint selection"
+            );
+            return Cow::Borrowed(&self.endpoints);
+        };
+
+        let mut candidates = Vec::with_capacity(self.endpoints.len());
+        let mut lagging = 0usize;
+        let mut unknown = 0usize;
+        for endpoint in &self.endpoints {
+            match stats
+                .get(&endpoint.url)
+                .and_then(|s| s.latest_block_number)
+            {
+                Some(block) if best_known_block.saturating_sub(block) <= max_block_lag => {
+                    candidates.push(endpoint.clone());
+                }
+                Some(_) => lagging += 1,
+                None => unknown += 1,
+            }
+        }
+
+        if candidates.is_empty() {
+            warn!(
+                max_block_lag,
+                best_known_block,
+                lagging,
+                unknown,
+                "No RPC endpoint passed head freshness; using legacy endpoint selection"
+            );
+            return Cow::Borrowed(&self.endpoints);
+        }
+
+        Cow::Owned(candidates)
     }
 
     /// Execute a function with automatic failover across endpoints.
@@ -336,13 +408,7 @@ impl RpcPool {
             }
 
             // Select endpoint
-            let endpoint = {
-                let stats_map = self.collect_stats_snapshot();
-                let mut strategy = self.strategy.write();
-                strategy
-                    .select(&self.endpoints, &stats_map, &tried)
-                    .cloned()
-            };
+            let endpoint = self.select_endpoint(&tried);
 
             let endpoint = match endpoint {
                 Some(e) => e,
@@ -602,8 +668,8 @@ impl RpcPool {
                 };
 
                 // Normalize so detection/recovery share one match.
-                let outcome: Result<(), String> = match probe_result {
-                    Ok(Ok(_)) => Ok(()),
+                let outcome: Result<u64, String> = match probe_result {
+                    Ok(Ok(block_number)) => Ok(block_number),
                     Ok(Err(e)) => Err(e.to_string()),
                     Err(_) => Err(format!(
                         "health probe timed out after {}ms",
@@ -612,8 +678,9 @@ impl RpcPool {
                 };
 
                 match outcome {
-                    Ok(()) => {
+                    Ok(block_number) => {
                         if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
+                            stats.latest_block_number = Some(block_number);
                             let latency_ms = probe_start.elapsed().as_millis() as u64;
                             if was_healthy {
                                 // Liveness confirmed — record latency, reset any
@@ -628,6 +695,7 @@ impl RpcPool {
                     }
                     Err(error) => {
                         if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
+                            stats.latest_block_number = None;
                             if was_healthy {
                                 // Detection: count the failure; mark unhealthy at
                                 // the threshold so get_current_url() fails over.
@@ -666,8 +734,12 @@ impl RpcPool {
                         }
                     }
                 }
+            } else if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
+                stats.latest_block_number = None;
             }
         }
+
+        self.log_freshness_distribution();
 
         if checked_count > 0 {
             debug!(
@@ -677,6 +749,35 @@ impl RpcPool {
                 "Health check cycle completed"
             );
         }
+    }
+
+    fn log_freshness_distribution(&self) {
+        let Some(max_block_lag) = self.max_block_lag else {
+            return;
+        };
+        let stats = self.stats.read();
+        let best_known_block = stats.values().filter_map(|s| s.latest_block_number).max();
+        let (fresh, lagging, unknown) = match best_known_block {
+            Some(best) => stats.values().fold((0, 0, 0), |counts, stats| {
+                match stats.latest_block_number {
+                    Some(block) if best.saturating_sub(block) <= max_block_lag => {
+                        (counts.0 + 1, counts.1, counts.2)
+                    }
+                    Some(_) => (counts.0, counts.1 + 1, counts.2),
+                    None => (counts.0, counts.1, counts.2 + 1),
+                }
+            }),
+            None => (0, 0, stats.len()),
+        };
+        info!(
+            max_block_lag,
+            best_known_block = ?best_known_block,
+            fresh,
+            lagging,
+            unknown,
+            endpoint_count = stats.len(),
+            "RPC endpoint head freshness distribution"
+        );
     }
 
     /// Gracefully shutdown the pool.
@@ -768,14 +869,10 @@ impl RpcPool {
             .map(EndpointMetrics::from)
             .collect();
 
-        let current_endpoint = {
-            let stats_map = self.collect_stats_snapshot();
-            let mut strategy = self.strategy.write();
-            strategy
-                .select(&self.endpoints, &stats_map, &HashSet::new())
-                .map(|e| e.name.clone())
-                .unwrap_or_else(|| "none".to_string())
-        };
+        let current_endpoint = self
+            .select_endpoint(&HashSet::new())
+            .map(|endpoint| endpoint.name)
+            .unwrap_or_else(|| "none".to_string());
 
         RpcPoolMetrics {
             total_requests: self.total_requests.load(Ordering::Relaxed),
@@ -902,6 +999,8 @@ fn truncate_error_message(msg: &str) -> String {
 mod tests {
     use super::*;
     use crate::strategies::FailoverStrategy;
+    use wiremock::matchers::method;
+    use wiremock::{Mock, MockServer, ResponseTemplate};
 
     fn create_test_config() -> RpcPoolConfig {
         RpcPoolConfig::new()
@@ -1102,6 +1201,158 @@ mod tests {
         assert_eq!(config.health_check_interval, Duration::from_secs(30));
         assert_eq!(config.max_consecutive_errors, 5);
         assert_eq!(config.retry_delay, Duration::from_secs(10));
+    }
+
+    #[tokio::test]
+    async fn health_probe_retains_block_number() {
+        let server = MockServer::start().await;
+        Mock::given(method("POST"))
+            .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "result": "0x75"
+            })))
+            .mount(&server)
+            .await;
+        let pool = RpcPool::new(
+            RpcPoolConfig::new()
+                .with_endpoints(vec![RpcEndpoint::new(server.uri())])
+                .with_health_check_timeout(Duration::from_secs(1)),
+        )
+        .unwrap();
+
+        pool.check_health().await;
+
+        assert_eq!(
+            pool.stats
+                .read()
+                .get(&server.uri())
+                .unwrap()
+                .latest_block_number,
+            Some(117)
+        );
+    }
+
+    #[tokio::test]
+    async fn failed_health_probe_clears_previous_block_number() {
+        let server = MockServer::start().await;
+        let success = ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": "0x75"
+        }));
+        Mock::given(method("POST"))
+            .respond_with(success)
+            .mount(&server)
+            .await;
+        let pool = RpcPool::new(
+            RpcPoolConfig::new()
+                .with_endpoints(vec![RpcEndpoint::new(server.uri())])
+                .with_max_consecutive_errors(3)
+                .with_health_check_timeout(Duration::from_secs(1)),
+        )
+        .unwrap();
+        pool.check_health().await;
+        assert_eq!(pool.stats.read().get(&server.uri()).unwrap().latest_block_number, Some(117));
+
+        server.reset().await;
+        Mock::given(method("POST"))
+            .respond_with(ResponseTemplate::new(500))
+            .mount(&server)
+            .await;
+        pool.check_health().await;
+
+        let stats = pool.stats.read();
+        let endpoint = stats.get(&server.uri()).unwrap();
+        assert_eq!(endpoint.latest_block_number, None);
+        assert!(endpoint.is_healthy);
+        assert_eq!(endpoint.consecutive_errors, 1);
+    }
+
+    #[test]
+    fn configured_freshness_skips_lagging_endpoint() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://lagging.rpc").with_priority(1),
+                RpcEndpoint::new("https://current.rpc").with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(2);
+        let pool = RpcPool::new(config).unwrap();
+
+        let mut stats = pool.stats.write();
+        stats
+            .get_mut("https://lagging.rpc")
+            .unwrap()
+            .latest_block_number = Some(100);
+        stats
+            .get_mut("https://current.rpc")
+            .unwrap()
+            .latest_block_number = Some(117);
+        drop(stats);
+
+        assert_eq!(pool.get_current_url().as_deref(), Some("https://current.rpc"));
+        let stats = pool.stats.read();
+        assert!(stats.get("https://lagging.rpc").unwrap().is_healthy);
+        assert_eq!(stats.get("https://lagging.rpc").unwrap().consecutive_errors, 0);
+    }
+
+    #[test]
+    fn configured_freshness_skips_unknown_endpoint() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://unknown.rpc").with_priority(1),
+                RpcEndpoint::new("https://probed.rpc").with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(0);
+        let pool = RpcPool::new(config).unwrap();
+
+        pool.stats
+            .write()
+            .get_mut("https://probed.rpc")
+            .unwrap()
+            .latest_block_number = Some(117);
+
+        assert_eq!(pool.get_current_url().as_deref(), Some("https://probed.rpc"));
+    }
+
+    #[test]
+    fn unset_freshness_margin_preserves_legacy_selection() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://fast.rpc").with_priority(1),
+                RpcEndpoint::new("https://current.rpc").with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy));
+        let pool = RpcPool::new(config).unwrap();
+
+        let mut stats = pool.stats.write();
+        stats
+            .get_mut("https://fast.rpc")
+            .unwrap()
+            .latest_block_number = Some(100);
+        stats
+            .get_mut("https://current.rpc")
+            .unwrap()
+            .latest_block_number = Some(117);
+        drop(stats);
+
+        assert_eq!(pool.get_current_url().as_deref(), Some("https://fast.rpc"));
+    }
+
+    #[test]
+    fn freshness_falls_back_when_no_endpoint_has_a_head() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://unknown.rpc").with_priority(1),
+                RpcEndpoint::new("https://also-unknown.rpc").with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(0);
+        let pool = RpcPool::new(config).unwrap();
+
+        assert_eq!(pool.get_current_url().as_deref(), Some("https://unknown.rpc"));
     }
 
     #[test]
