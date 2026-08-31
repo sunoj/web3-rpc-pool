@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out shared tools
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: sunoj/zhuge-tools
           token: ${{ secrets.CONSUMER_ISSUES_TOKEN }}
