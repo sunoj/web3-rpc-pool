@@ -51,6 +51,7 @@
 
 pub mod endpoint;
 pub mod error;
+mod freshness;
 pub mod metrics;
 pub mod pool;
 pub mod presets;

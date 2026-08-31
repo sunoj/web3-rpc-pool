@@ -2,6 +2,7 @@
 
 use crate::endpoint::{EndpointStats, RpcEndpoint};
 use crate::error::RpcPoolError;
+use crate::freshness::{best_known_healthy_block, freshness_distribution};
 use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
 use crate::strategies::SelectionStrategy;
 
@@ -351,11 +352,7 @@ impl RpcPool {
 
         // An unhealthy endpoint's last observation may be stale or malformed;
         // it must not define the reference that filters healthy endpoints.
-        let Some(best_known_block) = stats
-            .values()
-            .filter(|s| s.is_healthy)
-            .filter_map(|s| s.latest_block_number)
-            .max() else {
+        let Some(best_known_block) = best_known_healthy_block(stats) else {
             warn!(
                 max_block_lag,
                 endpoint_count = self.endpoints.len(),
@@ -778,25 +775,14 @@ impl RpcPool {
             return;
         };
         let stats = self.stats.read();
-        let best_known_block = stats.values().filter_map(|s| s.latest_block_number).max();
-        let (fresh, lagging, unknown) = match best_known_block {
-            Some(best) => stats.values().fold((0, 0, 0), |counts, stats| {
-                match stats.latest_block_number {
-                    Some(block) if best.saturating_sub(block) <= max_block_lag => {
-                        (counts.0 + 1, counts.1, counts.2)
-                    }
-                    Some(_) => (counts.0, counts.1 + 1, counts.2),
-                    None => (counts.0, counts.1, counts.2 + 1),
-                }
-            }),
-            None => (0, 0, stats.len()),
-        };
+        let distribution = freshness_distribution(&stats, max_block_lag);
         info!(
             max_block_lag,
-            best_known_block = ?best_known_block,
-            fresh,
-            lagging,
-            unknown,
+            best_known_block = ?distribution.best_known_block,
+            fresh = distribution.fresh,
+            lagging = distribution.lagging,
+            unknown = distribution.unknown,
+            unhealthy = distribution.unhealthy,
             endpoint_count = stats.len(),
             "RPC endpoint head freshness distribution"
         );

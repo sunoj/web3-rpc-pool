@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Optional `max_block_lag` endpoint preference for direct and tiered pools.
+  Health probes retain their latest block number, and metrics expose that value
+  per endpoint.
+
+### Safety
+
+- Lagging and unknown endpoints remain available as soft fallbacks after the
+  fresh set is exhausted.
+- Unhealthy endpoint heads cannot define the freshness reference or distort the
+  logged freshness distribution.
+- Request-level tests cover fallback through a lagging endpoint and ensure a
+  known unhealthy fresh endpoint cannot jump ahead of a healthy lagging one.
+
 ## [0.6.0] - 2026-07-26
 
 ### Changed

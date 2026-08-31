@@ -13,6 +13,10 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 - **Health monitoring**: Periodic health checks with automatic recovery
 
+- **Head freshness preference**: Optionally prefer endpoints close to the
+  best-known healthy head while retaining lagging endpoints as availability
+  fallbacks
+
 - **Latency tracking**: Exponential moving average (EMA) for performance monitoring
 
 - **Built-in presets**: Default endpoints for popular chains (Arbitrum, Base, Ethereum, etc.)
@@ -23,7 +27,7 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 ```toml
 [dependencies]
-web3-rpc-pool = "0.5.2"
+web3-rpc-pool = "0.7.0"
 ```
 
 ## Quick Start
@@ -36,13 +40,13 @@ use std::sync::Arc;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create pool with default Arbitrum endpoints
-    let pool = Arc::new(RpcPool::new(RpcPoolConfig {
-        endpoints: presets::arbitrum_endpoints(),
-        strategy: Box::new(FailoverStrategy),
-        health_check_interval: Duration::from_secs(60),
-        max_consecutive_errors: 3,
-        retry_delay: Duration::from_secs(5),
-    })?);
+    let config = RpcPoolConfig::new()
+        .with_endpoints(presets::arbitrum_endpoints())
+        .with_strategy(Box::new(FailoverStrategy))
+        .with_health_check_interval(Duration::from_secs(60))
+        .with_max_consecutive_errors(3)
+        .with_retry_delay(Duration::from_secs(5));
+    let pool = Arc::new(RpcPool::new(config)?);
 
     // Start background health checker
     let _health_task = pool.start_health_check();
@@ -120,6 +124,24 @@ let endpoints = vec![
         .with_chain_id(42161),
 ];
 ```
+
+## Head Freshness
+
+Enable head freshness when a fast endpoint may keep answering from a stale
+chain view. The margin is measured in blocks behind the highest block reported
+by a healthy endpoint during the latest health probes.
+
+```rust
+let config = RpcPoolConfig::new()
+    .with_endpoints(endpoints)
+    .with_max_block_lag(50);
+```
+
+Freshness is a preference, not a hard availability filter. If every fresh
+endpoint is unavailable or already tried, request execution falls back to the
+full endpoint list. Endpoints with no successful head probe are not considered
+fresh while a known healthy head exists. The default is disabled, preserving
+legacy selection exactly.
 
 ## Metrics
 
