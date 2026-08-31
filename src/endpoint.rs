@@ -258,6 +258,9 @@ pub struct EndpointStats {
     /// Number of consecutive errors (resets on success).
     pub consecutive_errors: u32,
 
+    /// Most recent block number returned by the health probe.
+    pub latest_block_number: Option<u64>,
+
     /// Number of consecutive recovery failures (for exponential backoff).
     pub recovery_attempts: u32,
 }
@@ -280,6 +283,7 @@ impl EndpointStats {
             last_error_time: None,
             is_healthy: true,
             consecutive_errors: 0,
+            latest_block_number: None,
             recovery_attempts: 0,
         }
     }

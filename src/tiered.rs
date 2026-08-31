@@ -22,7 +22,7 @@ use std::time::Duration;
 use tracing::{debug, info, warn};
 
 /// Request priority levels.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RequestPriority {
     /// Critical operations: liquidation execution, transaction submission.
     /// Uses premium tier first, falls back to standard.
@@ -30,6 +30,7 @@ pub enum RequestPriority {
 
     /// Normal operations: real-time health checks, price queries.
     /// Uses standard tier first, falls back to free.
+    #[default]
     Normal,
 
     /// Low priority: historical sync, batch queries, background tasks.
@@ -37,29 +38,18 @@ pub enum RequestPriority {
     Low,
 }
 
-impl Default for RequestPriority {
-    fn default() -> Self {
-        Self::Normal
-    }
-}
-
 /// Endpoint tier classification.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum EndpointTier {
     /// Premium tier: paid RPCs with high rate limits (Alchemy, Infura, QuickNode).
     Premium,
 
     /// Standard tier: reliable public RPCs with moderate limits.
+    #[default]
     Standard,
 
     /// Free tier: public RPCs with low rate limits, best for batch operations.
     Free,
-}
-
-impl Default for EndpointTier {
-    fn default() -> Self {
-        Self::Standard
-    }
 }
 
 /// Extended endpoint configuration with tier information.
@@ -132,6 +122,9 @@ pub struct TieredPoolConfig {
     /// Max consecutive errors before marking unhealthy.
     pub max_consecutive_errors: u32,
 
+    /// Maximum allowed lag behind the best-known endpoint head.
+    pub max_block_lag: Option<u64>,
+
     /// Delay before retrying unhealthy endpoint.
     pub retry_delay: Duration,
 
@@ -154,6 +147,7 @@ impl Default for TieredPoolConfig {
             endpoints: vec![],
             health_check_interval: Duration::from_secs(60),
             max_consecutive_errors: 3,
+            max_block_lag: None,
             retry_delay: Duration::from_secs(5),
             request_timeout: Duration::from_secs(30),
             allow_critical_fallback: true,
@@ -238,6 +232,10 @@ impl TieredPool {
                 .with_max_consecutive_errors(config.max_consecutive_errors)
                 .with_retry_delay(config.retry_delay)
                 .with_request_timeout(config.request_timeout);
+            let pool_config = match config.max_block_lag {
+                Some(max_block_lag) => pool_config.with_max_block_lag(max_block_lag),
+                None => pool_config,
+            };
 
             let pool = RpcPool::new(pool_config)?;
             info!(tier = ?tier, "Created RPC pool for tier");
@@ -535,6 +533,7 @@ pub struct TieredPoolBuilder {
     endpoints: Vec<TieredEndpoint>,
     health_check_interval: Duration,
     max_consecutive_errors: u32,
+    max_block_lag: Option<u64>,
     retry_delay: Duration,
     request_timeout: Duration,
     allow_critical_fallback: bool,
@@ -554,6 +553,7 @@ impl TieredPoolBuilder {
             endpoints: vec![],
             health_check_interval: Duration::from_secs(60),
             max_consecutive_errors: 3,
+            max_block_lag: None,
             retry_delay: Duration::from_secs(5),
             request_timeout: Duration::from_secs(30),
             allow_critical_fallback: true,
@@ -718,6 +718,12 @@ impl TieredPoolBuilder {
         self
     }
 
+    /// Set the maximum allowed block lag for endpoint selection.
+    pub fn max_block_lag(mut self, max_block_lag: u64) -> Self {
+        self.max_block_lag = Some(max_block_lag);
+        self
+    }
+
     /// Allow critical requests to fall back to lower tiers.
     pub fn allow_critical_fallback(mut self, allow: bool) -> Self {
         self.allow_critical_fallback = allow;
@@ -763,6 +769,7 @@ impl TieredPoolBuilder {
             endpoints: deduped,
             health_check_interval: self.health_check_interval,
             max_consecutive_errors: self.max_consecutive_errors,
+            max_block_lag: self.max_block_lag,
             retry_delay: self.retry_delay,
             request_timeout: self.request_timeout,
             allow_critical_fallback: self.allow_critical_fallback,
@@ -943,6 +950,23 @@ mod tests {
         assert!(pool.has_tier(EndpointTier::Premium));
         assert!(pool.has_tier(EndpointTier::Standard));
         assert!(pool.has_tier(EndpointTier::Free));
+    }
+
+    #[test]
+    fn builder_propagates_max_block_lag_to_tier_pool() {
+        let pool = TieredPoolBuilder::new()
+            .add_standard("https://standard.example.com", "Standard")
+            .max_block_lag(2)
+            .build()
+            .unwrap();
+
+        assert_eq!(
+            pool.pools
+                .get(&EndpointTier::Standard)
+                .unwrap()
+                .max_block_lag(),
+            Some(2)
+        );
     }
 
     #[test]

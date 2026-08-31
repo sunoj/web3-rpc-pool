@@ -35,11 +35,7 @@ impl PerfResult {
         let total_ns: u64 = durations_ns.iter().sum();
         let min_ns = *durations_ns.iter().min().unwrap_or(&0);
         let max_ns = *durations_ns.iter().max().unwrap_or(&0);
-        let avg_ns = if iterations > 0 {
-            total_ns / iterations
-        } else {
-            0
-        };
+        let avg_ns = total_ns.checked_div(iterations).unwrap_or(0);
         let throughput = if total_ns > 0 {
             (iterations as f64 * 1_000_000_000.0) / total_ns as f64
         } else {
@@ -78,8 +74,8 @@ impl PerfResult {
 fn create_test_endpoints(count: usize) -> Vec<RpcEndpoint> {
     (0..count)
         .map(|i| {
-            RpcEndpoint::new(&format!("https://rpc{}.example.com", i))
-                .with_name(&format!("RPC {}", i))
+            RpcEndpoint::new(format!("https://rpc{}.example.com", i))
+                .with_name(format!("RPC {}", i))
                 .with_priority((i * 10) as u32)
                 .with_chain_id(chain_id::ETHEREUM)
         })
@@ -100,6 +96,7 @@ fn create_test_stats(endpoints: &[RpcEndpoint]) -> HashMap<String, EndpointStats
 
 /// Test strategy selection performance under high concurrency.
 #[test]
+#[ignore = "run in release mode via the performance workflow"]
 fn test_strategy_selection_performance() {
     const ITERATIONS: usize = 10_000;
     const ENDPOINT_COUNT: usize = 20;
@@ -159,6 +156,7 @@ fn test_strategy_selection_performance() {
 
 /// Test pool creation performance.
 #[test]
+#[ignore = "run in release mode via the performance workflow"]
 fn test_pool_creation_performance() {
     const ITERATIONS: usize = 1_000;
 
@@ -196,6 +194,7 @@ fn test_pool_creation_performance() {
 
 /// Test endpoint stats update performance.
 #[test]
+#[ignore = "run in release mode via the performance workflow"]
 fn test_stats_update_performance() {
     const ITERATIONS: usize = 100_000;
     let endpoint = RpcEndpoint::new("https://rpc.example.com");
@@ -235,6 +234,7 @@ fn test_stats_update_performance() {
 
 /// Test metrics collection performance.
 #[test]
+#[ignore = "run in release mode via the performance workflow"]
 fn test_metrics_collection_performance() {
     const ITERATIONS: usize = 10_000;
 
@@ -273,6 +273,7 @@ fn test_metrics_collection_performance() {
 
 /// Test concurrent access performance.
 #[tokio::test]
+#[ignore = "run in release mode via the performance workflow"]
 async fn test_concurrent_url_access() {
     const CONCURRENT_TASKS: usize = 100;
     const ITERATIONS_PER_TASK: usize = 1000;
@@ -327,6 +328,7 @@ async fn test_concurrent_url_access() {
 
 /// Test memory efficiency by creating many pools.
 #[test]
+#[ignore = "run in release mode via the performance workflow"]
 fn test_memory_efficiency() {
     const POOL_COUNT: usize = 100;
     const ENDPOINTS_PER_POOL: usize = 20;
@@ -369,6 +371,7 @@ fn test_memory_efficiency() {
 
 /// Test graceful shutdown.
 #[tokio::test]
+#[ignore = "run in release mode via the performance workflow"]
 async fn test_graceful_shutdown() {
     let endpoints = create_test_endpoints(5);
     let config = RpcPoolConfig::new()
