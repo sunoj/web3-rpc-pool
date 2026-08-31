@@ -319,9 +319,19 @@ impl RpcPool {
         let stats_map = self.collect_stats_snapshot();
         let candidates = self.selection_candidates(&stats_map);
         let mut strategy = self.strategy.write();
-        strategy
+        let selected = strategy
             .select(candidates.as_ref(), &stats_map, exclude)
-            .cloned()
+            .cloned();
+        if selected.is_some() || candidates.len() == self.endpoints.len() {
+            return selected;
+        }
+
+        warn!(
+            fresh_candidates = candidates.len(),
+            total_endpoints = self.endpoints.len(),
+            "Fresh RPC endpoints exhausted; falling back to legacy endpoint selection"
+        );
+        strategy.select(&self.endpoints, &stats_map, exclude).cloned()
     }
 
     fn selection_candidates<'a>(
@@ -332,8 +342,13 @@ impl RpcPool {
             return Cow::Borrowed(&self.endpoints);
         };
 
-        let Some(best_known_block) = stats.values().filter_map(|s| s.latest_block_number).max()
-        else {
+        // An unhealthy endpoint's last observation may be stale or malformed;
+        // it must not define the reference that filters healthy endpoints.
+        let Some(best_known_block) = stats
+            .values()
+            .filter(|s| s.is_healthy)
+            .filter_map(|s| s.latest_block_number)
+            .max() else {
             warn!(
                 max_block_lag,
                 endpoint_count = self.endpoints.len(),
@@ -1315,6 +1330,69 @@ mod tests {
             .latest_block_number = Some(117);
 
         assert_eq!(pool.get_current_url().as_deref(), Some("https://probed.rpc"));
+    }
+
+    #[tokio::test]
+    async fn fresh_failure_falls_back_to_lagging_endpoint() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://fresh.rpc").with_priority(1),
+                RpcEndpoint::new("https://lagging.rpc").with_priority(2),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(2);
+        let pool = RpcPool::new(config).unwrap();
+        let mut stats = pool.stats.write();
+        stats
+            .get_mut("https://fresh.rpc")
+            .unwrap()
+            .latest_block_number = Some(117);
+        stats
+            .get_mut("https://lagging.rpc")
+            .unwrap()
+            .latest_block_number = Some(100);
+        drop(stats);
+
+        let result = pool
+            .execute_with_url(|url| async move {
+                if url == "https://fresh.rpc" {
+                    Err::<String, _>(std::io::Error::other("fresh endpoint failed"))
+                } else {
+                    Ok::<String, std::io::Error>(url)
+                }
+            })
+            .await;
+
+        assert!(result.is_ok(), "request should succeed through the lagging endpoint");
+        assert_eq!(result.ok().as_deref(), Some("https://lagging.rpc"));
+    }
+
+    #[test]
+    fn unhealthy_high_head_does_not_poison_freshness_reference() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://poisoned.rpc").with_priority(1),
+                RpcEndpoint::new("https://current.rpc").with_priority(2),
+                RpcEndpoint::new("https://lagging.rpc").with_priority(3),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(0);
+        let pool = RpcPool::new(config).unwrap();
+        let mut stats = pool.stats.write();
+        let poisoned = stats.get_mut("https://poisoned.rpc").unwrap();
+        poisoned.is_healthy = false;
+        poisoned.latest_block_number = Some(1_000);
+        stats
+            .get_mut("https://current.rpc")
+            .unwrap()
+            .latest_block_number = Some(100);
+        stats
+            .get_mut("https://lagging.rpc")
+            .unwrap()
+            .latest_block_number = Some(99);
+        drop(stats);
+
+        assert_eq!(pool.get_current_url().as_deref(), Some("https://current.rpc"));
     }
 
     #[test]
