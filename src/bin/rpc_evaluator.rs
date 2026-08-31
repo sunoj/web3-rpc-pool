@@ -184,9 +184,7 @@ async fn evaluate_endpoint(
 
     for _ in 0..3 {
         let start = Instant::now();
-        if let Ok(result) =
-            rpc_call(client, url, "eth_blockNumber", serde_json::json!([])).await
-        {
+        if let Ok(result) = rpc_call(client, url, "eth_blockNumber", serde_json::json!([])).await {
             reachable = true;
             let elapsed = start.elapsed().as_millis() as u64;
             latencies.push(elapsed);
