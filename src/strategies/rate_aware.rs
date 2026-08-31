@@ -7,6 +7,7 @@
 use super::SelectionStrategy;
 use crate::endpoint::{EndpointStats, RpcEndpoint};
 use parking_lot::RwLock;
+use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
 use std::time::{Duration, Instant};
 
@@ -95,9 +96,14 @@ impl SelectionStrategy for RateAwareStrategy {
         }
 
         // Otherwise distribute across the remaining (rate-limited) endpoints by idle time.
+        // If every healthy endpoint is cooling down, degrade gracefully instead of
+        // making the pool unavailable.
+        let has_ready_endpoint = endpoints
+            .iter()
+            .any(|e| is_healthy(&e) && self.is_ready(&e.url));
         let mut candidates: Vec<_> = endpoints
             .iter()
-            .filter(is_healthy)
+            .filter(|e| is_healthy(e) && (!has_ready_endpoint || self.is_ready(&e.url)))
             .map(|e| (e, self.time_since_last(&e.url)))
             .collect();
 
@@ -107,7 +113,7 @@ impl SelectionStrategy for RateAwareStrategy {
         }
 
         // Sort by idle time descending (longest idle first)
-        candidates.sort_by(|a, b| b.1.cmp(&a.1));
+        candidates.sort_by_key(|candidate| Reverse(candidate.1));
 
         // Select the endpoint that has been idle longest
         let selected = candidates.first().map(|(e, _)| *e)?;
