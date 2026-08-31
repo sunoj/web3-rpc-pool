@@ -2,7 +2,6 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::collections::{HashMap, HashSet};
-use std::time::Instant;
 use web3_rpc_pool::endpoint::{EndpointStats, RpcEndpoint};
 use web3_rpc_pool::presets::chain_id;
 use web3_rpc_pool::strategies::{
@@ -12,8 +11,8 @@ use web3_rpc_pool::strategies::{
 fn create_test_endpoints(count: usize) -> Vec<RpcEndpoint> {
     (0..count)
         .map(|i| {
-            RpcEndpoint::new(&format!("https://rpc{}.example.com", i))
-                .with_name(&format!("RPC {}", i))
+            RpcEndpoint::new(format!("https://rpc{}.example.com", i))
+                .with_name(format!("RPC {}", i))
                 .with_priority((i * 10) as u32)
                 .with_chain_id(chain_id::ETHEREUM)
         })

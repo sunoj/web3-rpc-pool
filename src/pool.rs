@@ -254,14 +254,7 @@ impl RpcPool {
             cancelled: AtomicBool::new(false),
             cancel_notify: tokio::sync::Notify::new(),
             health_check_handle: RwLock::new(None),
-            probe_client: {
-                crate::tls::ensure_provider();
-                alloy::transports::http::reqwest::Client::builder()
-                    .pool_max_idle_per_host(1)
-                    .pool_idle_timeout(std::time::Duration::from_secs(10))
-                    .build()
-                    .expect("failed to build health-check HTTP client")
-            },
+            probe_client: crate::tls::probe_client(),
         })
     }
 
@@ -328,9 +321,7 @@ impl RpcPool {
             .and_then(|endpoint| stats_map.get(&endpoint.url))
             .map(|stats| stats.is_healthy)
             .unwrap_or(true);
-        if (selected.is_some() && selected_is_healthy)
-            || candidates.len() == self.endpoints.len()
-        {
+        if (selected.is_some() && selected_is_healthy) || candidates.len() == self.endpoints.len() {
             return selected;
         }
 
@@ -339,7 +330,9 @@ impl RpcPool {
             total_endpoints = self.endpoints.len(),
             "Fresh RPC endpoints exhausted; falling back to legacy endpoint selection"
         );
-        strategy.select(&self.endpoints, &stats_map, exclude).cloned()
+        strategy
+            .select(&self.endpoints, &stats_map, exclude)
+            .cloned()
     }
 
     fn selection_candidates<'a>(
@@ -365,10 +358,7 @@ impl RpcPool {
         let mut lagging = 0usize;
         let mut unknown = 0usize;
         for endpoint in &self.endpoints {
-            match stats
-                .get(&endpoint.url)
-                .and_then(|s| s.latest_block_number)
-            {
+            match stats.get(&endpoint.url).and_then(|s| s.latest_block_number) {
                 Some(block) if best_known_block.saturating_sub(block) <= max_block_lag => {
                     candidates.push(endpoint.clone());
                 }
@@ -1261,7 +1251,14 @@ mod tests {
         )
         .unwrap();
         pool.check_health().await;
-        assert_eq!(pool.stats.read().get(&server.uri()).unwrap().latest_block_number, Some(117));
+        assert_eq!(
+            pool.stats
+                .read()
+                .get(&server.uri())
+                .unwrap()
+                .latest_block_number,
+            Some(117)
+        );
 
         server.reset().await;
         Mock::given(method("POST"))
@@ -1299,10 +1296,16 @@ mod tests {
             .latest_block_number = Some(117);
         drop(stats);
 
-        assert_eq!(pool.get_current_url().as_deref(), Some("https://current.rpc"));
+        assert_eq!(
+            pool.get_current_url().as_deref(),
+            Some("https://current.rpc")
+        );
         let stats = pool.stats.read();
         assert!(stats.get("https://lagging.rpc").unwrap().is_healthy);
-        assert_eq!(stats.get("https://lagging.rpc").unwrap().consecutive_errors, 0);
+        assert_eq!(
+            stats.get("https://lagging.rpc").unwrap().consecutive_errors,
+            0
+        );
     }
 
     #[test]
@@ -1322,7 +1325,10 @@ mod tests {
             .unwrap()
             .latest_block_number = Some(117);
 
-        assert_eq!(pool.get_current_url().as_deref(), Some("https://probed.rpc"));
+        assert_eq!(
+            pool.get_current_url().as_deref(),
+            Some("https://probed.rpc")
+        );
     }
 
     #[tokio::test]
@@ -1335,16 +1341,17 @@ mod tests {
             .with_strategy(Box::new(FailoverStrategy))
             .with_max_block_lag(2);
         let pool = RpcPool::new(config).unwrap();
-        let mut stats = pool.stats.write();
-        stats
-            .get_mut("https://fresh.rpc")
-            .unwrap()
-            .latest_block_number = Some(117);
-        stats
-            .get_mut("https://lagging.rpc")
-            .unwrap()
-            .latest_block_number = Some(100);
-        drop(stats);
+        {
+            let mut stats = pool.stats.write();
+            stats
+                .get_mut("https://fresh.rpc")
+                .unwrap()
+                .latest_block_number = Some(117);
+            stats
+                .get_mut("https://lagging.rpc")
+                .unwrap()
+                .latest_block_number = Some(100);
+        }
 
         let result = pool
             .execute_with_url(|url| async move {
@@ -1356,7 +1363,10 @@ mod tests {
             })
             .await;
 
-        assert!(result.is_ok(), "request should succeed through the lagging endpoint");
+        assert!(
+            result.is_ok(),
+            "request should succeed through the lagging endpoint"
+        );
         assert_eq!(result.ok().as_deref(), Some("https://lagging.rpc"));
     }
 
@@ -1371,13 +1381,20 @@ mod tests {
             .with_strategy(Box::new(FailoverStrategy))
             .with_max_block_lag(2);
         let pool = RpcPool::new(config).unwrap();
-        let mut stats = pool.stats.write();
-        stats.get_mut("https://fresh.rpc").unwrap().latest_block_number = Some(117);
-        let unhealthy = stats.get_mut("https://fresh-unhealthy.rpc").unwrap();
-        unhealthy.latest_block_number = Some(117);
-        unhealthy.is_healthy = false;
-        stats.get_mut("https://lagging.rpc").unwrap().latest_block_number = Some(100);
-        drop(stats);
+        {
+            let mut stats = pool.stats.write();
+            stats
+                .get_mut("https://fresh.rpc")
+                .unwrap()
+                .latest_block_number = Some(117);
+            let unhealthy = stats.get_mut("https://fresh-unhealthy.rpc").unwrap();
+            unhealthy.latest_block_number = Some(117);
+            unhealthy.is_healthy = false;
+            stats
+                .get_mut("https://lagging.rpc")
+                .unwrap()
+                .latest_block_number = Some(100);
+        }
 
         let result = pool
             .execute_with_url(|url| async move {
@@ -1389,7 +1406,10 @@ mod tests {
             })
             .await;
 
-        assert!(result.is_ok(), "request should use the healthy lagging fallback");
+        assert!(
+            result.is_ok(),
+            "request should use the healthy lagging fallback"
+        );
         assert_eq!(result.ok().as_deref(), Some("https://lagging.rpc"));
     }
 
@@ -1418,7 +1438,10 @@ mod tests {
             .latest_block_number = Some(99);
         drop(stats);
 
-        assert_eq!(pool.get_current_url().as_deref(), Some("https://current.rpc"));
+        assert_eq!(
+            pool.get_current_url().as_deref(),
+            Some("https://current.rpc")
+        );
     }
 
     #[test]
@@ -1456,7 +1479,10 @@ mod tests {
             .with_max_block_lag(0);
         let pool = RpcPool::new(config).unwrap();
 
-        assert_eq!(pool.get_current_url().as_deref(), Some("https://unknown.rpc"));
+        assert_eq!(
+            pool.get_current_url().as_deref(),
+            Some("https://unknown.rpc")
+        );
     }
 
     #[test]

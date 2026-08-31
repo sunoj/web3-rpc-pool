@@ -13,9 +13,7 @@ pub(crate) struct FreshnessDistribution {
     pub(crate) unhealthy: usize,
 }
 
-pub(crate) fn best_known_healthy_block(
-    stats: &HashMap<String, EndpointStats>,
-) -> Option<u64> {
+pub(crate) fn best_known_healthy_block(stats: &HashMap<String, EndpointStats>) -> Option<u64> {
     stats
         .values()
         .filter(|stats| stats.is_healthy)
@@ -71,8 +69,14 @@ mod tests {
         let unhealthy = stats.get_mut("https://unhealthy.rpc").unwrap();
         unhealthy.is_healthy = false;
         unhealthy.latest_block_number = Some(1_000);
-        stats.get_mut("https://current.rpc").unwrap().latest_block_number = Some(100);
-        stats.get_mut("https://lagging.rpc").unwrap().latest_block_number = Some(90);
+        stats
+            .get_mut("https://current.rpc")
+            .unwrap()
+            .latest_block_number = Some(100);
+        stats
+            .get_mut("https://lagging.rpc")
+            .unwrap()
+            .latest_block_number = Some(90);
 
         assert_eq!(
             freshness_distribution(&stats, 2),

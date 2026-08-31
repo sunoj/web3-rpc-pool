@@ -37,9 +37,24 @@ pub fn ensure_provider() {
     });
 }
 
+/// Returns a process-wide HTTP client for direct-pool health probes.
+pub(crate) fn probe_client() -> reqwest::Client {
+    static CLIENT: std::sync::OnceLock<reqwest::Client> = std::sync::OnceLock::new();
+    CLIENT
+        .get_or_init(|| {
+            ensure_provider();
+            reqwest::Client::builder()
+                .pool_max_idle_per_host(1)
+                .pool_idle_timeout(std::time::Duration::from_secs(10))
+                .build()
+                .expect("failed to build health-check HTTP client")
+        })
+        .clone()
+}
+
 #[cfg(test)]
 mod tests {
-    use super::ensure_provider;
+    use super::{ensure_provider, probe_client};
 
     #[test]
     fn is_idempotent_and_concurrency_safe() {
@@ -64,5 +79,12 @@ mod tests {
         reqwest::Client::builder()
             .build()
             .expect("client must build once the provider is installed");
+    }
+
+    #[test]
+    fn probe_client_is_reusable() {
+        let first = probe_client();
+        let second = probe_client();
+        drop((first, second));
     }
 }

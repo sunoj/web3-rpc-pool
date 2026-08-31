@@ -7,7 +7,7 @@
 name = "web3-rpc-pool"
 version = "0.7.0"
 edition = "2021"
-rust-version = "1.75"
+rust-version = "1.91"
 license = "MIT"
 description = "High-availability multi-endpoint RPC pool with automatic failover and load balancing for Web3 applications"
 repository = "https://github.com/sunoj/web3-rpc-pool"

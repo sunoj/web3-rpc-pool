@@ -52,7 +52,7 @@ jobs:
           cargo bench --bench pool_benchmarks -- --noplot | tee bench_pool.log
 
       - name: Run integration performance tests
-        run: cargo test --release --test perf_tests -- --nocapture | tee perf_tests.log
+        run: cargo test --release --test perf_tests -- --ignored --nocapture | tee perf_tests.log
 
       - name: Generate performance report
         run: |

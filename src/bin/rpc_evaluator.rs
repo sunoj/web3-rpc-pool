@@ -184,19 +184,18 @@ async fn evaluate_endpoint(
 
     for _ in 0..3 {
         let start = Instant::now();
-        match rpc_call(client, url, "eth_blockNumber", serde_json::json!([])).await {
-            Ok(result) => {
-                reachable = true;
-                let elapsed = start.elapsed().as_millis() as u64;
-                latencies.push(elapsed);
-                if latest_block.is_none() {
-                    if let Some(hex) = result.as_str() {
-                        let hex = hex.trim_start_matches("0x");
-                        latest_block = u64::from_str_radix(hex, 16).ok();
-                    }
+        if let Ok(result) =
+            rpc_call(client, url, "eth_blockNumber", serde_json::json!([])).await
+        {
+            reachable = true;
+            let elapsed = start.elapsed().as_millis() as u64;
+            latencies.push(elapsed);
+            if latest_block.is_none() {
+                if let Some(hex) = result.as_str() {
+                    let hex = hex.trim_start_matches("0x");
+                    latest_block = u64::from_str_radix(hex, 16).ok();
                 }
             }
-            Err(_) => {}
         }
     }
 
@@ -221,7 +220,7 @@ async fn evaluate_endpoint(
 
     // Step 2: eth_getLogs test (10 block range)
     let supports_logs = if let Some(block) = latest_block {
-        let from = if block > 10 { block - 10 } else { 0 };
+        let from = block.saturating_sub(10);
         let params = serde_json::json!([{
             "fromBlock": format!("0x{:x}", from),
             "toBlock": format!("0x{:x}", block),
@@ -255,7 +254,7 @@ async fn evaluate_endpoint(
             let ranges: [u64; 6] = [100, 1_000, 5_000, 10_000, 50_000, 100_000];
             let mut max_range = 0u64;
             for &range in &ranges {
-                let from = if block > range { block - range } else { 0 };
+                let from = block.saturating_sub(range);
                 let params = serde_json::json!([{
                     "fromBlock": format!("0x{:x}", from),
                     "toBlock": format!("0x{:x}", block),
