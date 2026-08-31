@@ -31,6 +31,7 @@ pub struct EndpointMetrics {
     pub last_latency_ms: u64,
     pub is_healthy: bool,
     pub consecutive_errors: u32,
+    pub latest_block_number: Option<u64>,
     pub success_rate: f64,
 }
 
@@ -46,6 +47,7 @@ impl From<&EndpointStats> for EndpointMetrics {
             last_latency_ms: stats.last_latency_ms,
             is_healthy: stats.is_healthy,
             consecutive_errors: stats.consecutive_errors,
+            latest_block_number: stats.latest_block_number,
             success_rate: stats.success_rate(),
         }
     }
