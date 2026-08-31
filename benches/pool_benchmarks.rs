@@ -10,8 +10,8 @@ use web3_rpc_pool::{RpcPool, RpcPoolConfig};
 fn create_test_endpoints(count: usize) -> Vec<RpcEndpoint> {
     (0..count)
         .map(|i| {
-            RpcEndpoint::new(&format!("https://rpc{}.example.com", i))
-                .with_name(&format!("RPC {}", i))
+            RpcEndpoint::new(format!("https://rpc{}.example.com", i))
+                .with_name(format!("RPC {}", i))
                 .with_priority((i * 10) as u32)
                 .with_chain_id(chain_id::ETHEREUM)
         })

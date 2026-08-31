@@ -22,7 +22,7 @@ use std::time::Duration;
 use tracing::{debug, info, warn};
 
 /// Request priority levels.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RequestPriority {
     /// Critical operations: liquidation execution, transaction submission.
     /// Uses premium tier first, falls back to standard.
@@ -30,6 +30,7 @@ pub enum RequestPriority {
 
     /// Normal operations: real-time health checks, price queries.
     /// Uses standard tier first, falls back to free.
+    #[default]
     Normal,
 
     /// Low priority: historical sync, batch queries, background tasks.
@@ -37,29 +38,18 @@ pub enum RequestPriority {
     Low,
 }
 
-impl Default for RequestPriority {
-    fn default() -> Self {
-        Self::Normal
-    }
-}
-
 /// Endpoint tier classification.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum EndpointTier {
     /// Premium tier: paid RPCs with high rate limits (Alchemy, Infura, QuickNode).
     Premium,
 
     /// Standard tier: reliable public RPCs with moderate limits.
+    #[default]
     Standard,
 
     /// Free tier: public RPCs with low rate limits, best for batch operations.
     Free,
-}
-
-impl Default for EndpointTier {
-    fn default() -> Self {
-        Self::Standard
-    }
 }
 
 /// Extended endpoint configuration with tier information.

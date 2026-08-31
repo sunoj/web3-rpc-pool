@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Health probes retain their latest block number, and metrics expose that value
   per endpoint.
 
+### Changed
+
+- The declared MSRV is now Rust 1.91, matching the locked Alloy 1.8 dependency
+  graph. The previous Rust 1.75 declaration was no longer buildable.
+- Integration performance tests run only in the dedicated release-mode
+  performance workflow, not in debug-mode feature-matrix jobs.
+- Direct pools reuse a process-wide health-probe HTTP client, keeping pool
+  construction cheap while preserving connection reuse.
+
 ### Safety
 
 - Lagging and unknown endpoints remain available as soft fallbacks after the
