@@ -322,7 +322,14 @@ impl RpcPool {
         let selected = strategy
             .select(candidates.as_ref(), &stats_map, exclude)
             .cloned();
-        if selected.is_some() || candidates.len() == self.endpoints.len() {
+        let selected_is_healthy = selected
+            .as_ref()
+            .and_then(|endpoint| stats_map.get(&endpoint.url))
+            .map(|stats| stats.is_healthy)
+            .unwrap_or(true);
+        if (selected.is_some() && selected_is_healthy)
+            || candidates.len() == self.endpoints.len()
+        {
             return selected;
         }
 
@@ -1364,6 +1371,39 @@ mod tests {
             .await;
 
         assert!(result.is_ok(), "request should succeed through the lagging endpoint");
+        assert_eq!(result.ok().as_deref(), Some("https://lagging.rpc"));
+    }
+
+    #[tokio::test]
+    async fn exhausted_fresh_health_prefers_healthy_lagging_fallback() {
+        let config = RpcPoolConfig::new()
+            .with_endpoints(vec![
+                RpcEndpoint::new("https://fresh.rpc").with_priority(1),
+                RpcEndpoint::new("https://fresh-unhealthy.rpc").with_priority(2),
+                RpcEndpoint::new("https://lagging.rpc").with_priority(3),
+            ])
+            .with_strategy(Box::new(FailoverStrategy))
+            .with_max_block_lag(2);
+        let pool = RpcPool::new(config).unwrap();
+        let mut stats = pool.stats.write();
+        stats.get_mut("https://fresh.rpc").unwrap().latest_block_number = Some(117);
+        let unhealthy = stats.get_mut("https://fresh-unhealthy.rpc").unwrap();
+        unhealthy.latest_block_number = Some(117);
+        unhealthy.is_healthy = false;
+        stats.get_mut("https://lagging.rpc").unwrap().latest_block_number = Some(100);
+        drop(stats);
+
+        let result = pool
+            .execute_with_url(|url| async move {
+                if url == "https://fresh.rpc" {
+                    Err::<String, _>(std::io::Error::other("fresh endpoint failed"))
+                } else {
+                    Ok::<String, std::io::Error>(url)
+                }
+            })
+            .await;
+
+        assert!(result.is_ok(), "request should use the healthy lagging fallback");
         assert_eq!(result.ok().as_deref(), Some("https://lagging.rpc"));
     }
 
