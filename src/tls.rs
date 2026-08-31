@@ -38,12 +38,13 @@ pub fn ensure_provider() {
 }
 
 /// Returns a process-wide HTTP client for direct-pool health probes.
-pub(crate) fn probe_client() -> reqwest::Client {
-    static CLIENT: std::sync::OnceLock<reqwest::Client> = std::sync::OnceLock::new();
+pub(crate) fn probe_client() -> alloy::transports::http::reqwest::Client {
+    type ProbeClient = alloy::transports::http::reqwest::Client;
+    static CLIENT: std::sync::OnceLock<ProbeClient> = std::sync::OnceLock::new();
     CLIENT
         .get_or_init(|| {
             ensure_provider();
-            reqwest::Client::builder()
+            ProbeClient::builder()
                 .pool_max_idle_per_host(1)
                 .pool_idle_timeout(std::time::Duration::from_secs(10))
                 .build()
