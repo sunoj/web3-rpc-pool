@@ -20,7 +20,11 @@ async fn mount_head(server: &MockServer, block_hex: &str) {
 async fn wait_for_head(pool: &RpcPool, url: &str, expected: u64) {
     tokio::time::timeout(Duration::from_secs(2), async {
         loop {
-            let observed = pool.metrics().endpoints.into_iter().find(|item| item.url == url);
+            let observed = pool
+                .metrics()
+                .endpoints
+                .into_iter()
+                .find(|item| item.url == url);
             if observed.is_some_and(|item| item.latest_block_number == Some(expected)) {
                 return;
             }
@@ -34,7 +38,11 @@ async fn wait_for_head(pool: &RpcPool, url: &str, expected: u64) {
 async fn wait_for_errors(pool: &RpcPool, url: &str, expected: u32) {
     tokio::time::timeout(Duration::from_secs(2), async {
         loop {
-            let observed = pool.metrics().endpoints.into_iter().find(|item| item.url == url);
+            let observed = pool
+                .metrics()
+                .endpoints
+                .into_iter()
+                .find(|item| item.url == url);
             if observed.is_some_and(|item| item.consecutive_errors == expected) {
                 return;
             }
@@ -81,5 +89,8 @@ async fn transient_primary_probe_failure_keeps_fresh_primary_selected() {
     wait_for_errors(&pool, &primary.uri(), 1).await;
     failing_probe.abort();
 
-    assert_eq!(pool.get_current_url().as_deref(), Some(primary.uri().as_str()));
+    assert_eq!(
+        pool.get_current_url().as_deref(),
+        Some(primary.uri().as_str())
+    );
 }
