@@ -53,8 +53,14 @@ async fn wait_for_errors(pool: &RpcPool, url: &str, expected: u32) {
     .expect("health probe should publish the endpoint error count");
 }
 
+async fn run_failing_probe(pool: &Arc<RpcPool>, url: &str, expected_errors: u32) {
+    let probe = pool.start_health_check();
+    wait_for_errors(pool, url, expected_errors).await;
+    probe.abort();
+}
+
 #[tokio::test]
-async fn transient_primary_probe_failure_keeps_fresh_primary_selected() {
+async fn probe_threshold_moves_selection_only_after_transient_failure_budget() {
     let primary = MockServer::start().await;
     let fallback = MockServer::start().await;
     mount_head(&primary, "0x104").await;
@@ -85,12 +91,16 @@ async fn transient_primary_probe_failure_keeps_fresh_primary_selected() {
         .mount(&primary)
         .await;
 
-    let failing_probe = pool.start_health_check();
-    wait_for_errors(&pool, &primary.uri(), 1).await;
-    failing_probe.abort();
-
+    run_failing_probe(&pool, &primary.uri(), 1).await;
     assert_eq!(
         pool.get_current_url().as_deref(),
         Some(primary.uri().as_str())
+    );
+    for expected_errors in 2..=3 {
+        run_failing_probe(&pool, &primary.uri(), expected_errors).await;
+    }
+    assert_eq!(
+        pool.get_current_url().as_deref(),
+        Some(fallback.uri().as_str())
     );
 }
