@@ -704,10 +704,11 @@ impl RpcPool {
                     }
                     Err(error) => {
                         if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
-                            stats.latest_block_number = None;
                             if was_healthy {
                                 // Detection: count the failure; mark unhealthy at
                                 // the threshold so get_current_url() fails over.
+                                // Retain the last head until then: one transient
+                                // probe must not promote a known-lagging fallback.
                                 let now_down = stats
                                     .record_failure(error.clone(), self.max_consecutive_errors);
                                 if now_down {
@@ -1232,7 +1233,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn failed_health_probe_clears_previous_block_number() {
+    async fn failed_health_probe_retains_previous_block_number() {
         let server = MockServer::start().await;
         let success = ResponseTemplate::new(200).set_body_json(serde_json::json!({
             "jsonrpc": "2.0",
@@ -1269,7 +1270,7 @@ mod tests {
 
         let stats = pool.stats.read();
         let endpoint = stats.get(&server.uri()).unwrap();
-        assert_eq!(endpoint.latest_block_number, None);
+        assert_eq!(endpoint.latest_block_number, Some(117));
         assert!(endpoint.is_healthy);
         assert_eq!(endpoint.consecutive_errors, 1);
     }
