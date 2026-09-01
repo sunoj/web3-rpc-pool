@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Safety
 
+- Transient health-probe failures retain the last known head until the endpoint
+  reaches its unhealthy threshold, preventing premature promotion of a known-
+  lagging fallback.
 - Lagging and unknown endpoints remain available as soft fallbacks after the
   fresh set is exhausted.
 - Unhealthy endpoint heads cannot define the freshness reference or distort the
