@@ -532,7 +532,10 @@ mod tests {
             items.push(v);
         }
         assert_eq!(items, vec![1, 2]);
-        assert!(retry.cooling_down(), "a terminated stream must cool down its endpoint");
+        assert!(
+            retry.cooling_down(),
+            "a terminated stream must cool down its endpoint"
+        );
     }
 
     #[tokio::test]

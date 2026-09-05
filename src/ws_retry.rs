@@ -2,7 +2,10 @@
 // Exports EndpointRetry to ws; tests use injected timestamps without sleeping.
 // Deps: std monotonic time and mutex, shared by subscription streams.
 
-use std::{sync::Mutex, time::{Duration, Instant}};
+use std::{
+    sync::Mutex,
+    time::{Duration, Instant},
+};
 
 const ENDPOINT_RETRY_COOLDOWN: Duration = Duration::from_secs(30);
 
@@ -21,7 +24,9 @@ impl EndpointRetry {
     }
 
     fn cooling_down_at(&self, now: Instant) -> bool {
-        self.failed_at.lock().expect("WS endpoint retry lock")
+        self.failed_at
+            .lock()
+            .expect("WS endpoint retry lock")
             .is_some_and(|failed| now.saturating_duration_since(failed) < ENDPOINT_RETRY_COOLDOWN)
     }
 }
