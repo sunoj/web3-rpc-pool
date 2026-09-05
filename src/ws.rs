@@ -22,6 +22,10 @@
 //! }
 //! ```
 
+#[path = "ws_retry.rs"]
+mod ws_retry;
+use ws_retry::EndpointRetry;
+
 use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
 
@@ -45,7 +49,7 @@ use tracing::{debug, info, warn};
 struct OwnedStream<T> {
     _owner: Box<dyn std::any::Any + Send>,
     stream: Pin<Box<dyn Stream<Item = T> + Send>>,
-    endpoint_failed: Arc<AtomicBool>,
+    endpoint_failed: Arc<EndpointRetry>,
 }
 
 impl<T> Stream for OwnedStream<T> {
@@ -54,7 +58,7 @@ impl<T> Stream for OwnedStream<T> {
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         let result = self.stream.as_mut().poll_next(cx);
         if matches!(result, Poll::Ready(None)) {
-            self.endpoint_failed.store(true, Ordering::Release);
+            self.endpoint_failed.failed();
         }
         result
     }
@@ -64,7 +68,7 @@ impl<T> Stream for OwnedStream<T> {
 fn owned_stream<T: 'static>(
     provider: impl std::any::Any + Send + 'static,
     stream: impl Stream<Item = T> + Send + 'static,
-    endpoint_failed: Arc<AtomicBool>,
+    endpoint_failed: Arc<EndpointRetry>,
 ) -> BoxSubscriptionStream<T> {
     Box::pin(OwnedStream {
         _owner: Box::new(provider),
@@ -117,8 +121,8 @@ pub struct WsPool {
     config: WsPoolConfig,
     /// Shutdown flag.
     shutdown: Arc<AtomicBool>,
-    /// Endpoints whose subscriptions have terminated are retired for this pool.
-    endpoint_failures: Arc<Vec<Arc<AtomicBool>>>,
+    /// Terminated endpoints cool down before becoming eligible for subscription again.
+    endpoint_failures: Arc<Vec<Arc<EndpointRetry>>>,
 }
 
 impl WsPool {
@@ -157,7 +161,7 @@ impl WsPool {
         let endpoint_failures = Arc::new(
             endpoints
                 .iter()
-                .map(|_| Arc::new(AtomicBool::new(false)))
+                .map(|_| Arc::new(EndpointRetry::default()))
                 .collect(),
         );
 
@@ -191,7 +195,7 @@ impl WsPool {
 
         for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
-                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for newHeads subscription");
@@ -236,7 +240,7 @@ impl WsPool {
 
         for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
-                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for pendingTransactions subscription");
@@ -282,7 +286,7 @@ impl WsPool {
 
         for (index, endpoint) in self.endpoints.iter().enumerate() {
             if let Some(ws_url) = &endpoint.ws_url {
-                if self.endpoint_failures[index].load(Ordering::Acquire) {
+                if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
                 debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for logs subscription");
@@ -376,7 +380,7 @@ pub async fn connect_and_subscribe_blocks(
     Ok(owned_stream(
         provider,
         sub.into_stream(),
-        Arc::new(AtomicBool::new(false)),
+        Arc::new(EndpointRetry::default()),
     ))
 }
 
@@ -404,7 +408,7 @@ pub async fn connect_and_subscribe_logs(
     Ok(owned_stream(
         provider,
         sub.into_stream(),
-        Arc::new(AtomicBool::new(false)),
+        Arc::new(EndpointRetry::default()),
     ))
 }
 
@@ -516,7 +520,8 @@ mod tests {
         let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
 
         let owner = String::from("fake-provider");
-        let mut stream = owned_stream(owner, inner, Arc::new(AtomicBool::new(false)));
+        let retry = Arc::new(EndpointRetry::default());
+        let mut stream = owned_stream(owner, inner, Arc::clone(&retry));
 
         tx.send(1).await.unwrap();
         tx.send(2).await.unwrap();
@@ -527,6 +532,10 @@ mod tests {
             items.push(v);
         }
         assert_eq!(items, vec![1, 2]);
+        assert!(
+            retry.cooling_down(),
+            "a terminated stream must cool down its endpoint"
+        );
     }
 
     #[tokio::test]
@@ -548,7 +557,7 @@ mod tests {
         let (tx, rx) = tokio::sync::mpsc::channel::<u64>(4);
         let inner = tokio_stream::wrappers::ReceiverStream::new(rx);
 
-        let mut stream = owned_stream(detector, inner, Arc::new(AtomicBool::new(false)));
+        let mut stream = owned_stream(detector, inner, Arc::new(EndpointRetry::default()));
 
         // Owner must not be dropped while stream is alive
         assert!(!dropped.load(Ordering::SeqCst));
