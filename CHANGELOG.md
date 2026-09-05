@@ -34,6 +34,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Request-level tests cover fallback through a lagging endpoint and ensure a
   known unhealthy fresh endpoint cannot jump ahead of a healthy lagging one.
 
+## [0.7.1] - 2026-09-05
+
+### Fixed
+
+- **A terminated WebSocket subscription no longer retires its endpoint forever.** `WsPool` used to
+  set a permanent per-endpoint failure flag when a subscription stream ended; once every endpoint
+  had terminated once, every later `subscribe_new_heads` / `subscribe_pending_transactions` /
+  `subscribe_logs` call skipped the whole pool and failed with the last error. Termination now
+  starts a 30-second cooldown (`src/ws_retry.rs`): healthy endpoints stay eligible immediately and
+  a terminated one is retried once the cooldown elapses. Stream/provider ownership, shutdown and the
+  standalone `connect_and_subscribe_*` helpers are unchanged. No public API or dependency changes.
+  (#9)
+
+## [0.7.0] - 2026-07-28
+
+### Fixed
+
+- **Contract reverts no longer poison endpoint health.** A JSON-RPC error response carrying a revert
+  marker is classified as a call failure, not an endpoint failure, so `eth_call` simulations that
+  revert by design do not trip `max_consecutive_errors` or drive failover. Classification is anchored
+  to the response marker and requires a JSON-RPC error body; `RpcPoolError` is `#[non_exhaustive]`.
+- `execute_with_url` guards are covered by tests; the failure log line and error are rendered once.
+
+### Changed
+
+- Released as 0.7.0 because the reqwest 0.13 bump had already consumed v0.6.0.
+
 ## [0.6.0] - 2026-07-26
 
 ### Changed
