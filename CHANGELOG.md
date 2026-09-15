@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- The Base Official preset no longer declares `wss://mainnet.base.org`: the host
+  answers every WebSocket upgrade with 405, so a WS pool carrying it retried it
+  forever.
+
 ### Added
 
 - Optional `max_block_lag` endpoint preference for direct and tiered pools.
