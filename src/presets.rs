@@ -748,9 +748,10 @@ pub fn arbitrum_endpoints() -> Vec<RpcEndpoint> {
 /// Default endpoints for Base (21 verified endpoints).
 pub fn base_endpoints() -> Vec<RpcEndpoint> {
     vec![
+        // No WebSocket: wss://mainnet.base.org answers every upgrade with 405
+        // (verified 2026-09-15), so a WS pool that carried it retried it forever.
         RpcEndpoint::new("https://mainnet.base.org")
             .with_name("Base Official")
-            .with_ws_url("wss://mainnet.base.org")
             .with_priority(50)
             .with_chain_id(chain_id::BASE)
             .with_capabilities(EndpointCapabilities {
