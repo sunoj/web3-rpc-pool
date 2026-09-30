@@ -60,6 +60,7 @@ pub mod chain_id {
     pub const GRAVITY: u64 = 1625;
     pub const STORY: u64 = 1514;
     pub const ROBINHOOD: u64 = 4663;
+    pub const ARC: u64 = 5042;
 }
 
 /// Get default endpoints for a chain by chain ID.
@@ -113,6 +114,7 @@ pub fn default_endpoints(chain_id: u64) -> Vec<RpcEndpoint> {
         chain_id::GRAVITY => gravity_endpoints(),
         chain_id::STORY => story_endpoints(),
         chain_id::ROBINHOOD => robinhood_endpoints(),
+        chain_id::ARC => arc_endpoints(),
         _ => vec![],
     }
 }
@@ -128,11 +130,51 @@ pub fn robinhood_endpoints() -> Vec<RpcEndpoint> {
         .with_chain_id(chain_id::ROBINHOOD)]
 }
 
+/// Arc mainnet. Gas is USDC. Every endpoint below answered `eth_call` with a native `balance` state
+/// override on the USDC view 0x3600…0000 (survey from a workstation and a fleet host, 2026-09-30).
+/// `max_block_range` is the largest `eth_getLogs` range each one accepted in that survey.
+pub fn arc_endpoints() -> Vec<RpcEndpoint> {
+    let arc = |url: &str, name: &str, priority: u32, max_block_range: u64| {
+        RpcEndpoint::new(url)
+            .with_name(name)
+            .with_priority(priority)
+            .with_chain_id(chain_id::ARC)
+            .with_capabilities(EndpointCapabilities {
+                supports_eth_get_logs: Some(true),
+                max_block_range: Some(max_block_range),
+                ..Default::default()
+            })
+    };
+    vec![
+        arc("https://rpc.mainnet.arc.io", "Arc Official", 50, 1_000),
+        arc(
+            "https://rpc.blockdaemon.mainnet.arc.io",
+            "Blockdaemon",
+            51,
+            100_000,
+        ),
+        arc(
+            "https://rpc.quicknode.mainnet.arc.io",
+            "QuickNode",
+            52,
+            1_000,
+        ),
+        arc("https://rpc.beamrpc.com", "Beam", 53, 1_000),
+        arc(
+            "https://rpc.drpc.mainnet.arc.io",
+            "dRPC (Arc domain)",
+            54,
+            98,
+        ),
+        arc("https://arc.drpc.org", "dRPC", 55, 98),
+    ]
+}
+
 /// Return all supported mainnet chain IDs.
 /// Chains with no public WebSocket endpoint at all. Kept explicit so the
 /// WS-coverage invariant stays meaningful for every other chain instead of
 /// being deleted the first time a WS-less chain is added.
-pub const NO_PUBLIC_WS_CHAINS: &[u64] = &[chain_id::ROBINHOOD];
+pub const NO_PUBLIC_WS_CHAINS: &[u64] = &[chain_id::ROBINHOOD, chain_id::ARC];
 
 pub fn all_chain_ids() -> Vec<u64> {
     vec![
@@ -167,6 +209,7 @@ pub fn all_chain_ids() -> Vec<u64> {
         chain_id::POLYGON,
         chain_id::POLYGON_ZKEVM,
         chain_id::ROBINHOOD,
+        chain_id::ARC,
         chain_id::ROOTSTOCK,
         chain_id::SCROLL,
         chain_id::SEI,
@@ -225,6 +268,7 @@ pub fn chain_name(chain_id: u64) -> &'static str {
         self::chain_id::POLYGON => "Polygon",
         self::chain_id::POLYGON_ZKEVM => "Polygon zkEVM",
         self::chain_id::ROBINHOOD => "Robinhood Chain",
+        self::chain_id::ARC => "Arc",
         self::chain_id::ROOTSTOCK => "Rootstock",
         self::chain_id::SCROLL => "Scroll",
         self::chain_id::SEI => "Sei",
@@ -3036,6 +3080,18 @@ mod tests {
                 "Endpoints should be sorted by priority"
             );
         }
+    }
+
+    #[test]
+    fn test_arc_endpoints() {
+        let endpoints = default_endpoints(chain_id::ARC);
+        assert_eq!(endpoints.len(), 6);
+        assert!(endpoints.iter().all(|e| e.chain_id == chain_id::ARC));
+        assert!(endpoints.iter().all(|e| e.url.starts_with("https://")));
+        assert!(endpoints.iter().all(|e| e.ws_url.is_none()));
+        assert_eq!(endpoints[0].url, "https://rpc.mainnet.arc.io");
+        assert!(all_chain_ids().contains(&chain_id::ARC));
+        assert!(NO_PUBLIC_WS_CHAINS.contains(&chain_id::ARC));
     }
 
     #[test]
