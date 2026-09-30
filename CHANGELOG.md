@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Arc mainnet (chain 5042) presets: six HTTP endpoints, each verified to answer
+  `eth_call` with a native `balance` state override. Arc has no verified public
+  WebSocket and joins `NO_PUBLIC_WS_CHAINS`.
+
 ### Removed
 
 - The Base Official preset no longer declares `wss://mainnet.base.org`: the host
