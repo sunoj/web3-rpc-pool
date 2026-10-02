@@ -655,8 +655,7 @@ impl RpcPool {
             // Probe with a simple block-number request (with timeout).
             let url: Result<url::Url, _> = endpoint.url.parse();
             if let Ok(url) = url {
-                let parsed_url = url.to_string();
-                let host = url.host_str().unwrap_or("endpoint").to_string();
+                let host = url.host_str().map(str::to_string);
                 let transport = Http::with_client(self.probe_client.clone(), url);
                 let provider = RootProvider::<alloy::network::Ethereum>::new(
                     alloy::rpc::client::RpcClient::new(transport, true),
@@ -681,10 +680,10 @@ impl RpcPool {
                 // Normalize so detection/recovery share one match.
                 let outcome: Result<u64, String> = match probe_result {
                     Ok(Ok(block_number)) => Ok(block_number),
-                    Ok(Err(e)) => Err(replace_endpoint_url(
+                    Ok(Err(e)) => Err(scrub_probe_error(
                         &e.to_string(),
-                        [endpoint.url.as_str(), parsed_url.as_str()],
-                        &host,
+                        host.as_deref(),
+                        probe_error_kind(&e),
                     )),
                     Err(_) => Err(format!(
                         "health probe timed out after {}ms",
@@ -990,23 +989,42 @@ pub(crate) fn is_call_failure(msg: &str) -> bool {
         .starts_with("execution reverted")
 }
 
-/// Replace the endpoint's own URL with its host in a transport error.
+/// Reduce a probe transport error to host and kind when it mentions the endpoint.
 ///
-/// Provider URLs carry the API key in the path or query, and reqwest renders the
-/// full request URL into its errors. The probe knows exactly which URL it sent, so
-/// this is a literal substitution, not a pattern-based redactor.
-fn replace_endpoint_url<'a>(
-    msg: &str,
-    urls: impl IntoIterator<Item = &'a str>,
-    host: &str,
-) -> String {
-    let mut msg = msg.to_string();
-    for url in urls {
-        if !url.is_empty() {
-            msg = msg.replace(url, host);
+/// Provider URLs carry the API key in userinfo, path or query, and transport errors
+/// may render the request URL in any form (raw, percent-encoded, scheme-less). Any
+/// rendering contains the host, so an error that mentions the host is replaced by a
+/// fixed message; one that does not cannot carry the URL and is kept as-is. A URL
+/// without a host always gets the fixed message.
+fn scrub_probe_error(msg: &str, host: Option<&str>, kind: &str) -> String {
+    match host {
+        Some(host)
+            if !host.is_empty()
+                && !msg
+                    .to_ascii_lowercase()
+                    .contains(&host.to_ascii_lowercase()) =>
+        {
+            msg.to_string()
         }
+        Some(host) => format!("health probe to {host} failed: {kind}"),
+        None => format!("health probe to endpoint failed: {kind}"),
     }
-    msg
+}
+
+/// Short, URL-free label for a probe transport error.
+fn probe_error_kind(e: &alloy::transports::TransportError) -> &'static str {
+    use alloy::transports::{RpcError, TransportErrorKind};
+    match e {
+        RpcError::ErrorResp(_) => "rpc error response",
+        RpcError::NullResp => "null response",
+        RpcError::UnsupportedFeature(_) => "unsupported feature",
+        RpcError::LocalUsageError(_) => "local usage error",
+        RpcError::SerError(_) => "serialization error",
+        RpcError::DeserError { .. } => "deserialization error",
+        RpcError::Transport(TransportErrorKind::HttpError(_)) => "http status error",
+        RpcError::Transport(TransportErrorKind::BackendGone) => "backend gone",
+        RpcError::Transport(_) => "transport error",
+    }
 }
 
 /// Truncate error message to prevent unbounded memory growth.
@@ -1301,14 +1319,35 @@ mod tests {
     }
 
     #[test]
-    fn replace_endpoint_url_keeps_host_only() {
-        let raw = "https://rpc.example/v2/SYNTHETIC_PATH_TOKEN";
-        let parsed = format!("{}", raw.parse::<url::Url>().unwrap());
-        let msg = format!("error sending request for url ({parsed}): connection refused");
-        let scrubbed = replace_endpoint_url(&msg, [raw, parsed.as_str()], "rpc.example");
+    fn scrub_probe_error_drops_every_url_rendering() {
+        let kind = "transport error";
+        let expected = "health probe to rpc.example failed: transport error";
+        for rendered in [
+            "https://user:SYNTHETIC_PASS@rpc.example/v2/SYNTHETIC_PATH_TOKEN?key=SYNTHETIC_QUERY",
+            "https%3A%2F%2Frpc.example%2Fv2%2FSYNTHETIC_PATH_TOKEN%3Fkey%3DSYNTHETIC_QUERY",
+            "rpc.example/v2/SYNTHETIC_PATH_TOKEN?key=SYNTHETIC_QUERY",
+            "HTTPS://RPC.EXAMPLE/v2/SYNTHETIC_PATH_TOKEN",
+        ] {
+            let msg = format!("error sending request for url ({rendered}): connection refused");
+            assert_eq!(scrub_probe_error(&msg, Some("rpc.example"), kind), expected);
+        }
+    }
+
+    #[test]
+    fn scrub_probe_error_without_host_is_always_fixed() {
+        let msg = "error sending request for url (SYNTHETIC_PATH_TOKEN)";
         assert_eq!(
-            scrubbed,
-            "error sending request for url (rpc.example): connection refused"
+            scrub_probe_error(msg, None, "transport error"),
+            "health probe to endpoint failed: transport error"
+        );
+    }
+
+    #[test]
+    fn scrub_probe_error_keeps_messages_without_host() {
+        let msg = "server returned an error response: error code -32000: header not found";
+        assert_eq!(
+            scrub_probe_error(msg, Some("rpc.example"), "rpc error response"),
+            msg
         );
     }
 
@@ -1332,6 +1371,10 @@ mod tests {
             .as_deref()
             .expect("probe error recorded");
         assert!(!error.contains("SYNTHETIC_PATH_TOKEN"), "{error}");
+        assert!(
+            error.starts_with("health probe to 127.0.0.1 failed: "),
+            "{error}"
+        );
         assert!(
             !error.contains("timed out"),
             "probe must fail on transport: {error}"
