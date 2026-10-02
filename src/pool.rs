@@ -680,11 +680,7 @@ impl RpcPool {
                 // Normalize so detection/recovery share one match.
                 let outcome: Result<u64, String> = match probe_result {
                     Ok(Ok(block_number)) => Ok(block_number),
-                    Ok(Err(e)) => Err(scrub_probe_error(
-                        &e.to_string(),
-                        host.as_deref(),
-                        probe_error_kind(&e),
-                    )),
+                    Ok(Err(e)) => Err(probe_error_message(host.as_deref(), probe_error_kind(&e))),
                     Err(_) => Err(format!(
                         "health probe timed out after {}ms",
                         self.health_check_timeout.as_millis()
@@ -989,25 +985,15 @@ pub(crate) fn is_call_failure(msg: &str) -> bool {
         .starts_with("execution reverted")
 }
 
-/// Reduce a probe transport error to host and kind when it mentions the endpoint.
+/// Probe failure text built only from the endpoint host and the error kind.
 ///
-/// Provider URLs carry the API key in userinfo, path or query, and transport errors
-/// may render the request URL in any form (raw, percent-encoded, scheme-less). Any
-/// rendering contains the host, so an error that mentions the host is replaced by a
-/// fixed message; one that does not cannot carry the URL and is kept as-is. A URL
-/// without a host always gets the fixed message.
-fn scrub_probe_error(msg: &str, host: Option<&str>, kind: &str) -> String {
+/// Provider URLs carry the API key in userinfo, path or query, and a transport error or
+/// a server response can echo any part of it, with or without the host. The raw error
+/// text is therefore never kept.
+fn probe_error_message(host: Option<&str>, kind: &str) -> String {
     match host {
-        Some(host)
-            if !host.is_empty()
-                && !msg
-                    .to_ascii_lowercase()
-                    .contains(&host.to_ascii_lowercase()) =>
-        {
-            msg.to_string()
-        }
-        Some(host) => format!("health probe to {host} failed: {kind}"),
-        None => format!("health probe to endpoint failed: {kind}"),
+        Some(host) if !host.is_empty() => format!("health probe to {host} failed: {kind}"),
+        _ => format!("health probe to endpoint failed: {kind}"),
     }
 }
 
@@ -1319,35 +1305,18 @@ mod tests {
     }
 
     #[test]
-    fn scrub_probe_error_drops_every_url_rendering() {
-        let kind = "transport error";
-        let expected = "health probe to rpc.example failed: transport error";
-        for rendered in [
-            "https://user:SYNTHETIC_PASS@rpc.example/v2/SYNTHETIC_PATH_TOKEN?key=SYNTHETIC_QUERY",
-            "https%3A%2F%2Frpc.example%2Fv2%2FSYNTHETIC_PATH_TOKEN%3Fkey%3DSYNTHETIC_QUERY",
-            "rpc.example/v2/SYNTHETIC_PATH_TOKEN?key=SYNTHETIC_QUERY",
-            "HTTPS://RPC.EXAMPLE/v2/SYNTHETIC_PATH_TOKEN",
-        ] {
-            let msg = format!("error sending request for url ({rendered}): connection refused");
-            assert_eq!(scrub_probe_error(&msg, Some("rpc.example"), kind), expected);
-        }
-    }
-
-    #[test]
-    fn scrub_probe_error_without_host_is_always_fixed() {
-        let msg = "error sending request for url (SYNTHETIC_PATH_TOKEN)";
+    fn probe_error_message_carries_only_host_and_kind() {
         assert_eq!(
-            scrub_probe_error(msg, None, "transport error"),
-            "health probe to endpoint failed: transport error"
+            probe_error_message(Some("rpc.example"), "transport error"),
+            "health probe to rpc.example failed: transport error"
         );
-    }
-
-    #[test]
-    fn scrub_probe_error_keeps_messages_without_host() {
-        let msg = "server returned an error response: error code -32000: header not found";
         assert_eq!(
-            scrub_probe_error(msg, Some("rpc.example"), "rpc error response"),
-            msg
+            probe_error_message(None, "rpc error response"),
+            "health probe to endpoint failed: rpc error response"
+        );
+        assert_eq!(
+            probe_error_message(Some(""), "http status error"),
+            "health probe to endpoint failed: http status error"
         );
     }
 
