@@ -655,6 +655,8 @@ impl RpcPool {
             // Probe with a simple block-number request (with timeout).
             let url: Result<url::Url, _> = endpoint.url.parse();
             if let Ok(url) = url {
+                let parsed_url = url.to_string();
+                let host = url.host_str().unwrap_or("endpoint").to_string();
                 let transport = Http::with_client(self.probe_client.clone(), url);
                 let provider = RootProvider::<alloy::network::Ethereum>::new(
                     alloy::rpc::client::RpcClient::new(transport, true),
@@ -679,7 +681,11 @@ impl RpcPool {
                 // Normalize so detection/recovery share one match.
                 let outcome: Result<u64, String> = match probe_result {
                     Ok(Ok(block_number)) => Ok(block_number),
-                    Ok(Err(e)) => Err(e.to_string()),
+                    Ok(Err(e)) => Err(replace_endpoint_url(
+                        &e.to_string(),
+                        [endpoint.url.as_str(), parsed_url.as_str()],
+                        &host,
+                    )),
                     Err(_) => Err(format!(
                         "health probe timed out after {}ms",
                         self.health_check_timeout.as_millis()
@@ -984,6 +990,25 @@ pub(crate) fn is_call_failure(msg: &str) -> bool {
         .starts_with("execution reverted")
 }
 
+/// Replace the endpoint's own URL with its host in a transport error.
+///
+/// Provider URLs carry the API key in the path or query, and reqwest renders the
+/// full request URL into its errors. The probe knows exactly which URL it sent, so
+/// this is a literal substitution, not a pattern-based redactor.
+fn replace_endpoint_url<'a>(
+    msg: &str,
+    urls: impl IntoIterator<Item = &'a str>,
+    host: &str,
+) -> String {
+    let mut msg = msg.to_string();
+    for url in urls {
+        if !url.is_empty() {
+            msg = msg.replace(url, host);
+        }
+    }
+    msg
+}
+
 /// Truncate error message to prevent unbounded memory growth.
 #[inline]
 fn truncate_error_message(msg: &str) -> String {
@@ -1273,6 +1298,44 @@ mod tests {
         assert_eq!(endpoint.latest_block_number, Some(117));
         assert!(endpoint.is_healthy);
         assert_eq!(endpoint.consecutive_errors, 1);
+    }
+
+    #[test]
+    fn replace_endpoint_url_keeps_host_only() {
+        let raw = "https://rpc.example/v2/SYNTHETIC_PATH_TOKEN";
+        let parsed = format!("{}", raw.parse::<url::Url>().unwrap());
+        let msg = format!("error sending request for url ({parsed}): connection refused");
+        let scrubbed = replace_endpoint_url(&msg, [raw, parsed.as_str()], "rpc.example");
+        assert_eq!(
+            scrubbed,
+            "error sending request for url (rpc.example): connection refused"
+        );
+    }
+
+    #[tokio::test]
+    async fn failed_health_probe_error_carries_host_not_path_token() {
+        let url = "http://127.0.0.1:1/v2/SYNTHETIC_PATH_TOKEN";
+        let pool = RpcPool::new(
+            RpcPoolConfig::new()
+                .with_endpoints(vec![RpcEndpoint::new(url).with_name("probe-test")])
+                .with_max_consecutive_errors(3)
+                .with_health_check_timeout(Duration::from_secs(2)),
+        )
+        .unwrap();
+        pool.check_health().await;
+
+        let stats = pool.stats.read();
+        let endpoint = stats.get(url).unwrap();
+        assert_eq!(endpoint.consecutive_errors, 1);
+        let error = endpoint
+            .last_error
+            .as_deref()
+            .expect("probe error recorded");
+        assert!(!error.contains("SYNTHETIC_PATH_TOKEN"), "{error}");
+        assert!(
+            !error.contains("timed out"),
+            "probe must fail on transport: {error}"
+        );
     }
 
     #[test]
