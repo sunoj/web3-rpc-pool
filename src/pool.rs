@@ -1,9 +1,10 @@
 //! Core RPC pool implementation.
 
-use crate::endpoint::{url_host, EndpointStats, RpcEndpoint};
+use crate::endpoint::{EndpointStats, RpcEndpoint};
 use crate::error::RpcPoolError;
 use crate::freshness::{best_known_healthy_block, freshness_distribution};
 use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
+use crate::redact::{redact_url, url_host};
 use crate::strategies::SelectionStrategy;
 
 use alloy::providers::{Provider, RootProvider};
@@ -516,7 +517,7 @@ impl RpcPool {
                 }
                 Ok(Err(e)) => {
                     let raw_error = e.to_string();
-                    let error_msg = truncate_error_message(&raw_error);
+                    let error_msg = truncate_error_message(&redact_url(&raw_error, &endpoint.url));
 
                     // The node answered; the CALL failed. Failing over would replay
                     // the same deterministic error on every remaining endpoint while
@@ -545,13 +546,12 @@ impl RpcPool {
                     }
 
                     self.failovers.fetch_add(1, Ordering::Relaxed);
-                    last_error = Some(error_msg);
-
                     debug!(
                         endpoint = %endpoint.name,
-                        error = %e,
+                        error = %error_msg,
                         "Request failed, trying next endpoint"
                     );
+                    last_error = Some(error_msg);
                 }
                 Err(_timeout) => {
                     let error_msg = format!(
@@ -1069,10 +1069,13 @@ fn probe_error_kind(e: &alloy::transports::TransportError) -> &'static str {
 #[inline]
 fn truncate_error_message(msg: &str) -> String {
     if msg.len() <= MAX_ERROR_MESSAGE_LENGTH {
-        msg.to_string()
-    } else {
-        format!("{}...(truncated)", &msg[..MAX_ERROR_MESSAGE_LENGTH])
+        return msg.to_string();
     }
+    let mut end = MAX_ERROR_MESSAGE_LENGTH;
+    while !msg.is_char_boundary(end) {
+        end -= 1;
+    }
+    format!("{}...(truncated)", &msg[..end])
 }
 
 #[cfg(test)]
@@ -1254,6 +1257,43 @@ mod tests {
             0,
             "a transport failure must still degrade endpoint health"
         );
+    }
+
+    #[tokio::test]
+    async fn request_failure_error_carries_host_not_key() {
+        let url = "https://rpc.example.com/v2/SYNTHETIC_REQUEST_KEY_0123456789";
+        let pool = RpcPool::new(
+            RpcPoolConfig::new()
+                .with_endpoints(vec![RpcEndpoint::new(url).with_name("request-test")])
+                .with_strategy(Box::new(FailoverStrategy)),
+        )
+        .unwrap();
+        let result: Result<(), RpcPoolError> = pool
+            .execute_with_url(|url| async move {
+                Err::<(), _>(std::io::Error::other(format!(
+                    "error sending request for url ({url}): connection refused"
+                )))
+            })
+            .await;
+        let message = match result {
+            Err(RpcPoolError::AllEndpointsFailed(message)) => message,
+            other => panic!("expected AllEndpointsFailed, got {other:?}"),
+        };
+        assert!(!message.contains("SYNTHETIC_REQUEST_KEY"), "{message}");
+        assert!(message.contains("https://rpc.example.com"), "{message}");
+
+        let stats = pool.stats.read();
+        let stored = stats.get(url).and_then(|s| s.last_error.clone());
+        let stored = stored.expect("failure recorded");
+        assert!(!stored.contains("SYNTHETIC_REQUEST_KEY"), "{stored}");
+    }
+
+    #[test]
+    fn truncate_error_message_respects_char_boundaries() {
+        for prefix in ["", "a"] {
+            let msg = format!("{prefix}{}", "é".repeat(MAX_ERROR_MESSAGE_LENGTH));
+            assert!(truncate_error_message(&msg).ends_with("...(truncated)"));
+        }
     }
 
     #[tokio::test]

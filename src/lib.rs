@@ -55,6 +55,7 @@ mod freshness;
 pub mod metrics;
 pub mod pool;
 pub mod presets;
+mod redact;
 pub mod strategies;
 pub mod tiered;
 pub mod tls;

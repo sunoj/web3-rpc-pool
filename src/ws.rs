@@ -26,8 +26,9 @@
 mod ws_retry;
 use ws_retry::EndpointRetry;
 
-use crate::endpoint::{url_host, RpcEndpoint};
+use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
+use crate::redact::{host_label, redact_url, url_host};
 
 use alloy::primitives::B256;
 use alloy::providers::{Provider, ProviderBuilder};
@@ -211,10 +212,11 @@ impl WsPool {
                             ));
                         }
                         Err(e) => {
-                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            let error = redact_url(&e.to_string(), ws_url);
+                            warn!(name = %endpoint.name, error = %error, "Subscribe failed");
                             last_error = Some(RpcPoolError::WebSocketError(format!(
                                 "Subscribe failed on {}: {}",
-                                endpoint.name, e
+                                endpoint.name, error
                             )));
                         }
                     },
@@ -256,10 +258,11 @@ impl WsPool {
                             ));
                         }
                         Err(e) => {
-                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            let error = redact_url(&e.to_string(), ws_url);
+                            warn!(name = %endpoint.name, error = %error, "Subscribe failed");
                             last_error = Some(RpcPoolError::WebSocketError(format!(
                                 "Subscribe failed on {}: {}",
-                                endpoint.name, e
+                                endpoint.name, error
                             )));
                         }
                     },
@@ -302,10 +305,11 @@ impl WsPool {
                             ));
                         }
                         Err(e) => {
-                            warn!(name = %endpoint.name, error = %e, "Subscribe failed");
+                            let error = redact_url(&e.to_string(), ws_url);
+                            warn!(name = %endpoint.name, error = %error, "Subscribe failed");
                             last_error = Some(RpcPoolError::WebSocketError(format!(
                                 "Subscribe failed on {}: {}",
-                                endpoint.name, e
+                                endpoint.name, error
                             )));
                         }
                     },
@@ -347,11 +351,15 @@ async fn connect_ws_with_timeout(
             RpcPoolError::WebSocketError(format!(
                 "Connection timeout after {}ms to {}",
                 timeout.as_millis(),
-                ws_url
+                host_label(ws_url)
             ))
         })?
         .map_err(|e| {
-            RpcPoolError::WebSocketError(format!("Failed to connect to {}: {}", ws_url, e))
+            RpcPoolError::WebSocketError(format!(
+                "Failed to connect to {}: {}",
+                host_label(ws_url),
+                redact_url(&e.to_string(), ws_url)
+            ))
         })?;
 
     Ok(provider)
@@ -369,13 +377,19 @@ pub async fn connect_and_subscribe_blocks(
         .connect_ws(connect)
         .await
         .map_err(|e| {
-            RpcPoolError::WebSocketError(format!("Failed to connect to {}: {}", ws_url, e))
+            RpcPoolError::WebSocketError(format!(
+                "Failed to connect to {}: {}",
+                host_label(ws_url),
+                redact_url(&e.to_string(), ws_url)
+            ))
         })?;
 
-    let sub = provider
-        .subscribe_blocks()
-        .await
-        .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
+    let sub = provider.subscribe_blocks().await.map_err(|e| {
+        RpcPoolError::WebSocketError(format!(
+            "Failed to subscribe: {}",
+            redact_url(&e.to_string(), ws_url)
+        ))
+    })?;
 
     Ok(owned_stream(
         provider,
@@ -397,13 +411,19 @@ pub async fn connect_and_subscribe_logs(
         .connect_ws(connect)
         .await
         .map_err(|e| {
-            RpcPoolError::WebSocketError(format!("Failed to connect to {}: {}", ws_url, e))
+            RpcPoolError::WebSocketError(format!(
+                "Failed to connect to {}: {}",
+                host_label(ws_url),
+                redact_url(&e.to_string(), ws_url)
+            ))
         })?;
 
-    let sub = provider
-        .subscribe_logs(filter)
-        .await
-        .map_err(|e| RpcPoolError::WebSocketError(format!("Failed to subscribe: {}", e)))?;
+    let sub = provider.subscribe_logs(filter).await.map_err(|e| {
+        RpcPoolError::WebSocketError(format!(
+            "Failed to subscribe: {}",
+            redact_url(&e.to_string(), ws_url)
+        ))
+    })?;
 
     Ok(owned_stream(
         provider,
@@ -415,6 +435,17 @@ pub async fn connect_and_subscribe_logs(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn failed_ws_connect_error_carries_host_not_key() {
+        let url = "ws://127.0.0.1:1/v2/SYNTHETIC_WS_KEY_0123456789";
+        let Err(error) = connect_ws_with_timeout(url, Duration::from_secs(2)).await else {
+            panic!("connecting to a closed port must fail");
+        };
+        let message = error.to_string();
+        assert!(!message.contains("SYNTHETIC_WS_KEY"), "{message}");
+        assert!(message.contains("127.0.0.1"), "{message}");
+    }
 
     fn create_ws_endpoints() -> Vec<RpcEndpoint> {
         vec![

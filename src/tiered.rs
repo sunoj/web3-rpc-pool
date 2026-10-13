@@ -6,10 +6,11 @@
 //! - Using free public RPCs for non-urgent batch operations (historical sync)
 //! - Managing RPC costs by routing low-priority requests to free tiers
 
-use crate::endpoint::{url_host, RpcEndpoint};
+use crate::endpoint::RpcEndpoint;
 use crate::error::RpcPoolError;
 use crate::pool::{RpcPool, RpcPoolConfig};
 use crate::presets;
+use crate::redact::{redact_url, url_host};
 use crate::strategies::{FailoverStrategy, RateAwareStrategy, SelectionStrategy};
 
 use alloy::providers::RootProvider;
@@ -320,8 +321,9 @@ impl TieredPool {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
                         // A revert is deterministic: the next tier would replay it.
-                        let message = e.to_string();
-                        if crate::pool::is_call_failure(&message) {
+                        let raw = e.to_string();
+                        let message = redact_url(&raw, url.as_str());
+                        if crate::pool::is_call_failure(&raw) {
                             return Err(RpcPoolError::CallFailed(message));
                         }
                         warn!(tier = ?tier, error = %message, "Trusted tier failed, falling back to next tier");
@@ -417,8 +419,9 @@ impl TieredPool {
                     Ok(Ok(result)) => return Ok(result),
                     Ok(Err(e)) => {
                         // A revert is deterministic: the next tier would replay it.
-                        let message = e.to_string();
-                        if crate::pool::is_call_failure(&message) {
+                        let raw = e.to_string();
+                        let message = redact_url(&raw, url.as_str());
+                        if crate::pool::is_call_failure(&raw) {
                             return Err(RpcPoolError::CallFailed(message));
                         }
                         warn!(tier = ?tier, error = %message, "Trusted tier failed, falling back to next tier");
