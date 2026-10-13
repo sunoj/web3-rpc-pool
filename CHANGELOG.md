@@ -7,17 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-10-13
+
+### Added
+
+- `RpcPool::execute_meta` and `RpcPool::execute_with_url_meta`: like `execute` and
+  `execute_with_url`, and also return `ExecuteMeta` for the endpoint that answered — its
+  name, its host and how many endpoints failed before it.
+
+### Security
+
+- A failed health probe is recorded and logged as `health probe to <host> failed: <kind>`.
+  The raw transport error, which can echo an API key from the URL's userinfo, path or
+  query, is no longer stored in `EndpointStats::last_error` or logged.
+- Errors no longer carry an endpoint's API key. A caller's transport error renders the full
+  request URL, and WebSocket connect errors formatted the configured URL, so the key reached
+  `AllEndpointsFailed`, `CallFailed`, `WebSocketError`, `EndpointStats::last_error` and the
+  logs. Error text now keeps only `scheme://host` of any URL and removes the endpoint's
+  credentials (userinfo, query values, key-length path segments) wherever they appear.
+- `RpcEndpoint::new` names an endpoint after its URL's host instead of the full URL, so an
+  endpoint without `with_name` no longer logs its key through the name field.
+- Pool, tiered and WebSocket log fields that rendered a configured endpoint URL now render
+  its host.
+
+### Fixed
+
+- Truncating a long error message no longer panics when the cut falls inside a multi-byte
+  character.
+
+## [0.7.3] - 2026-09-30
+
 ### Added
 
 - Arc mainnet (chain 5042) presets: six HTTP endpoints, each verified to answer
   `eth_call` with a native `balance` state override. Arc has no verified public
   WebSocket and joins `NO_PUBLIC_WS_CHAINS`.
 
+## [0.7.2] - 2026-09-15
+
 ### Removed
 
 - The Base Official preset no longer declares `wss://mainnet.base.org`: the host
   answers every WebSocket upgrade with 405, so a WS pool carrying it retried it
   forever.
+
+## [0.7.1] - 2026-09-05
 
 ### Added
 
@@ -46,8 +80,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Request-level tests cover fallback through a lagging endpoint and ensure a
   known unhealthy fresh endpoint cannot jump ahead of a healthy lagging one.
 
-## [0.7.1] - 2026-09-05
-
 ### Fixed
 
 - **A terminated WebSocket subscription no longer retires its endpoint forever.** `WsPool` used to
@@ -56,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `subscribe_logs` call skipped the whole pool and failed with the last error. Termination now
   starts a 30-second cooldown (`src/ws_retry.rs`): healthy endpoints stay eligible immediately and
   a terminated one is retried once the cooldown elapses. Stream/provider ownership, shutdown and the
-  standalone `connect_and_subscribe_*` helpers are unchanged. No public API or dependency changes.
+  standalone `connect_and_subscribe_*` helpers are unchanged.
   (#9)
 
 ## [0.7.0] - 2026-07-28
