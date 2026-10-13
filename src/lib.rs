@@ -64,7 +64,7 @@ pub mod ws;
 pub use endpoint::{EndpointCapabilities, EndpointGrade, EndpointStats, RpcEndpoint};
 pub use error::RpcPoolError;
 pub use metrics::RpcPoolMetrics;
-pub use pool::{HealthSummary, RpcPool, RpcPoolConfig};
+pub use pool::{ExecuteMeta, ExecuteOutcome, HealthSummary, RpcPool, RpcPoolConfig};
 pub use strategies::{
     FailoverStrategy, LatencyBasedStrategy, RateAwareStrategy, RoundRobinStrategy,
     SelectionStrategy,

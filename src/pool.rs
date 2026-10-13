@@ -37,6 +37,24 @@ pub struct HealthSummary {
     pub total: usize,
 }
 
+/// Which endpoint answered a successful `execute` / `execute_with_url` call.
+#[derive(Debug, Clone)]
+pub struct ExecuteMeta {
+    /// Human-readable endpoint name from the preset / config.
+    pub endpoint_name: String,
+    /// URL that served the successful response.
+    pub endpoint_url: String,
+    /// How many endpoints failed before this success (`0` = first selected answered).
+    pub prior_failures: u32,
+}
+
+/// Successful pool call value plus serving-endpoint metadata.
+#[derive(Debug, Clone)]
+pub struct ExecuteOutcome<T> {
+    pub value: T,
+    pub meta: ExecuteMeta,
+}
+
 impl HealthSummary {
     /// Returns true if all endpoints are unhealthy.
     pub fn all_unhealthy(&self) -> bool {
@@ -392,6 +410,20 @@ impl RpcPool {
         Fut: Future<Output = Result<T, E>>,
         E: std::error::Error,
     {
+        Ok(self.execute_with_url_meta(f).await?.value)
+    }
+
+    /// Like [`Self::execute_with_url`], but also returns which endpoint answered.
+    #[instrument(skip(self, f), level = "trace", fields(request_id = %self.total_requests.load(Ordering::Relaxed) + 1))]
+    pub async fn execute_with_url_meta<F, Fut, T, E>(
+        &self,
+        f: F,
+    ) -> Result<ExecuteOutcome<T>, RpcPoolError>
+    where
+        F: Fn(String) -> Fut + Clone,
+        Fut: Future<Output = Result<T, E>>,
+        E: std::error::Error,
+    {
         if self.is_shutdown() {
             debug!("Request rejected: pool is shut down");
             return Err(RpcPoolError::PoolShutdown);
@@ -464,13 +496,22 @@ impl RpcPool {
                     if let Some(stats) = self.stats.write().get_mut(&endpoint.url) {
                         stats.record_success(latency);
                     }
+                    let prior_failures = tried.len().saturating_sub(1) as u32;
                     trace!(
                         request_id,
                         endpoint_name = %endpoint.name,
                         latency_ms = latency,
+                        prior_failures,
                         "Request completed successfully"
                     );
-                    return Ok(value);
+                    return Ok(ExecuteOutcome {
+                        value,
+                        meta: ExecuteMeta {
+                            endpoint_name: endpoint.name.clone(),
+                            endpoint_url: endpoint.url.clone(),
+                            prior_failures,
+                        },
+                    });
                 }
                 Ok(Err(e)) => {
                     let raw_error = e.to_string();
@@ -562,7 +603,17 @@ impl RpcPool {
         Fut: Future<Output = Result<T, E>>,
         E: std::error::Error,
     {
-        self.execute_with_url(|url_str| {
+        Ok(self.execute_meta(f).await?.value)
+    }
+
+    /// Like [`Self::execute`], but also returns which endpoint answered.
+    pub async fn execute_meta<T, E, F, Fut>(&self, f: F) -> Result<ExecuteOutcome<T>, RpcPoolError>
+    where
+        F: Fn(url::Url) -> Fut + Clone,
+        Fut: Future<Output = Result<T, E>>,
+        E: std::error::Error,
+    {
+        self.execute_with_url_meta(|url_str| {
             let f = f.clone();
             async move {
                 let url: url::Url = url_str.parse().map_err(|e: url::ParseError| {
@@ -1182,7 +1233,7 @@ mod tests {
         );
     }
 
-    /// The contrast case: a genuine transport failure still marks endpoints unhealthy
+    /// A genuine transport failure still marks endpoints unhealthy
     /// and still fails over across all of them.
     #[tokio::test]
     async fn transport_failure_still_degrades_endpoint_health() {
@@ -1202,6 +1253,31 @@ mod tests {
             0,
             "a transport failure must still degrade endpoint health"
         );
+    }
+
+    #[tokio::test]
+    async fn execute_with_url_meta_reports_endpoint_and_prior_failures() {
+        let pool = RpcPool::new(create_test_config()).unwrap();
+        let attempts = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let counter = attempts.clone();
+        let outcome = pool
+            .execute_with_url_meta(move |_url| {
+                let counter = counter.clone();
+                async move {
+                    let n = counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if n == 0 {
+                        Err(std::io::Error::other("error sending request for url"))
+                    } else {
+                        Ok(42u64)
+                    }
+                }
+            })
+            .await
+            .expect("second endpoint should succeed");
+        assert_eq!(outcome.value, 42);
+        assert_eq!(outcome.meta.prior_failures, 1);
+        assert_eq!(outcome.meta.endpoint_url, "https://rpc2.example.com");
+        assert!(!outcome.meta.endpoint_name.is_empty());
     }
 
     #[test]
