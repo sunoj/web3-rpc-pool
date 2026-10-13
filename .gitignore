@@ -3,3 +3,7 @@ Cargo.lock
 **/*.rs.bk
 *.pdb
 .DS_Store
+
+# Local tool output
+report.json
+.aid/
