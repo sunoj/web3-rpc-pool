@@ -160,6 +160,13 @@ pub struct RpcEndpoint {
     pub preferred: bool,
 }
 
+/// Host of an endpoint URL, the only part safe to log or hand back to callers.
+///
+/// Provider URLs carry the API key in userinfo, path or query; the host never does.
+pub(crate) fn url_host(url: &str) -> Option<String> {
+    url::Url::parse(url).ok()?.host_str().map(str::to_string)
+}
+
 fn default_name() -> String {
     "unnamed".to_string()
 }
@@ -596,5 +603,19 @@ mod tests {
         stats.mark_recovered();
         assert_eq!(stats.recovery_attempts, 0);
         assert_eq!(stats.current_retry_delay(base_delay).as_secs(), 5);
+    }
+
+    #[test]
+    fn url_host_drops_userinfo_path_and_query() {
+        for url in [
+            "https://eth-mainnet.g.alchemy.com/v2/SECRETKEY",
+            "https://user:SECRETKEY@eth-mainnet.g.alchemy.com/",
+            "https://eth-mainnet.g.alchemy.com/?apikey=SECRETKEY",
+            "wss://eth-mainnet.g.alchemy.com/v2/SECRETKEY",
+        ] {
+            let host = url_host(url);
+            assert_eq!(host.as_deref(), Some("eth-mainnet.g.alchemy.com"), "{url}");
+        }
+        assert_eq!(url_host("not a url"), None);
     }
 }

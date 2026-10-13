@@ -6,7 +6,7 @@
 //! - Using free public RPCs for non-urgent batch operations (historical sync)
 //! - Managing RPC costs by routing low-priority requests to free tiers
 
-use crate::endpoint::RpcEndpoint;
+use crate::endpoint::{url_host, RpcEndpoint};
 use crate::error::RpcPoolError;
 use crate::pool::{RpcPool, RpcPoolConfig};
 use crate::presets;
@@ -204,7 +204,7 @@ impl TieredPool {
 
             if endpoints.iter().all(|endpoint| endpoint.trusted) {
                 let url = url::Url::parse(&endpoints[0].endpoint.url)?;
-                info!(tier = ?tier, url = %url, "Configured trusted tier URL");
+                info!(tier = ?tier, host = ?url.host_str(), "Configured trusted tier URL");
                 trusted_urls.insert(tier, url);
                 continue;
             }
@@ -755,7 +755,7 @@ impl TieredPoolBuilder {
         for ep in self.endpoints {
             if !seen.insert((ep.tier, ep.endpoint.url.clone())) {
                 warn!(
-                    url = %ep.endpoint.url,
+                    host = ?url_host(&ep.endpoint.url),
                     name = %ep.endpoint.name,
                     tier = ?ep.tier,
                     "Duplicate endpoint removed during pool build (same url+tier)"

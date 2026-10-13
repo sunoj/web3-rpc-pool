@@ -1,6 +1,6 @@
 //! Core RPC pool implementation.
 
-use crate::endpoint::{EndpointStats, RpcEndpoint};
+use crate::endpoint::{url_host, EndpointStats, RpcEndpoint};
 use crate::error::RpcPoolError;
 use crate::freshness::{best_known_healthy_block, freshness_distribution};
 use crate::metrics::{EndpointMetrics, RpcPoolMetrics};
@@ -42,8 +42,9 @@ pub struct HealthSummary {
 pub struct ExecuteMeta {
     /// Human-readable endpoint name from the preset / config.
     pub endpoint_name: String,
-    /// URL that served the successful response.
-    pub endpoint_url: String,
+    /// Host of the endpoint that served the response (`None` if its URL has no host).
+    /// The full URL is withheld: provider URLs carry the API key.
+    pub endpoint_host: Option<String>,
     /// How many endpoints failed before this success (`0` = first selected answered).
     pub prior_failures: u32,
 }
@@ -231,7 +232,7 @@ impl RpcPool {
             stats.insert(endpoint.url.clone(), EndpointStats::new(endpoint));
             trace!(
                 endpoint_name = %endpoint.name,
-                endpoint_url = %endpoint.url,
+                endpoint_host = ?url_host(&endpoint.url),
                 priority = endpoint.priority,
                 chain_id = endpoint.chain_id,
                 "Registered endpoint"
@@ -470,7 +471,7 @@ impl RpcPool {
                 request_id,
                 attempt,
                 endpoint_name = %endpoint.name,
-                endpoint_url = %endpoint.url,
+                endpoint_host = ?url_host(&endpoint.url),
                 "Selected endpoint for request"
             );
 
@@ -508,7 +509,7 @@ impl RpcPool {
                         value,
                         meta: ExecuteMeta {
                             endpoint_name: endpoint.name.clone(),
-                            endpoint_url: endpoint.url.clone(),
+                            endpoint_host: url_host(&endpoint.url),
                             prior_failures,
                         },
                     });
@@ -889,11 +890,11 @@ impl RpcPool {
             stats.last_error_time = Some(Instant::now());
             debug!(
                 endpoint_name = %stats.name,
-                endpoint_url = %url,
+                endpoint_host = ?url_host(url),
                 "Endpoint manually marked unhealthy"
             );
         } else {
-            warn!(endpoint_url = %url, "Attempted to mark unknown endpoint as unhealthy");
+            warn!(endpoint_host = ?url_host(url), "Attempted to mark unknown endpoint as unhealthy");
         }
     }
 
@@ -903,11 +904,11 @@ impl RpcPool {
             stats.mark_recovered();
             debug!(
                 endpoint_name = %stats.name,
-                endpoint_url = %url,
+                endpoint_host = ?url_host(url),
                 "Endpoint manually marked healthy"
             );
         } else {
-            warn!(endpoint_url = %url, "Attempted to mark unknown endpoint as healthy");
+            warn!(endpoint_host = ?url_host(url), "Attempted to mark unknown endpoint as healthy");
         }
     }
 
@@ -1276,7 +1277,10 @@ mod tests {
             .expect("second endpoint should succeed");
         assert_eq!(outcome.value, 42);
         assert_eq!(outcome.meta.prior_failures, 1);
-        assert_eq!(outcome.meta.endpoint_url, "https://rpc2.example.com");
+        assert_eq!(
+            outcome.meta.endpoint_host.as_deref(),
+            Some("rpc2.example.com")
+        );
         assert!(!outcome.meta.endpoint_name.is_empty());
     }
 

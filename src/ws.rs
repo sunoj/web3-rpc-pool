@@ -26,7 +26,7 @@
 mod ws_retry;
 use ws_retry::EndpointRetry;
 
-use crate::endpoint::RpcEndpoint;
+use crate::endpoint::{url_host, RpcEndpoint};
 use crate::error::RpcPoolError;
 
 use alloy::primitives::B256;
@@ -152,7 +152,7 @@ impl WsPool {
         for ep in &endpoints {
             debug!(
                 name = %ep.name,
-                ws_url = %ep.ws_url.as_deref().unwrap_or(""),
+                ws_host = ?ep.ws_url.as_deref().and_then(url_host),
                 priority = ep.priority,
                 "Registered WS endpoint"
             );
@@ -198,7 +198,7 @@ impl WsPool {
                 if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
-                debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for newHeads subscription");
+                debug!(name = %endpoint.name, ws_host = ?url_host(ws_url), "Connecting for newHeads subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_blocks().await {
@@ -243,7 +243,7 @@ impl WsPool {
                 if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
-                debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for pendingTransactions subscription");
+                debug!(name = %endpoint.name, ws_host = ?url_host(ws_url), "Connecting for pendingTransactions subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_pending_transactions().await {
@@ -289,7 +289,7 @@ impl WsPool {
                 if self.endpoint_failures[index].cooling_down() {
                     continue;
                 }
-                debug!(name = %endpoint.name, ws_url = %ws_url, "Connecting for logs subscription");
+                debug!(name = %endpoint.name, ws_host = ?url_host(ws_url), "Connecting for logs subscription");
 
                 match connect_ws_with_timeout(ws_url, self.config.connect_timeout).await {
                     Ok(provider) => match provider.subscribe_logs(filter).await {
