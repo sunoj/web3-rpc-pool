@@ -23,17 +23,23 @@ High-availability multi-endpoint RPC pool with automatic failover and load balan
 
 - **WebSocket subscriptions**: Stream-based `WsPool` with automatic reconnection and failover
 
+- **Key-safe diagnostics**: errors, logs and default endpoint names carry an endpoint's host, never
+  the API key in its URL
+
 ## Installation
+
+The crate is not published on crates.io; depend on a release tag:
 
 ```toml
 [dependencies]
-web3-rpc-pool = "0.7.0"
+web3-rpc-pool = { git = "https://github.com/sunoj/web3-rpc-pool.git", tag = "v0.7.4" }
 ```
 
 ## Quick Start
 
 ```rust
 use web3_rpc_pool::{RpcPool, RpcPoolConfig, strategies::FailoverStrategy, presets};
+use alloy::providers::{Provider, ProviderBuilder};
 use std::time::Duration;
 use std::sync::Arc;
 
@@ -51,9 +57,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Start background health checker
     let _health_task = pool.start_health_check();
 
-    // Execute with automatic failover
-    let block = pool.execute(|provider| async move {
-        provider.get_block_number().await
+    // Execute with automatic failover; the closure receives the selected endpoint URL
+    let block = pool.execute(|url| async move {
+        ProviderBuilder::new().connect_http(url).get_block_number().await
     }).await?;
 
     println!("Current block: {}", block);
@@ -125,6 +131,41 @@ let endpoints = vec![
 ];
 ```
 
+## Which Endpoint Answered
+
+`execute_meta` (and `execute_with_url_meta`) return the value together with the endpoint that
+served it:
+
+```rust
+let outcome = pool.execute_meta(|url| async move {
+    ProviderBuilder::new().connect_http(url).get_block_number().await
+}).await?;
+
+println!(
+    "block {} from {} ({:?}); {} endpoint(s) failed first",
+    outcome.value,
+    outcome.meta.endpoint_name,
+    outcome.meta.endpoint_host,
+    outcome.meta.prior_failures,
+);
+```
+
+## Endpoint URLs and API Keys
+
+Provider URLs often carry an API key in the path, query or userinfo. Everything the pool reports
+identifies an endpoint by its host:
+
+- `RpcPoolError` messages, `EndpointStats::last_error` and the crate's log fields render URLs as
+  `scheme://host`, and the endpoint's credentials are removed wherever they appear in error text.
+  Revert detection still reads the raw error, so `CallFailed` keeps its revert data.
+- `RpcEndpoint::new(url)` names the endpoint after its host; `with_name` sets an explicit label.
+- `ExecuteMeta` exposes `endpoint_host`, not the URL.
+
+The configured URL is still available where a caller needs it to connect: the URL passed to the
+`execute` closure, `get_current_url`, `get_all_urls` and `EndpointMetrics::url`. Do not log or
+export those. Alloy's own DEBUG/TRACE spans also include the request URL, so keep
+`alloy_transport_http` below DEBUG in production.
+
 ## Head Freshness
 
 Enable head freshness when a fast endpoint may keep answering from a stale
@@ -185,11 +226,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Supported Chains
 
-Built-in presets with 276 verified public RPC endpoints (43 WSS) across 38 chains:
+Built-in presets of verified public RPC endpoints for 40 chains:
 
 | Chain | Chain ID | Endpoints | Preset Function |
 |-------|----------|-----------|-----------------|
 | Arbitrum One | 42161 | 20 | `arbitrum_endpoints()` |
+| Arc | 5042 | 6 | `arc_endpoints()` |
 | Aurora | 1313161554 | 3 | `aurora_endpoints()` |
 | Avalanche C-Chain | 43114 | 8 | `avalanche_endpoints()` |
 | Base | 8453 | 21 | `base_endpoints()` |
@@ -219,6 +261,7 @@ Built-in presets with 276 verified public RPC endpoints (43 WSS) across 38 chain
 | Optimism | 10 | 16 | `optimism_endpoints()` |
 | Polygon | 137 | 14 | `polygon_endpoints()` |
 | Polygon zkEVM | 1101 | 6 | `polygon_zkevm_endpoints()` |
+| Robinhood Chain | 4663 | 1 | `robinhood_endpoints()` |
 | Rootstock | 30 | 2 | `rootstock_endpoints()` |
 | Scroll | 534352 | 11 | `scroll_endpoints()` |
 | Sei | 1329 | 2 | `sei_endpoints()` |
